@@ -1,0 +1,1309 @@
+swagger: "2.0"
+info:
+    title: Character Service API
+    description: TODO character API
+    version: ""
+host: localhost:8000
+consumes:
+    - application/json
+    - application/xml
+    - application/gob
+produces:
+    - application/json
+    - application/xml
+    - application/gob
+paths:
+    /character:
+        get:
+            tags:
+                - character
+            summary: list character
+            description: List all stored bottles
+            operationId: character#list
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        $ref: '#/definitions/CharacterStoredCharacterResponseTinyCollection'
+            schemes:
+                - http
+        post:
+            tags:
+                - character
+            summary: add character
+            description: Add new character and return its ID.
+            operationId: character#add
+            parameters:
+                - name: AddRequestBody
+                  in: body
+                  required: true
+                  schema:
+                    $ref: '#/definitions/CharacterAddRequestBody'
+                    required:
+                        - name
+                        - health
+                        - experience
+            responses:
+                "201":
+                    description: Created response.
+                    schema:
+                        type: string
+            schemes:
+                - http
+    /character/{id}:
+        get:
+            tags:
+                - character
+            summary: show character
+            description: Show character by Id
+            operationId: character#show
+            parameters:
+                - name: view
+                  in: query
+                  description: View to render
+                  required: false
+                  type: string
+                  enum:
+                    - default
+                    - tiny
+                - name: id
+                  in: path
+                  description: ID of character to show
+                  required: true
+                  type: string
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        $ref: '#/definitions/CharacterShowResponseBody'
+                "404":
+                    description: Not Found response.
+                    schema:
+                        $ref: '#/definitions/CharacterShowNotFoundResponseBody'
+                        required:
+                            - message
+                            - id
+            schemes:
+                - http
+        put:
+            tags:
+                - character
+            summary: update character
+            description: ' update '
+            operationId: character#update
+            parameters:
+                - name: id
+                  in: path
+                  description: ID of character to update
+                  required: true
+                  type: string
+                - name: UpdateRequestBody
+                  in: body
+                  required: true
+                  schema:
+                    $ref: '#/definitions/CharacterUpdateRequestBody'
+                    required:
+                        - character
+            responses:
+                "204":
+                    description: No Content response.
+            schemes:
+                - http
+        delete:
+            tags:
+                - character
+            summary: remove character
+            description: Remove character
+            operationId: character#remove
+            parameters:
+                - name: id
+                  in: path
+                  description: ID of character to remove
+                  required: true
+                  type: string
+            responses:
+                "204":
+                    description: No Content response.
+            schemes:
+                - http
+    /inventory:
+        post:
+            tags:
+                - inventory
+            summary: add inventory
+            description: Add new inventory and return its ID.
+            operationId: inventory#add
+            parameters:
+                - name: AddRequestBody
+                  in: body
+                  required: true
+                  schema:
+                    $ref: '#/definitions/InventoryAddRequestBody'
+                    required:
+                        - characterId
+            responses:
+                "201":
+                    description: Created response.
+                    schema:
+                        type: string
+            schemes:
+                - http
+    /inventory/{id}:
+        get:
+            tags:
+                - inventory
+            summary: show inventory
+            description: Show inventory by Id
+            operationId: inventory#show
+            parameters:
+                - name: view
+                  in: query
+                  description: View to render
+                  required: false
+                  type: string
+                  enum:
+                    - default
+                    - tiny
+                - name: id
+                  in: path
+                  description: ID of inventory to show
+                  required: true
+                  type: string
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        $ref: '#/definitions/InventoryShowResponseBody'
+                "404":
+                    description: Not Found response.
+                    schema:
+                        $ref: '#/definitions/InventoryShowNotFoundResponseBody'
+                        required:
+                            - message
+                            - id
+            schemes:
+                - http
+        put:
+            tags:
+                - inventory
+            summary: update inventory
+            description: ' update '
+            operationId: inventory#update
+            parameters:
+                - name: id
+                  in: path
+                  description: ID of inventory to update
+                  required: true
+                  type: string
+                - name: UpdateRequestBody
+                  in: body
+                  required: true
+                  schema:
+                    $ref: '#/definitions/InventoryUpdateRequestBody'
+                    required:
+                        - inventory
+            responses:
+                "204":
+                    description: No Content response.
+            schemes:
+                - http
+        delete:
+            tags:
+                - inventory
+            summary: remove inventory
+            description: Remove Inventory
+            operationId: inventory#remove
+            parameters:
+                - name: id
+                  in: path
+                  description: ID of inventory to remove
+                  required: true
+                  type: string
+            responses:
+                "204":
+                    description: No Content response.
+            schemes:
+                - http
+    /inventory/{id}/item:
+        get:
+            tags:
+                - inventory
+            summary: showItem inventory
+            description: Show items in an inventory
+            operationId: inventory#showItem
+            parameters:
+                - name: view
+                  in: query
+                  description: View to render
+                  required: false
+                  type: string
+                  enum:
+                    - default
+                    - tiny
+                - name: id
+                  in: path
+                  description: ID of inventory to show
+                  required: true
+                  type: string
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        $ref: '#/definitions/InventoryStoredItemResponseTinyCollection'
+                "404":
+                    description: Not Found response.
+                    schema:
+                        $ref: '#/definitions/InventoryShowItemNotFoundResponseBody'
+                        required:
+                            - message
+                            - id
+            schemes:
+                - http
+    /inventory/{id}/item/{itemId}:
+        post:
+            tags:
+                - inventory
+            summary: addItem inventory
+            description: Add new item to inventory.
+            operationId: inventory#addItem
+            parameters:
+                - name: id
+                  in: path
+                  description: ID of inventory to add
+                  required: true
+                  type: string
+                - name: itemId
+                  in: path
+                  description: ID of item to add
+                  required: true
+                  type: string
+                - name: AddItemRequestBody
+                  in: body
+                  required: true
+                  schema:
+                    $ref: '#/definitions/InventoryAddItemRequestBody'
+            responses:
+                "201":
+                    description: Created response.
+                    schema:
+                        type: string
+            schemes:
+                - http
+        delete:
+            tags:
+                - inventory
+            summary: removeItem inventory
+            description: Remove an item from inventory
+            operationId: inventory#removeItem
+            parameters:
+                - name: id
+                  in: path
+                  description: ID of inventory to add
+                  required: true
+                  type: string
+                - name: itemId
+                  in: path
+                  description: ID of item to add
+                  required: true
+                  type: string
+            responses:
+                "204":
+                    description: No Content response.
+            schemes:
+                - http
+    /inventory/character/{characterId}/:
+        get:
+            tags:
+                - inventory
+            summary: list inventory
+            description: List all items in character inventory
+            operationId: inventory#list
+            parameters:
+                - name: characterId
+                  in: path
+                  description: ID of character to show
+                  required: true
+                  type: string
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        $ref: '#/definitions/InventoryStoredInventoryResponseTinyCollection'
+            schemes:
+                - http
+    /item:
+        get:
+            tags:
+                - item
+            summary: list item
+            description: List all stored items
+            operationId: item#list
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        $ref: '#/definitions/ItemStoredItemResponseTinyCollection'
+            schemes:
+                - http
+        post:
+            tags:
+                - item
+            summary: add item
+            description: Add new item and return its ID.
+            operationId: item#add
+            parameters:
+                - name: AddRequestBody
+                  in: body
+                  required: true
+                  schema:
+                    $ref: '#/definitions/ItemAddRequestBody'
+                    required:
+                        - name
+            responses:
+                "201":
+                    description: Created response.
+                    schema:
+                        type: string
+            schemes:
+                - http
+    /item/{id}:
+        get:
+            tags:
+                - item
+            summary: show item
+            description: Show character by Id
+            operationId: item#show
+            parameters:
+                - name: view
+                  in: query
+                  description: View to render
+                  required: false
+                  type: string
+                  enum:
+                    - default
+                    - tiny
+                - name: id
+                  in: path
+                  description: ID of item to show
+                  required: true
+                  type: string
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        $ref: '#/definitions/ItemShowResponseBody'
+                "404":
+                    description: Not Found response.
+                    schema:
+                        $ref: '#/definitions/ItemShowNotFoundResponseBody'
+                        required:
+                            - message
+                            - id
+            schemes:
+                - http
+        put:
+            tags:
+                - item
+            summary: update item
+            description: ' update '
+            operationId: item#update
+            parameters:
+                - name: id
+                  in: path
+                  description: ID of item to update
+                  required: true
+                  type: string
+                - name: UpdateRequestBody
+                  in: body
+                  required: true
+                  schema:
+                    $ref: '#/definitions/ItemUpdateRequestBody'
+                    required:
+                        - character
+            responses:
+                "204":
+                    description: No Content response.
+            schemes:
+                - http
+        delete:
+            tags:
+                - item
+            summary: remove item
+            description: Remove character
+            operationId: item#remove
+            parameters:
+                - name: id
+                  in: path
+                  description: ID of item to remove
+                  required: true
+                  type: string
+            responses:
+                "204":
+                    description: No Content response.
+            schemes:
+                - http
+    /swagger/swagger.json:
+        get:
+            tags:
+                - swagger
+            summary: Download gen/http/openapi.json
+            description: JSON document containing the API swagger definition
+            operationId: swagger#/swagger/swagger.json
+            responses:
+                "200":
+                    description: File downloaded
+                    schema:
+                        type: file
+            schemes:
+                - http
+definitions:
+    CharacterAddRequestBody:
+        title: CharacterAddRequestBody
+        type: object
+        properties:
+            description:
+                type: string
+                description: Description
+                example: A splintered fragment of the same primordial power as the Ancients themselves, Zet endeavors to end the disharmony among the warring factions through whatever means necessary. Solitary foes are thrown into a volatile state of Flux, ripping away their health over time. Distorting space to generate a Protective Field sheltering around allies, evading and attacking with greater efficiency. Zet summons Spark Fragments of its former self that circles in place, and seek out nearby foes. Is there one Arc Warden, or two? Armed with the original's items and abilities, the Self's Tempest Double duplicates each spell and every attack, bringing twice the chaos to any fight.
+            experience:
+                type: number
+                description: Experience
+                example: 65.21
+                format: double
+            health:
+                type: number
+                description: Health
+                example: 12.6
+                format: double
+            name:
+                type: string
+                description: Name
+                example: Arc Warden
+        example:
+            description: A splintered fragment of the same primordial power as the Ancients themselves, Zet endeavors to end the disharmony among the warring factions through whatever means necessary. Solitary foes are thrown into a volatile state of Flux, ripping away their health over time. Distorting space to generate a Protective Field sheltering around allies, evading and attacking with greater efficiency. Zet summons Spark Fragments of its former self that circles in place, and seek out nearby foes. Is there one Arc Warden, or two? Armed with the original's items and abilities, the Self's Tempest Double duplicates each spell and every attack, bringing twice the chaos to any fight.
+            experience: 65.21
+            health: 12.6
+            name: Arc Warden
+        required:
+            - name
+            - health
+            - experience
+    CharacterRequestBody:
+        title: CharacterRequestBody
+        type: object
+        properties:
+            description:
+                type: string
+                description: Description
+                example: A splintered fragment of the same primordial power as the Ancients themselves, Zet endeavors to end the disharmony among the warring factions through whatever means necessary. Solitary foes are thrown into a volatile state of Flux, ripping away their health over time. Distorting space to generate a Protective Field sheltering around allies, evading and attacking with greater efficiency. Zet summons Spark Fragments of its former self that circles in place, and seek out nearby foes. Is there one Arc Warden, or two? Armed with the original's items and abilities, the Self's Tempest Double duplicates each spell and every attack, bringing twice the chaos to any fight.
+            experience:
+                type: number
+                description: Experience
+                example: 65.21
+                format: double
+            health:
+                type: number
+                description: Health
+                example: 12.6
+                format: double
+            name:
+                type: string
+                description: Name
+                example: Arc Warden
+        description: Character
+        example:
+            description: A splintered fragment of the same primordial power as the Ancients themselves, Zet endeavors to end the disharmony among the warring factions through whatever means necessary. Solitary foes are thrown into a volatile state of Flux, ripping away their health over time. Distorting space to generate a Protective Field sheltering around allies, evading and attacking with greater efficiency. Zet summons Spark Fragments of its former self that circles in place, and seek out nearby foes. Is there one Arc Warden, or two? Armed with the original's items and abilities, the Self's Tempest Double duplicates each spell and every attack, bringing twice the chaos to any fight.
+            experience: 65.21
+            health: 12.6
+            name: Arc Warden
+        required:
+            - name
+            - health
+            - experience
+    CharacterShowNotFoundResponseBody:
+        title: CharacterShowNotFoundResponseBody
+        type: object
+        properties:
+            id:
+                type: string
+                description: ID of missing resource
+                example: Eligendi autem.
+            message:
+                type: string
+                description: Message of error
+                example: resource 1 not found
+        description: Character not found
+        example:
+            id: Quo ex exercitationem ea.
+            message: resource 1 not found
+        required:
+            - message
+            - id
+    CharacterShowResponseBody:
+        title: 'Mediatype identifier: application/vnd.goa.example.character; view=default'
+        type: object
+        properties:
+            description:
+                type: string
+                description: Description
+                example: A splintered fragment of the same primordial power as the Ancients themselves, Zet endeavors to end the disharmony among the warring factions through whatever means necessary. Solitary foes are thrown into a volatile state of Flux, ripping away their health over time. Distorting space to generate a Protective Field sheltering around allies, evading and attacking with greater efficiency. Zet summons Spark Fragments of its former self that circles in place, and seek out nearby foes. Is there one Arc Warden, or two? Armed with the original's items and abilities, the Self's Tempest Double duplicates each spell and every attack, bringing twice the chaos to any fight.
+            experience:
+                type: number
+                description: Experience
+                example: 65.21
+                format: double
+            health:
+                type: number
+                description: Health
+                example: 12.6
+                format: double
+            id:
+                type: string
+                description: ID is the unique id of the character.
+                example: 123abc
+            name:
+                type: string
+                description: Name
+                example: Arc Warden
+        description: ShowResponseBody result type (default view)
+        example:
+            description: A splintered fragment of the same primordial power as the Ancients themselves, Zet endeavors to end the disharmony among the warring factions through whatever means necessary. Solitary foes are thrown into a volatile state of Flux, ripping away their health over time. Distorting space to generate a Protective Field sheltering around allies, evading and attacking with greater efficiency. Zet summons Spark Fragments of its former self that circles in place, and seek out nearby foes. Is there one Arc Warden, or two? Armed with the original's items and abilities, the Self's Tempest Double duplicates each spell and every attack, bringing twice the chaos to any fight.
+            experience: 65.21
+            health: 12.6
+            id: 123abc
+            name: Arc Warden
+        required:
+            - id
+            - name
+            - health
+            - experience
+    CharacterStoredCharacterResponseTinyCollection:
+        title: 'Mediatype identifier: application/vnd.goa.example.character; type=collection; view=tiny'
+        type: array
+        items:
+            $ref: '#/definitions/StoredCharacterResponseTiny'
+        description: CharacterStoredCharacterResponseTinyCollection is the result type for an array of StoredCharacterResponseTiny (default view)
+        example:
+            - description: A splintered fragment of the same primordial power as the Ancients themselves, Zet endeavors to end the disharmony among the warring factions through whatever means necessary. Solitary foes are thrown into a volatile state of Flux, ripping away their health over time. Distorting space to generate a Protective Field sheltering around allies, evading and attacking with greater efficiency. Zet summons Spark Fragments of its former self that circles in place, and seek out nearby foes. Is there one Arc Warden, or two? Armed with the original's items and abilities, the Self's Tempest Double duplicates each spell and every attack, bringing twice the chaos to any fight.
+              experience: 65.21
+              health: 12.6
+              id: 123abc
+              name: Arc Warden
+            - description: A splintered fragment of the same primordial power as the Ancients themselves, Zet endeavors to end the disharmony among the warring factions through whatever means necessary. Solitary foes are thrown into a volatile state of Flux, ripping away their health over time. Distorting space to generate a Protective Field sheltering around allies, evading and attacking with greater efficiency. Zet summons Spark Fragments of its former self that circles in place, and seek out nearby foes. Is there one Arc Warden, or two? Armed with the original's items and abilities, the Self's Tempest Double duplicates each spell and every attack, bringing twice the chaos to any fight.
+              experience: 65.21
+              health: 12.6
+              id: 123abc
+              name: Arc Warden
+    CharacterUpdateRequestBody:
+        title: CharacterUpdateRequestBody
+        type: object
+        properties:
+            character:
+                $ref: '#/definitions/CharacterRequestBody'
+        example:
+            character:
+                description: A splintered fragment of the same primordial power as the Ancients themselves, Zet endeavors to end the disharmony among the warring factions through whatever means necessary. Solitary foes are thrown into a volatile state of Flux, ripping away their health over time. Distorting space to generate a Protective Field sheltering around allies, evading and attacking with greater efficiency. Zet summons Spark Fragments of its former self that circles in place, and seek out nearby foes. Is there one Arc Warden, or two? Armed with the original's items and abilities, the Self's Tempest Double duplicates each spell and every attack, bringing twice the chaos to any fight.
+                experience: 65.21
+                health: 12.6
+                name: Arc Warden
+        required:
+            - character
+    InventoryAddItemRequestBody:
+        title: InventoryAddItemRequestBody
+        type: object
+        properties:
+            view:
+                type: string
+                description: View to render
+                example: default
+                enum:
+                    - default
+                    - tiny
+        example:
+            view: tiny
+    InventoryAddRequestBody:
+        title: InventoryAddRequestBody
+        type: object
+        properties:
+            characterId:
+                type: string
+                description: ID of character to show
+                example: Animi est assumenda veniam cumque commodi nesciunt.
+        example:
+            characterId: Architecto repellendus.
+        required:
+            - characterId
+    InventoryRequestBody:
+        title: InventoryRequestBody
+        type: object
+        properties:
+            character:
+                $ref: '#/definitions/StoredCharacterRequestBody'
+            items:
+                type: array
+                items:
+                    $ref: '#/definitions/StoredItemRequestBody'
+                description: Character items
+                example:
+                    - damage: 37.8267
+                      description: Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.
+                      healing: 12.6
+                      id: 123abc
+                      name: Boots of travel
+                      protection: 65.21
+                    - damage: 37.8267
+                      description: Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.
+                      healing: 12.6
+                      id: 123abc
+                      name: Boots of travel
+                      protection: 65.21
+        description: inventory
+        example:
+            character:
+                description: A splintered fragment of the same primordial power as the Ancients themselves, Zet endeavors to end the disharmony among the warring factions through whatever means necessary. Solitary foes are thrown into a volatile state of Flux, ripping away their health over time. Distorting space to generate a Protective Field sheltering around allies, evading and attacking with greater efficiency. Zet summons Spark Fragments of its former self that circles in place, and seek out nearby foes. Is there one Arc Warden, or two? Armed with the original's items and abilities, the Self's Tempest Double duplicates each spell and every attack, bringing twice the chaos to any fight.
+                experience: 65.21
+                health: 12.6
+                id: 123abc
+                name: Arc Warden
+            items:
+                - damage: 37.8267
+                  description: Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.
+                  healing: 12.6
+                  id: 123abc
+                  name: Boots of travel
+                  protection: 65.21
+                - damage: 37.8267
+                  description: Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.
+                  healing: 12.6
+                  id: 123abc
+                  name: Boots of travel
+                  protection: 65.21
+                - damage: 37.8267
+                  description: Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.
+                  healing: 12.6
+                  id: 123abc
+                  name: Boots of travel
+                  protection: 65.21
+        required:
+            - character
+            - items
+    InventoryShowItemNotFoundResponseBody:
+        title: InventoryShowItemNotFoundResponseBody
+        type: object
+        properties:
+            id:
+                type: string
+                description: ID of missing resource
+                example: Nihil sit ex.
+            message:
+                type: string
+                description: Message of error
+                example: resource 1 not found
+        description: Character not found
+        example:
+            id: Porro aspernatur exercitationem officiis omnis vel.
+            message: resource 1 not found
+        required:
+            - message
+            - id
+    InventoryShowNotFoundResponseBody:
+        title: InventoryShowNotFoundResponseBody
+        type: object
+        properties:
+            id:
+                type: string
+                description: ID of missing resource
+                example: Maiores commodi perferendis.
+            message:
+                type: string
+                description: Message of error
+                example: resource 1 not found
+        description: Character not found
+        example:
+            id: Molestias a qui.
+            message: resource 1 not found
+        required:
+            - message
+            - id
+    InventoryShowResponseBody:
+        title: 'Mediatype identifier: application/vnd.goa.example.inventory; view=default'
+        type: object
+        properties:
+            characterId:
+                type: string
+                example: Sed soluta animi doloribus consectetur ea odio.
+            id:
+                type: string
+                description: ID is the unique id of the character.
+                example: 123abc
+            items:
+                type: array
+                items:
+                    $ref: '#/definitions/StoredItemResponseBodyTiny'
+                description: Character items
+                example:
+                    - damage: 37.8267
+                      healing: 12.6
+                      id: 123abc
+                      name: Boots of travel
+                      protection: 65.21
+                    - damage: 37.8267
+                      healing: 12.6
+                      id: 123abc
+                      name: Boots of travel
+                      protection: 65.21
+                    - damage: 37.8267
+                      healing: 12.6
+                      id: 123abc
+                      name: Boots of travel
+                      protection: 65.21
+                    - damage: 37.8267
+                      healing: 12.6
+                      id: 123abc
+                      name: Boots of travel
+                      protection: 65.21
+        description: ShowResponseBody result type (default view)
+        example:
+            characterId: Qui reprehenderit quia qui est.
+            id: 123abc
+            items:
+                - damage: 37.8267
+                  healing: 12.6
+                  id: 123abc
+                  name: Boots of travel
+                  protection: 65.21
+                - damage: 37.8267
+                  healing: 12.6
+                  id: 123abc
+                  name: Boots of travel
+                  protection: 65.21
+                - damage: 37.8267
+                  healing: 12.6
+                  id: 123abc
+                  name: Boots of travel
+                  protection: 65.21
+                - damage: 37.8267
+                  healing: 12.6
+                  id: 123abc
+                  name: Boots of travel
+                  protection: 65.21
+        required:
+            - id
+            - characterId
+            - items
+    InventoryStoredInventoryResponseTinyCollection:
+        title: 'Mediatype identifier: application/vnd.goa.example.inventory; type=collection; view=tiny'
+        type: array
+        items:
+            $ref: '#/definitions/StoredInventoryResponseTiny'
+        description: InventoryStoredInventoryResponseTinyCollection is the result type for an array of StoredInventoryResponseTiny (default view)
+        example:
+            - characterId: Explicabo omnis.
+              id: 123abc
+              items:
+                - damage: 37.8267
+                  healing: 12.6
+                  id: 123abc
+                  name: Boots of travel
+                  protection: 65.21
+                - damage: 37.8267
+                  healing: 12.6
+                  id: 123abc
+                  name: Boots of travel
+                  protection: 65.21
+                - damage: 37.8267
+                  healing: 12.6
+                  id: 123abc
+                  name: Boots of travel
+                  protection: 65.21
+            - characterId: Explicabo omnis.
+              id: 123abc
+              items:
+                - damage: 37.8267
+                  healing: 12.6
+                  id: 123abc
+                  name: Boots of travel
+                  protection: 65.21
+                - damage: 37.8267
+                  healing: 12.6
+                  id: 123abc
+                  name: Boots of travel
+                  protection: 65.21
+                - damage: 37.8267
+                  healing: 12.6
+                  id: 123abc
+                  name: Boots of travel
+                  protection: 65.21
+            - characterId: Explicabo omnis.
+              id: 123abc
+              items:
+                - damage: 37.8267
+                  healing: 12.6
+                  id: 123abc
+                  name: Boots of travel
+                  protection: 65.21
+                - damage: 37.8267
+                  healing: 12.6
+                  id: 123abc
+                  name: Boots of travel
+                  protection: 65.21
+                - damage: 37.8267
+                  healing: 12.6
+                  id: 123abc
+                  name: Boots of travel
+                  protection: 65.21
+            - characterId: Explicabo omnis.
+              id: 123abc
+              items:
+                - damage: 37.8267
+                  healing: 12.6
+                  id: 123abc
+                  name: Boots of travel
+                  protection: 65.21
+                - damage: 37.8267
+                  healing: 12.6
+                  id: 123abc
+                  name: Boots of travel
+                  protection: 65.21
+                - damage: 37.8267
+                  healing: 12.6
+                  id: 123abc
+                  name: Boots of travel
+                  protection: 65.21
+    InventoryStoredItemResponseTinyCollection:
+        title: 'Mediatype identifier: application/json; type=collection; view=tiny'
+        type: array
+        items:
+            $ref: '#/definitions/StoredItemResponseTiny'
+        description: InventoryStoredItemResponseTinyCollection is the result type for an array of StoredItemResponseTiny (default view)
+        example:
+            - damage: 37.8267
+              description: Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.
+              healing: 12.6
+              id: 123abc
+              name: Boots of travel
+              protection: 65.21
+            - damage: 37.8267
+              description: Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.
+              healing: 12.6
+              id: 123abc
+              name: Boots of travel
+              protection: 65.21
+            - damage: 37.8267
+              description: Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.
+              healing: 12.6
+              id: 123abc
+              name: Boots of travel
+              protection: 65.21
+    InventoryUpdateRequestBody:
+        title: InventoryUpdateRequestBody
+        type: object
+        properties:
+            inventory:
+                $ref: '#/definitions/InventoryRequestBody'
+        example:
+            inventory:
+                character:
+                    description: A splintered fragment of the same primordial power as the Ancients themselves, Zet endeavors to end the disharmony among the warring factions through whatever means necessary. Solitary foes are thrown into a volatile state of Flux, ripping away their health over time. Distorting space to generate a Protective Field sheltering around allies, evading and attacking with greater efficiency. Zet summons Spark Fragments of its former self that circles in place, and seek out nearby foes. Is there one Arc Warden, or two? Armed with the original's items and abilities, the Self's Tempest Double duplicates each spell and every attack, bringing twice the chaos to any fight.
+                    experience: 65.21
+                    health: 12.6
+                    id: 123abc
+                    name: Arc Warden
+                items:
+                    - damage: 37.8267
+                      description: Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.
+                      healing: 12.6
+                      id: 123abc
+                      name: Boots of travel
+                      protection: 65.21
+                    - damage: 37.8267
+                      description: Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.
+                      healing: 12.6
+                      id: 123abc
+                      name: Boots of travel
+                      protection: 65.21
+        required:
+            - inventory
+    ItemAddRequestBody:
+        title: ItemAddRequestBody
+        type: object
+        properties:
+            damage:
+                type: number
+                description: Damage
+                default: 0
+                example: 37.8267
+                format: double
+            description:
+                type: string
+                description: Description
+                example: Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.
+            healing:
+                type: number
+                description: Healing
+                default: 0
+                example: 12.6
+                format: double
+            name:
+                type: string
+                description: Name
+                example: Boots of travel
+            protection:
+                type: number
+                description: Protection
+                default: 0
+                example: 65.21
+                format: double
+        example:
+            damage: 37.8267
+            description: Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.
+            healing: 12.6
+            name: Boots of travel
+            protection: 65.21
+        required:
+            - name
+    ItemShowNotFoundResponseBody:
+        title: ItemShowNotFoundResponseBody
+        type: object
+        properties:
+            id:
+                type: string
+                description: ID of missing resource
+                example: Eius ipsa.
+            message:
+                type: string
+                description: Message of error
+                example: resource 1 not found
+        description: Character not found
+        example:
+            id: Animi a in perferendis incidunt.
+            message: resource 1 not found
+        required:
+            - message
+            - id
+    ItemShowResponseBody:
+        title: 'Mediatype identifier: application/json; view=default'
+        type: object
+        properties:
+            damage:
+                type: number
+                description: Damage
+                default: 0
+                example: 37.8267
+                format: double
+            description:
+                type: string
+                description: Description
+                example: Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.
+            healing:
+                type: number
+                description: Healing
+                default: 0
+                example: 12.6
+                format: double
+            id:
+                type: string
+                description: ID is the unique id of the Item.
+                example: 123abc
+            name:
+                type: string
+                description: Name
+                example: Boots of travel
+            protection:
+                type: number
+                description: Protection
+                default: 0
+                example: 65.21
+                format: double
+        description: ShowResponseBody result type (default view)
+        example:
+            damage: 37.8267
+            description: Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.
+            healing: 12.6
+            id: 123abc
+            name: Boots of travel
+            protection: 65.21
+        required:
+            - id
+            - name
+    ItemStoredItemResponseTinyCollection:
+        title: 'Mediatype identifier: application/json; type=collection; view=tiny'
+        type: array
+        items:
+            $ref: '#/definitions/StoredItemResponseTiny'
+        description: ItemStoredItemResponseTinyCollection is the result type for an array of StoredItemResponseTiny (default view)
+        example:
+            - damage: 37.8267
+              description: Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.
+              healing: 12.6
+              id: 123abc
+              name: Boots of travel
+              protection: 65.21
+            - damage: 37.8267
+              description: Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.
+              healing: 12.6
+              id: 123abc
+              name: Boots of travel
+              protection: 65.21
+            - damage: 37.8267
+              description: Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.
+              healing: 12.6
+              id: 123abc
+              name: Boots of travel
+              protection: 65.21
+    ItemUpdateRequestBody:
+        title: ItemUpdateRequestBody
+        type: object
+        properties:
+            character:
+                $ref: '#/definitions/CharacterRequestBody'
+        example:
+            character:
+                description: A splintered fragment of the same primordial power as the Ancients themselves, Zet endeavors to end the disharmony among the warring factions through whatever means necessary. Solitary foes are thrown into a volatile state of Flux, ripping away their health over time. Distorting space to generate a Protective Field sheltering around allies, evading and attacking with greater efficiency. Zet summons Spark Fragments of its former self that circles in place, and seek out nearby foes. Is there one Arc Warden, or two? Armed with the original's items and abilities, the Self's Tempest Double duplicates each spell and every attack, bringing twice the chaos to any fight.
+                experience: 65.21
+                health: 12.6
+                name: Arc Warden
+        required:
+            - character
+    StoredCharacterRequestBody:
+        title: 'Mediatype identifier: application/vnd.goa.example.character; view=default'
+        type: object
+        properties:
+            description:
+                type: string
+                description: Description
+                example: A splintered fragment of the same primordial power as the Ancients themselves, Zet endeavors to end the disharmony among the warring factions through whatever means necessary. Solitary foes are thrown into a volatile state of Flux, ripping away their health over time. Distorting space to generate a Protective Field sheltering around allies, evading and attacking with greater efficiency. Zet summons Spark Fragments of its former self that circles in place, and seek out nearby foes. Is there one Arc Warden, or two? Armed with the original's items and abilities, the Self's Tempest Double duplicates each spell and every attack, bringing twice the chaos to any fight.
+            experience:
+                type: number
+                description: Experience
+                example: 65.21
+                format: double
+            health:
+                type: number
+                description: Health
+                example: 12.6
+                format: double
+            id:
+                type: string
+                description: ID is the unique id of the character.
+                example: 123abc
+            name:
+                type: string
+                description: Name
+                example: Arc Warden
+        description: A StoredCharacter describes a character retrieved by the db. (default view)
+        example:
+            description: A splintered fragment of the same primordial power as the Ancients themselves, Zet endeavors to end the disharmony among the warring factions through whatever means necessary. Solitary foes are thrown into a volatile state of Flux, ripping away their health over time. Distorting space to generate a Protective Field sheltering around allies, evading and attacking with greater efficiency. Zet summons Spark Fragments of its former self that circles in place, and seek out nearby foes. Is there one Arc Warden, or two? Armed with the original's items and abilities, the Self's Tempest Double duplicates each spell and every attack, bringing twice the chaos to any fight.
+            experience: 65.21
+            health: 12.6
+            id: 123abc
+            name: Arc Warden
+        required:
+            - id
+            - name
+            - health
+            - experience
+    StoredCharacterResponseTiny:
+        title: 'Mediatype identifier: application/vnd.goa.example.character; view=default'
+        type: object
+        properties:
+            experience:
+                type: number
+                description: Experience
+                example: 65.21
+                format: double
+            health:
+                type: number
+                description: Health
+                example: 12.6
+                format: double
+            id:
+                type: string
+                description: ID is the unique id of the character.
+                example: 123abc
+            name:
+                type: string
+                description: Name
+                example: Arc Warden
+        description: A StoredCharacter describes a character retrieved by the db. (tiny view) (default view)
+        example:
+            experience: 65.21
+            health: 12.6
+            id: 123abc
+            name: Arc Warden
+        required:
+            - id
+            - name
+            - health
+            - experience
+    StoredInventoryResponseTiny:
+        title: 'Mediatype identifier: application/vnd.goa.example.inventory; view=default'
+        type: object
+        properties:
+            characterId:
+                type: string
+                example: Fugit dicta id illo fugiat.
+            id:
+                type: string
+                description: ID is the unique id of the character.
+                example: 123abc
+            items:
+                type: array
+                items:
+                    $ref: '#/definitions/StoredItemResponseTiny'
+                description: Character items
+                example:
+                    - damage: 37.8267
+                      healing: 12.6
+                      id: 123abc
+                      name: Boots of travel
+                      protection: 65.21
+                    - damage: 37.8267
+                      healing: 12.6
+                      id: 123abc
+                      name: Boots of travel
+                      protection: 65.21
+        description: A StoredInventory describes a StoredInventory retrieved by the db. (tiny view) (default view)
+        example:
+            characterId: Et vitae et aperiam quis repudiandae.
+            id: 123abc
+            items:
+                - damage: 37.8267
+                  healing: 12.6
+                  id: 123abc
+                  name: Boots of travel
+                  protection: 65.21
+                - damage: 37.8267
+                  healing: 12.6
+                  id: 123abc
+                  name: Boots of travel
+                  protection: 65.21
+        required:
+            - id
+            - characterId
+            - items
+    StoredItemRequestBody:
+        title: 'Mediatype identifier: application/json; view=default'
+        type: object
+        properties:
+            damage:
+                type: number
+                description: Damage
+                default: 0
+                example: 37.8267
+                format: double
+            description:
+                type: string
+                description: Description
+                example: Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.
+            healing:
+                type: number
+                description: Healing
+                default: 0
+                example: 12.6
+                format: double
+            id:
+                type: string
+                description: ID is the unique id of the Item.
+                example: 123abc
+            name:
+                type: string
+                description: Name
+                example: Boots of travel
+            protection:
+                type: number
+                description: Protection
+                default: 0
+                example: 65.21
+                format: double
+        description: A StoredItem describes a Item retrieved by the db. (default view)
+        example:
+            damage: 37.8267
+            description: Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.
+            healing: 12.6
+            id: 123abc
+            name: Boots of travel
+            protection: 65.21
+        required:
+            - id
+            - name
+    StoredItemResponseBodyTiny:
+        title: 'Mediatype identifier: application/json; view=default'
+        type: object
+        properties:
+            damage:
+                type: number
+                description: Damage
+                default: 0
+                example: 37.8267
+                format: double
+            healing:
+                type: number
+                description: Healing
+                default: 0
+                example: 12.6
+                format: double
+            id:
+                type: string
+                description: ID is the unique id of the Item.
+                example: 123abc
+            name:
+                type: string
+                description: Name
+                example: Boots of travel
+            protection:
+                type: number
+                description: Protection
+                default: 0
+                example: 65.21
+                format: double
+        description: A StoredItem describes a Item retrieved by the db. (tiny view) (default view)
+        example:
+            damage: 37.8267
+            healing: 12.6
+            id: 123abc
+            name: Boots of travel
+            protection: 65.21
+        required:
+            - id
+            - name
+    StoredItemResponseTiny:
+        title: 'Mediatype identifier: application/json; view=default'
+        type: object
+        properties:
+            damage:
+                type: number
+                description: Damage
+                default: 0
+                example: 37.8267
+                format: double
+            healing:
+                type: number
+                description: Healing
+                default: 0
+                example: 12.6
+                format: double
+            id:
+                type: string
+                description: ID is the unique id of the Item.
+                example: 123abc
+            name:
+                type: string
+                description: Name
+                example: Boots of travel
+            protection:
+                type: number
+                description: Protection
+                default: 0
+                example: 65.21
+                format: double
+        description: A StoredItem describes a Item retrieved by the db. (tiny view) (default view)
+        example:
+            damage: 37.8267
+            healing: 12.6
+            id: 123abc
+            name: Boots of travel
+            protection: 65.21
+        required:
+            - id
+            - name

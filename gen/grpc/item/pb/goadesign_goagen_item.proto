@@ -1,0 +1,121 @@
+// Code generated with goa v3.8.5, DO NOT EDIT.
+//
+// item protocol buffer definition
+//
+// Command:
+// $ goa gen characters/design
+
+syntax = "proto3";
+
+package item;
+
+option go_package = "/itempb";
+
+// Public HTTP frontend
+service Item {
+	// List all stored items
+	rpc List (ListRequest) returns (StoredItemCollection);
+	// Show character by Id
+	rpc Show (ShowRequest) returns (ShowResponse);
+	// Add new item and return its ID.
+	rpc Add (AddRequest) returns (AddResponse);
+	// Remove character
+	rpc Remove (RemoveRequest) returns (RemoveResponse);
+	// update
+	rpc Update (UpdateRequest) returns (UpdateResponse);
+}
+
+message ListRequest {
+}
+
+message StoredItemCollection {
+	repeated StoredItem field = 1;
+}
+// A StoredItem describes a Item retrieved by the db.
+message StoredItem {
+	// ID is the unique id of the Item.
+	string id = 1;
+	// Name
+	string name = 2;
+	// Description
+	string description = 3;
+	// Damage
+	double damage = 4;
+	// Healing
+	double healing = 5;
+	// Protection
+	double protection = 6;
+}
+
+message ShowNotFoundError {
+	// Message of error
+	string message_ = 1;
+	// ID of missing resource
+	string id = 2;
+}
+
+message ShowRequest {
+	// ID of item to show
+	string id = 1;
+}
+
+message ShowResponse {
+	// ID is the unique id of the Item.
+	string id = 1;
+	// Name
+	string name = 2;
+	// Description
+	string description = 3;
+	// Damage
+	double damage = 4;
+	// Healing
+	double healing = 5;
+	// Protection
+	double protection = 6;
+}
+
+message AddRequest {
+	// Name
+	string name = 1;
+	// Description
+	string description = 2;
+	// Damage
+	double damage = 3;
+	// Healing
+	double healing = 4;
+	// Protection
+	double protection = 5;
+}
+
+message AddResponse {
+	string field = 1;
+}
+
+message RemoveRequest {
+	// ID of item to remove
+	string id = 1;
+}
+
+message RemoveResponse {
+}
+
+message UpdateRequest {
+	// ID of item to update
+	string id = 1;
+	// item to update
+	Character character = 2;
+}
+// Character
+message Character {
+	// Name
+	string name = 1;
+	// Description
+	string description = 2;
+	// Health
+	double health = 3;
+	// Experience
+	double experience = 4;
+}
+
+message UpdateResponse {
+}

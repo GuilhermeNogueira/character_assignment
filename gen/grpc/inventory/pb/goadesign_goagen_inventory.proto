@@ -1,0 +1,170 @@
+// Code generated with goa v3.8.5, DO NOT EDIT.
+//
+// inventory protocol buffer definition
+//
+// Command:
+// $ goa gen characters/design
+
+syntax = "proto3";
+
+package inventory;
+
+option go_package = "/inventorypb";
+
+// Public HTTP frontend
+service Inventory {
+	// List all items in character inventory
+	rpc List (ListRequest) returns (StoredInventoryCollection);
+	// Show inventory by Id
+	rpc Show (ShowRequest) returns (ShowResponse);
+	// Show items in an inventory
+	rpc ShowItem (ShowItemRequest) returns (StoredItemCollection);
+	// Add new inventory and return its ID.
+	rpc Add (AddRequest) returns (AddResponse);
+	// Add new item to inventory.
+	rpc AddItem (AddItemRequest) returns (AddItemResponse);
+	// Remove an item from inventory
+	rpc RemoveItem (RemoveItemRequest) returns (RemoveItemResponse);
+	// Remove Inventory
+	rpc Remove (RemoveRequest) returns (RemoveResponse);
+	// update
+	rpc Update (UpdateRequest) returns (UpdateResponse);
+}
+
+message ListRequest {
+	// ID of character to show
+	string character_id = 1;
+}
+
+message StoredInventoryCollection {
+	repeated StoredInventory field = 1;
+}
+// A StoredInventory describes a StoredInventory retrieved by the db.
+message StoredInventory {
+	// ID is the unique id of the character.
+	string id = 6;
+	string character_id = 2;
+	// Character items
+	repeated StoredItem items = 3;
+}
+// A StoredItem describes a Item retrieved by the db.
+message StoredItem {
+	// ID is the unique id of the Item.
+	string id = 1;
+	// Name
+	string name = 2;
+	// Description
+	string description = 3;
+	// Damage
+	double damage = 4;
+	// Healing
+	double healing = 5;
+	// Protection
+	double protection = 6;
+}
+
+message ShowNotFoundError {
+	// Message of error
+	string message_ = 1;
+	// ID of missing resource
+	string id = 2;
+}
+
+message ShowRequest {
+	// ID of inventory to show
+	string id = 2;
+}
+
+message ShowResponse {
+	// ID is the unique id of the character.
+	string id = 6;
+	string character_id = 2;
+	// Character items
+	repeated StoredItem items = 3;
+}
+
+message ShowItemNotFoundError {
+	// Message of error
+	string message_ = 1;
+	// ID of missing resource
+	string id = 2;
+}
+
+message ShowItemRequest {
+	// ID of inventory to show
+	string id = 1;
+}
+
+message StoredItemCollection {
+	repeated StoredItem field = 1;
+}
+
+message AddRequest {
+	// ID of character to show
+	string character_id = 1;
+}
+
+message AddResponse {
+	string field = 1;
+}
+
+message AddItemRequest {
+	// ID of inventory to add
+	string id = 2;
+	// ID of item to add
+	string item_id = 3;
+	// View to render
+	string view = 4;
+}
+
+message AddItemResponse {
+	string field = 1;
+}
+
+message RemoveItemRequest {
+	// ID of inventory to add
+	string id = 2;
+	// ID of item to add
+	string item_id = 3;
+}
+
+message RemoveItemResponse {
+}
+
+message RemoveRequest {
+	// ID of inventory to remove
+	string id = 1;
+}
+
+message RemoveResponse {
+}
+
+message UpdateRequest {
+	// ID of inventory to update
+	string id = 1;
+	// inventory to update
+	Inventory2 inventory = 2;
+}
+// inventory
+message Inventory2 {
+	// Character
+	StoredCharacter character = 1;
+	// Character items
+	repeated StoredItem items = 2;
+}
+// A StoredCharacter describes a character retrieved by the db.
+message StoredCharacter {
+	// ID is the unique id of the character.
+	string id = 8;
+	// Name
+	string name = 2;
+	// Description
+	string description = 3;
+	// Health
+	double health = 4;
+	// Experience
+	double experience = 5;
+}
+
+message UpdateResponse {
+}

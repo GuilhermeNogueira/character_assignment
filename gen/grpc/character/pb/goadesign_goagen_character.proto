@@ -1,0 +1,115 @@
+// Code generated with goa v3.8.5, DO NOT EDIT.
+//
+// character protocol buffer definition
+//
+// Command:
+// $ goa gen characters/design
+
+syntax = "proto3";
+
+package character;
+
+option go_package = "/characterpb";
+
+// Public HTTP frontend
+service Character {
+	// List all stored bottles
+	rpc List (ListRequest) returns (StoredCharacterCollection);
+	// Show character by Id
+	rpc Show (ShowRequest) returns (ShowResponse);
+	// Add new character and return its ID.
+	rpc Add (AddRequest) returns (AddResponse);
+	// Remove character
+	rpc Remove (RemoveRequest) returns (RemoveResponse);
+	// update
+	rpc Update (UpdateRequest) returns (UpdateResponse);
+}
+
+message ListRequest {
+}
+
+message StoredCharacterCollection {
+	repeated StoredCharacter field = 1;
+}
+// A StoredCharacter describes a character retrieved by the db.
+message StoredCharacter {
+	// ID is the unique id of the character.
+	string id = 8;
+	// Name
+	string name = 2;
+	// Description
+	string description = 3;
+	// Health
+	double health = 4;
+	// Experience
+	double experience = 5;
+}
+
+message ShowNotFoundError {
+	// Message of error
+	string message_ = 1;
+	// ID of missing resource
+	string id = 2;
+}
+
+message ShowRequest {
+	// ID of character to show
+	string id = 1;
+}
+
+message ShowResponse {
+	// ID is the unique id of the character.
+	string id = 8;
+	// Name
+	string name = 2;
+	// Description
+	string description = 3;
+	// Health
+	double health = 4;
+	// Experience
+	double experience = 5;
+}
+
+message AddRequest {
+	// Name
+	string name = 1;
+	// Description
+	string description = 2;
+	// Health
+	double health = 3;
+	// Experience
+	double experience = 4;
+}
+
+message AddResponse {
+	string field = 1;
+}
+
+message RemoveRequest {
+	// ID of character to remove
+	string id = 1;
+}
+
+message RemoveResponse {
+}
+
+message UpdateRequest {
+	// ID of character to update
+	string id = 1;
+	// character to update
+	Character2 character = 2;
+}
+// Character
+message Character2 {
+	// Name
+	string name = 1;
+	// Description
+	string description = 2;
+	// Health
+	double health = 3;
+	// Experience
+	double experience = 4;
+}
+
+message UpdateResponse {
+}
