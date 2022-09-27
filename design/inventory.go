@@ -8,7 +8,7 @@ var _ = Service("inventory", func() {
 	Description("Public HTTP frontend")
 
 	HTTP(func() {
-		Path("/inventory")
+		Path("/character") //ugly
 	})
 
 	Method("list", func() {
@@ -21,7 +21,7 @@ var _ = Service("inventory", func() {
 			View("tiny")
 		})
 		HTTP(func() {
-			GET("/character/{characterId}/")
+			GET("/{characterId}/inventory")
 			Response(StatusOK)
 		})
 		GRPC(func() {
@@ -32,6 +32,7 @@ var _ = Service("inventory", func() {
 	Method("show", func() {
 		Description("Show inventory by Id")
 		Payload(func() {
+			Field(1, "characterId", String, "ID of character to show")
 			Field(2, "id", String, "ID of inventory to show")
 			Field(3, "view", String, "View to render", func() {
 				Enum("default", "tiny")
@@ -41,7 +42,7 @@ var _ = Service("inventory", func() {
 		Result(StoredInventory)
 		Error("not_found", NotFound, "Character not found")
 		HTTP(func() {
-			GET("/{id}")
+			GET("/{characterId}/inventory/{id}")
 			Param("view")
 			Response(StatusOK)
 			Response("not_found", StatusNotFound)
@@ -58,8 +59,9 @@ var _ = Service("inventory", func() {
 	Method("showItem", func() {
 		Description("Show items in an inventory")
 		Payload(func() {
-			Field(1, "id", String, "ID of inventory to show")
-			Field(2, "view", String, "View to render", func() {
+			Field(1, "characterId", String, "ID of character to show")
+			Field(2, "id", String, "ID of inventory to show")
+			Field(3, "view", String, "View to render", func() {
 				Enum("default", "tiny")
 			})
 			Required("id")
@@ -69,7 +71,7 @@ var _ = Service("inventory", func() {
 		})
 		Error("not_found", NotFound, "Character not found")
 		HTTP(func() {
-			GET("/{id}/item")
+			GET("/{characterId}/inventory/{id}/item")
 			Param("view")
 			Response(StatusOK)
 			Response("not_found", StatusNotFound)
@@ -92,7 +94,7 @@ var _ = Service("inventory", func() {
 		})
 		Result(String)
 		HTTP(func() {
-			POST("/")
+			POST("/{characterId}/inventory")
 			Response(StatusCreated)
 		})
 		GRPC(func() {
@@ -103,6 +105,7 @@ var _ = Service("inventory", func() {
 	Method("addItem", func() {
 		Description("Add new item to inventory.")
 		Payload(func() {
+			Field(1, "characterId", String, "ID of character to show")
 			Field(2, "id", String, "ID of inventory to add")
 			Field(3, "itemId", String, "ID of item to add")
 			Field(4, "view", String, "View to render", func() {
@@ -110,10 +113,10 @@ var _ = Service("inventory", func() {
 			})
 			Required("id", "itemId")
 		})
-		Result(String)
+		Result(StoredInventory)
 		HTTP(func() {
-			POST("/{id}/item/{itemId}")
-			Response(StatusCreated)
+			POST("/{characterId}/inventory/{id}/item/{itemId}")
+			Response(StatusOK)
 		})
 		GRPC(func() {
 			Response(CodeOK)
@@ -123,13 +126,15 @@ var _ = Service("inventory", func() {
 	Method("removeItem", func() {
 		Description("Remove an item from inventory")
 		Payload(func() {
+			Field(1, "characterId", String, "ID of character to show")
 			Field(2, "id", String, "ID of inventory to add")
 			Field(3, "itemId", String, "ID of item to add")
 			Required("id", "itemId")
 		})
+		Result(StoredInventory)
 		HTTP(func() {
-			DELETE("/{id}/item/{itemId}")
-			Response(StatusNoContent)
+			DELETE("/{characterId}/inventory/{id}/item/{itemId}")
+			Response(StatusOK)
 		})
 		GRPC(func() {
 			Response(CodeOK)
@@ -139,28 +144,13 @@ var _ = Service("inventory", func() {
 	Method("remove", func() {
 		Description("Remove Inventory")
 		Payload(func() {
-			Field(1, "id", String, "ID of inventory to remove")
+			Field(1, "characterId", String, "ID of character to show")
+			Field(2, "id", String, "ID of inventory to remove")
 			Required("id")
 		})
 		Error("not_found", NotFound, "inventory not found")
 		HTTP(func() {
-			DELETE("/{id}")
-			Response(StatusNoContent)
-		})
-		GRPC(func() {
-			Response(CodeOK)
-		})
-	})
-
-	Method("update", func() {
-		Description(" update ")
-		Payload(func() {
-			Field(1, "id", String, "ID of inventory to update")
-			Field(2, "inventory", Inventory, "inventory to update")
-			Required("id", "inventory")
-		})
-		HTTP(func() {
-			PUT("/{id}")
+			DELETE("/{characterId}/inventory/{id}")
 			Response(StatusNoContent)
 		})
 		GRPC(func() {

@@ -26,13 +26,17 @@ type Service interface {
 	// Add new inventory and return its ID.
 	Add(context.Context, *AddPayload) (res string, err error)
 	// Add new item to inventory.
-	AddItem(context.Context, *AddItemPayload) (res string, err error)
+	// The "view" return value must have one of the following views
+	//	- "default"
+	//	- "tiny"
+	AddItem(context.Context, *AddItemPayload) (res *StoredInventory, view string, err error)
 	// Remove an item from inventory
-	RemoveItem(context.Context, *RemoveItemPayload) (err error)
+	// The "view" return value must have one of the following views
+	//	- "default"
+	//	- "tiny"
+	RemoveItem(context.Context, *RemoveItemPayload) (res *StoredInventory, view string, err error)
 	// Remove Inventory
 	Remove(context.Context, *RemovePayload) (err error)
-	// update
-	Update(context.Context, *UpdatePayload) (err error)
 }
 
 // ServiceName is the name of the service as defined in the design. This is the
@@ -43,10 +47,12 @@ const ServiceName = "inventory"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [8]string{"list", "show", "showItem", "add", "addItem", "removeItem", "remove", "update"}
+var MethodNames = [7]string{"list", "show", "showItem", "add", "addItem", "removeItem", "remove"}
 
 // AddItemPayload is the payload type of the inventory service addItem method.
 type AddItemPayload struct {
+	// ID of character to show
+	CharacterID *string
 	// ID of inventory to add
 	ID string
 	// ID of item to add
@@ -59,14 +65,6 @@ type AddItemPayload struct {
 type AddPayload struct {
 	// ID of character to show
 	CharacterID string
-}
-
-// inventory
-type Inventory struct {
-	// Character
-	Character *StoredCharacter
-	// Character items
-	Items []*StoredItem
 }
 
 // ListPayload is the payload type of the inventory service list method.
@@ -87,6 +85,8 @@ type NotFound struct {
 // RemoveItemPayload is the payload type of the inventory service removeItem
 // method.
 type RemoveItemPayload struct {
+	// ID of character to show
+	CharacterID *string
 	// ID of inventory to add
 	ID string
 	// ID of item to add
@@ -95,12 +95,16 @@ type RemoveItemPayload struct {
 
 // RemovePayload is the payload type of the inventory service remove method.
 type RemovePayload struct {
+	// ID of character to show
+	CharacterID *string
 	// ID of inventory to remove
 	ID string
 }
 
 // ShowItemPayload is the payload type of the inventory service showItem method.
 type ShowItemPayload struct {
+	// ID of character to show
+	CharacterID *string
 	// ID of inventory to show
 	ID string
 	// View to render
@@ -109,30 +113,19 @@ type ShowItemPayload struct {
 
 // ShowPayload is the payload type of the inventory service show method.
 type ShowPayload struct {
+	// ID of character to show
+	CharacterID *string
 	// ID of inventory to show
 	ID string
 	// View to render
 	View *string
 }
 
-// A StoredCharacter describes a character retrieved by the db.
-type StoredCharacter struct {
-	// ID is the unique id of the character.
-	ID string
-	// Name
-	Name string
-	// Description
-	Description *string
-	// Health
-	Health float64
-	// Experience
-	Experience float64
-}
-
 // StoredInventory is the result type of the inventory service show method.
 type StoredInventory struct {
-	// ID is the unique id of the character.
-	ID          string
+	// ID is the unique id of the inventory.
+	ID string
+	// CharacterId
 	CharacterID string
 	// Character items
 	Items []*StoredItem
@@ -161,14 +154,6 @@ type StoredItem struct {
 // StoredItemCollection is the result type of the inventory service showItem
 // method.
 type StoredItemCollection []*StoredItem
-
-// UpdatePayload is the payload type of the inventory service update method.
-type UpdatePayload struct {
-	// ID of inventory to update
-	ID string
-	// inventory to update
-	Inventory *Inventory
-}
 
 // Error returns an error description.
 func (e *NotFound) Error() string {

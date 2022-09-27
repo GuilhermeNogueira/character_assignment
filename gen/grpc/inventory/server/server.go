@@ -27,7 +27,6 @@ type Server struct {
 	AddItemH    goagrpc.UnaryHandler
 	RemoveItemH goagrpc.UnaryHandler
 	RemoveH     goagrpc.UnaryHandler
-	UpdateH     goagrpc.UnaryHandler
 	inventorypb.UnimplementedInventoryServer
 }
 
@@ -47,7 +46,6 @@ func New(e *inventory.Endpoints, uh goagrpc.UnaryHandler) *Server {
 		AddItemH:    NewAddItemHandler(e.AddItem, uh),
 		RemoveItemH: NewRemoveItemHandler(e.RemoveItem, uh),
 		RemoveH:     NewRemoveHandler(e.Remove, uh),
-		UpdateH:     NewUpdateHandler(e.Update, uh),
 	}
 }
 
@@ -211,25 +209,4 @@ func (s *Server) Remove(ctx context.Context, message *inventorypb.RemoveRequest)
 		return nil, goagrpc.EncodeError(err)
 	}
 	return resp.(*inventorypb.RemoveResponse), nil
-}
-
-// NewUpdateHandler creates a gRPC handler which serves the "inventory" service
-// "update" endpoint.
-func NewUpdateHandler(endpoint goa.Endpoint, h goagrpc.UnaryHandler) goagrpc.UnaryHandler {
-	if h == nil {
-		h = goagrpc.NewUnaryHandler(endpoint, DecodeUpdateRequest, EncodeUpdateResponse)
-	}
-	return h
-}
-
-// Update implements the "Update" method in inventorypb.InventoryServer
-// interface.
-func (s *Server) Update(ctx context.Context, message *inventorypb.UpdateRequest) (*inventorypb.UpdateResponse, error) {
-	ctx = context.WithValue(ctx, goa.MethodKey, "update")
-	ctx = context.WithValue(ctx, goa.ServiceKey, "inventory")
-	resp, err := s.UpdateH.Handle(ctx, message)
-	if err != nil {
-		return nil, goagrpc.EncodeError(err)
-	}
-	return resp.(*inventorypb.UpdateResponse), nil
 }

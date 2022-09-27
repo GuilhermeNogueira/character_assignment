@@ -30,8 +30,12 @@ func BuildListPayload(inventoryListCharacterID string) (*inventory.ListPayload, 
 
 // BuildShowPayload builds the payload for the inventory show endpoint from CLI
 // flags.
-func BuildShowPayload(inventoryShowID string, inventoryShowView string) (*inventory.ShowPayload, error) {
+func BuildShowPayload(inventoryShowCharacterID string, inventoryShowID string, inventoryShowView string) (*inventory.ShowPayload, error) {
 	var err error
+	var characterID string
+	{
+		characterID = inventoryShowCharacterID
+	}
 	var id string
 	{
 		id = inventoryShowID
@@ -49,6 +53,7 @@ func BuildShowPayload(inventoryShowID string, inventoryShowView string) (*invent
 		}
 	}
 	v := &inventory.ShowPayload{}
+	v.CharacterID = &characterID
 	v.ID = id
 	v.View = view
 
@@ -57,8 +62,12 @@ func BuildShowPayload(inventoryShowID string, inventoryShowView string) (*invent
 
 // BuildShowItemPayload builds the payload for the inventory showItem endpoint
 // from CLI flags.
-func BuildShowItemPayload(inventoryShowItemID string, inventoryShowItemView string) (*inventory.ShowItemPayload, error) {
+func BuildShowItemPayload(inventoryShowItemCharacterID string, inventoryShowItemID string, inventoryShowItemView string) (*inventory.ShowItemPayload, error) {
 	var err error
+	var characterID string
+	{
+		characterID = inventoryShowItemCharacterID
+	}
 	var id string
 	{
 		id = inventoryShowItemID
@@ -76,6 +85,7 @@ func BuildShowItemPayload(inventoryShowItemID string, inventoryShowItemView stri
 		}
 	}
 	v := &inventory.ShowItemPayload{}
+	v.CharacterID = &characterID
 	v.ID = id
 	v.View = view
 
@@ -84,31 +94,26 @@ func BuildShowItemPayload(inventoryShowItemID string, inventoryShowItemView stri
 
 // BuildAddPayload builds the payload for the inventory add endpoint from CLI
 // flags.
-func BuildAddPayload(inventoryAddBody string) (*inventory.AddPayload, error) {
-	var err error
-	var body AddRequestBody
+func BuildAddPayload(inventoryAddCharacterID string) (*inventory.AddPayload, error) {
+	var characterID string
 	{
-		err = json.Unmarshal([]byte(inventoryAddBody), &body)
-		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"characterId\": \"Eum est.\"\n   }'")
-		}
+		characterID = inventoryAddCharacterID
 	}
-	v := &inventory.AddPayload{
-		CharacterID: body.CharacterID,
-	}
+	v := &inventory.AddPayload{}
+	v.CharacterID = characterID
 
 	return v, nil
 }
 
 // BuildAddItemPayload builds the payload for the inventory addItem endpoint
 // from CLI flags.
-func BuildAddItemPayload(inventoryAddItemBody string, inventoryAddItemID string, inventoryAddItemItemID string) (*inventory.AddItemPayload, error) {
+func BuildAddItemPayload(inventoryAddItemBody string, inventoryAddItemCharacterID string, inventoryAddItemID string, inventoryAddItemItemID string) (*inventory.AddItemPayload, error) {
 	var err error
 	var body AddItemRequestBody
 	{
 		err = json.Unmarshal([]byte(inventoryAddItemBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"view\": \"tiny\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"view\": \"default\"\n   }'")
 		}
 		if body.View != nil {
 			if !(*body.View == "default" || *body.View == "tiny") {
@@ -118,6 +123,10 @@ func BuildAddItemPayload(inventoryAddItemBody string, inventoryAddItemID string,
 		if err != nil {
 			return nil, err
 		}
+	}
+	var characterID string
+	{
+		characterID = inventoryAddItemCharacterID
 	}
 	var id string
 	{
@@ -130,6 +139,7 @@ func BuildAddItemPayload(inventoryAddItemBody string, inventoryAddItemID string,
 	v := &inventory.AddItemPayload{
 		View: body.View,
 	}
+	v.CharacterID = &characterID
 	v.ID = id
 	v.ItemID = itemID
 
@@ -138,7 +148,11 @@ func BuildAddItemPayload(inventoryAddItemBody string, inventoryAddItemID string,
 
 // BuildRemoveItemPayload builds the payload for the inventory removeItem
 // endpoint from CLI flags.
-func BuildRemoveItemPayload(inventoryRemoveItemID string, inventoryRemoveItemItemID string) (*inventory.RemoveItemPayload, error) {
+func BuildRemoveItemPayload(inventoryRemoveItemCharacterID string, inventoryRemoveItemID string, inventoryRemoveItemItemID string) (*inventory.RemoveItemPayload, error) {
+	var characterID string
+	{
+		characterID = inventoryRemoveItemCharacterID
+	}
 	var id string
 	{
 		id = inventoryRemoveItemID
@@ -148,6 +162,7 @@ func BuildRemoveItemPayload(inventoryRemoveItemID string, inventoryRemoveItemIte
 		itemID = inventoryRemoveItemItemID
 	}
 	v := &inventory.RemoveItemPayload{}
+	v.CharacterID = &characterID
 	v.ID = id
 	v.ItemID = itemID
 
@@ -156,47 +171,17 @@ func BuildRemoveItemPayload(inventoryRemoveItemID string, inventoryRemoveItemIte
 
 // BuildRemovePayload builds the payload for the inventory remove endpoint from
 // CLI flags.
-func BuildRemovePayload(inventoryRemoveID string) (*inventory.RemovePayload, error) {
+func BuildRemovePayload(inventoryRemoveCharacterID string, inventoryRemoveID string) (*inventory.RemovePayload, error) {
+	var characterID string
+	{
+		characterID = inventoryRemoveCharacterID
+	}
 	var id string
 	{
 		id = inventoryRemoveID
 	}
 	v := &inventory.RemovePayload{}
-	v.ID = id
-
-	return v, nil
-}
-
-// BuildUpdatePayload builds the payload for the inventory update endpoint from
-// CLI flags.
-func BuildUpdatePayload(inventoryUpdateBody string, inventoryUpdateID string) (*inventory.UpdatePayload, error) {
-	var err error
-	var body UpdateRequestBody
-	{
-		err = json.Unmarshal([]byte(inventoryUpdateBody), &body)
-		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"inventory\": {\n         \"character\": {\n            \"description\": \"A splintered fragment of the same primordial power as the Ancients themselves, Zet endeavors to end the disharmony among the warring factions through whatever means necessary. Solitary foes are thrown into a volatile state of Flux, ripping away their health over time. Distorting space to generate a Protective Field sheltering around allies, evading and attacking with greater efficiency. Zet summons Spark Fragments of its former self that circles in place, and seek out nearby foes. Is there one Arc Warden, or two? Armed with the original\\'s items and abilities, the Self\\'s Tempest Double duplicates each spell and every attack, bringing twice the chaos to any fight.\",\n            \"experience\": 65.21,\n            \"health\": 12.6,\n            \"id\": \"123abc\",\n            \"name\": \"Arc Warden\"\n         },\n         \"items\": [\n            {\n               \"damage\": 37.8267,\n               \"description\": \"Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.\",\n               \"healing\": 12.6,\n               \"id\": \"123abc\",\n               \"name\": \"Boots of travel\",\n               \"protection\": 65.21\n            },\n            {\n               \"damage\": 37.8267,\n               \"description\": \"Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.\",\n               \"healing\": 12.6,\n               \"id\": \"123abc\",\n               \"name\": \"Boots of travel\",\n               \"protection\": 65.21\n            }\n         ]\n      }\n   }'")
-		}
-		if body.Inventory == nil {
-			err = goa.MergeErrors(err, goa.MissingFieldError("inventory", "body"))
-		}
-		if body.Inventory != nil {
-			if err2 := ValidateInventoryRequestBody(body.Inventory); err2 != nil {
-				err = goa.MergeErrors(err, err2)
-			}
-		}
-		if err != nil {
-			return nil, err
-		}
-	}
-	var id string
-	{
-		id = inventoryUpdateID
-	}
-	v := &inventory.UpdatePayload{}
-	if body.Inventory != nil {
-		v.Inventory = marshalInventoryRequestBodyToInventoryInventory(body.Inventory)
-	}
+	v.CharacterID = &characterID
 	v.ID = id
 
 	return v, nil

@@ -129,6 +129,28 @@ func NewProtoUpdateRequest(payload *item.UpdatePayload) *itempb.UpdateRequest {
 	return message
 }
 
+// NewUpdateResult builds the result type of the "update" endpoint of the
+// "item" service from the gRPC response type.
+func NewUpdateResult(message *itempb.UpdateResponse) *itemviews.StoredItemView {
+	result := &itemviews.StoredItemView{
+		ID:   &message.Id,
+		Name: &message.Name,
+	}
+	if message.Description != "" {
+		result.Description = &message.Description
+	}
+	if message.Damage != 0 {
+		result.Damage = &message.Damage
+	}
+	if message.Healing != 0 {
+		result.Healing = &message.Healing
+	}
+	if message.Protection != 0 {
+		result.Protection = &message.Protection
+	}
+	return result
+}
+
 // protobufItempbCharacterToItemCharacter builds a value of type
 // *item.Character from a value of type *itempb.Character.
 func protobufItempbCharacterToItemCharacter(v *itempb.Character) *item.Character {

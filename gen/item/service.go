@@ -26,7 +26,10 @@ type Service interface {
 	// Remove character
 	Remove(context.Context, *RemovePayload) (err error)
 	// update
-	Update(context.Context, *UpdatePayload) (err error)
+	// The "view" return value must have one of the following views
+	//	- "default"
+	//	- "tiny"
+	Update(context.Context, *UpdatePayload) (res *StoredItem, view string, err error)
 }
 
 // ServiceName is the name of the service as defined in the design. This is the

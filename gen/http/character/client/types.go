@@ -53,6 +53,21 @@ type ShowResponseBody struct {
 	Experience *float64 `form:"experience,omitempty" json:"experience,omitempty" xml:"experience,omitempty"`
 }
 
+// UpdateResponseBody is the type of the "character" service "update" endpoint
+// HTTP response body.
+type UpdateResponseBody struct {
+	// ID is the unique id of the character.
+	ID *string `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	// Name
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
+	// Description
+	Description *string `form:"description,omitempty" json:"description,omitempty" xml:"description,omitempty"`
+	// Health
+	Health *float64 `form:"health,omitempty" json:"health,omitempty" xml:"health,omitempty"`
+	// Experience
+	Experience *float64 `form:"experience,omitempty" json:"experience,omitempty" xml:"experience,omitempty"`
+}
+
 // ShowNotFoundResponseBody is the type of the "character" service "show"
 // endpoint HTTP response body for the "not_found" error.
 type ShowNotFoundResponseBody struct {
@@ -140,6 +155,20 @@ func NewShowNotFound(body *ShowNotFoundResponseBody) *character.NotFound {
 	v := &character.NotFound{
 		Message: *body.Message,
 		ID:      *body.ID,
+	}
+
+	return v
+}
+
+// NewUpdateStoredCharacterOK builds a "character" service "update" endpoint
+// result from a HTTP "OK" response.
+func NewUpdateStoredCharacterOK(body *UpdateResponseBody) *characterviews.StoredCharacterView {
+	v := &characterviews.StoredCharacterView{
+		ID:          body.ID,
+		Name:        body.Name,
+		Description: body.Description,
+		Health:      body.Health,
+		Experience:  body.Experience,
 	}
 
 	return v

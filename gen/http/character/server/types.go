@@ -66,6 +66,34 @@ type ShowResponseBodyTiny struct {
 	Experience float64 `form:"experience" json:"experience" xml:"experience"`
 }
 
+// UpdateResponseBody is the type of the "character" service "update" endpoint
+// HTTP response body.
+type UpdateResponseBody struct {
+	// ID is the unique id of the character.
+	ID string `form:"id" json:"id" xml:"id"`
+	// Name
+	Name string `form:"name" json:"name" xml:"name"`
+	// Description
+	Description *string `form:"description,omitempty" json:"description,omitempty" xml:"description,omitempty"`
+	// Health
+	Health float64 `form:"health" json:"health" xml:"health"`
+	// Experience
+	Experience float64 `form:"experience" json:"experience" xml:"experience"`
+}
+
+// UpdateResponseBodyTiny is the type of the "character" service "update"
+// endpoint HTTP response body.
+type UpdateResponseBodyTiny struct {
+	// ID is the unique id of the character.
+	ID string `form:"id" json:"id" xml:"id"`
+	// Name
+	Name string `form:"name" json:"name" xml:"name"`
+	// Health
+	Health float64 `form:"health" json:"health" xml:"health"`
+	// Experience
+	Experience float64 `form:"experience" json:"experience" xml:"experience"`
+}
+
 // ShowNotFoundResponseBody is the type of the "character" service "show"
 // endpoint HTTP response body for the "not_found" error.
 type ShowNotFoundResponseBody struct {
@@ -126,6 +154,31 @@ func NewShowResponseBody(res *characterviews.StoredCharacterView) *ShowResponseB
 // "show" endpoint of the "character" service.
 func NewShowResponseBodyTiny(res *characterviews.StoredCharacterView) *ShowResponseBodyTiny {
 	body := &ShowResponseBodyTiny{
+		ID:         *res.ID,
+		Name:       *res.Name,
+		Health:     *res.Health,
+		Experience: *res.Experience,
+	}
+	return body
+}
+
+// NewUpdateResponseBody builds the HTTP response body from the result of the
+// "update" endpoint of the "character" service.
+func NewUpdateResponseBody(res *characterviews.StoredCharacterView) *UpdateResponseBody {
+	body := &UpdateResponseBody{
+		ID:          *res.ID,
+		Name:        *res.Name,
+		Description: res.Description,
+		Health:      *res.Health,
+		Experience:  *res.Experience,
+	}
+	return body
+}
+
+// NewUpdateResponseBodyTiny builds the HTTP response body from the result of
+// the "update" endpoint of the "character" service.
+func NewUpdateResponseBodyTiny(res *characterviews.StoredCharacterView) *UpdateResponseBodyTiny {
+	body := &UpdateResponseBodyTiny{
 		ID:         *res.ID,
 		Name:       *res.Name,
 		Health:     *res.Health,

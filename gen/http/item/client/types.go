@@ -57,6 +57,23 @@ type ShowResponseBody struct {
 	Protection *float64 `form:"protection,omitempty" json:"protection,omitempty" xml:"protection,omitempty"`
 }
 
+// UpdateResponseBody is the type of the "item" service "update" endpoint HTTP
+// response body.
+type UpdateResponseBody struct {
+	// ID is the unique id of the Item.
+	ID *string `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	// Name
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
+	// Description
+	Description *string `form:"description,omitempty" json:"description,omitempty" xml:"description,omitempty"`
+	// Damage
+	Damage *float64 `form:"damage,omitempty" json:"damage,omitempty" xml:"damage,omitempty"`
+	// Healing
+	Healing *float64 `form:"healing,omitempty" json:"healing,omitempty" xml:"healing,omitempty"`
+	// Protection
+	Protection *float64 `form:"protection,omitempty" json:"protection,omitempty" xml:"protection,omitempty"`
+}
+
 // ShowNotFoundResponseBody is the type of the "item" service "show" endpoint
 // HTTP response body for the "not_found" error.
 type ShowNotFoundResponseBody struct {
@@ -166,6 +183,21 @@ func NewShowNotFound(body *ShowNotFoundResponseBody) *item.NotFound {
 	v := &item.NotFound{
 		Message: *body.Message,
 		ID:      *body.ID,
+	}
+
+	return v
+}
+
+// NewUpdateStoredItemOK builds a "item" service "update" endpoint result from
+// a HTTP "OK" response.
+func NewUpdateStoredItemOK(body *UpdateResponseBody) *itemviews.StoredItemView {
+	v := &itemviews.StoredItemView{
+		ID:          body.ID,
+		Name:        body.Name,
+		Description: body.Description,
+		Damage:      body.Damage,
+		Healing:     body.Healing,
+		Protection:  body.Protection,
 	}
 
 	return v

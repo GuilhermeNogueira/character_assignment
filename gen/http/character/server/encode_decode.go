@@ -175,8 +175,18 @@ func DecodeRemoveRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.
 // character update endpoint.
 func EncodeUpdateResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
 	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
-		w.WriteHeader(http.StatusNoContent)
-		return nil
+		res := v.(*characterviews.StoredCharacter)
+		w.Header().Set("goa-view", res.View)
+		enc := encoder(ctx, w)
+		var body interface{}
+		switch res.View {
+		case "default", "":
+			body = NewUpdateResponseBody(res.Projected)
+		case "tiny":
+			body = NewUpdateResponseBodyTiny(res.Projected)
+		}
+		w.WriteHeader(http.StatusOK)
+		return enc.Encode(body)
 	}
 }
 

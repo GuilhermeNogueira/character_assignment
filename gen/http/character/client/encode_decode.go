@@ -354,8 +354,23 @@ func DecodeUpdateResponse(decoder func(*http.Response) goahttp.Decoder, restoreB
 			defer resp.Body.Close()
 		}
 		switch resp.StatusCode {
-		case http.StatusNoContent:
-			return nil, nil
+		case http.StatusOK:
+			var (
+				body UpdateResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("character", "update", err)
+			}
+			p := NewUpdateStoredCharacterOK(&body)
+			view := resp.Header.Get("goa-view")
+			vres := &characterviews.StoredCharacter{Projected: p, View: view}
+			if err = characterviews.ValidateStoredCharacter(vres); err != nil {
+				return nil, goahttp.ErrValidationError("character", "update", err)
+			}
+			res := character.NewStoredCharacter(vres)
+			return res, nil
 		default:
 			body, _ := io.ReadAll(resp.Body)
 			return nil, goahttp.ErrInvalidResponse("character", "update", resp.StatusCode, string(body))

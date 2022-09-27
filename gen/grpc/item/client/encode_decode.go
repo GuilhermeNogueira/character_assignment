@@ -176,3 +176,23 @@ func EncodeUpdateRequest(ctx context.Context, v interface{}, md *metadata.MD) (i
 	}
 	return NewProtoUpdateRequest(payload), nil
 }
+
+// DecodeUpdateResponse decodes responses from the item update endpoint.
+func DecodeUpdateResponse(ctx context.Context, v interface{}, hdr, trlr metadata.MD) (interface{}, error) {
+	var view string
+	{
+		if vals := hdr.Get("goa-view"); len(vals) > 0 {
+			view = vals[0]
+		}
+	}
+	message, ok := v.(*itempb.UpdateResponse)
+	if !ok {
+		return nil, goagrpc.ErrInvalidType("item", "update", "*itempb.UpdateResponse", v)
+	}
+	res := NewUpdateResult(message)
+	vres := &itemviews.StoredItem{Projected: res, View: view}
+	if err := itemviews.ValidateStoredItem(vres); err != nil {
+		return nil, err
+	}
+	return item.NewStoredItem(vres), nil
+}

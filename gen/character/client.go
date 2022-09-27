@@ -76,7 +76,11 @@ func (c *Client) Remove(ctx context.Context, p *RemovePayload) (err error) {
 }
 
 // Update calls the "update" endpoint of the "character" service.
-func (c *Client) Update(ctx context.Context, p *UpdatePayload) (err error) {
-	_, err = c.UpdateEndpoint(ctx, p)
-	return
+func (c *Client) Update(ctx context.Context, p *UpdatePayload) (res *StoredCharacter, err error) {
+	var ires interface{}
+	ires, err = c.UpdateEndpoint(ctx, p)
+	if err != nil {
+		return
+	}
+	return ires.(*StoredCharacter), nil
 }

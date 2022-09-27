@@ -180,10 +180,12 @@ func DecodeAddRequest(ctx context.Context, v interface{}, md metadata.MD) (inter
 // EncodeAddItemResponse encodes responses from the "inventory" service
 // "addItem" endpoint.
 func EncodeAddItemResponse(ctx context.Context, v interface{}, hdr, trlr *metadata.MD) (interface{}, error) {
-	result, ok := v.(string)
+	vres, ok := v.(*inventoryviews.StoredInventory)
 	if !ok {
-		return nil, goagrpc.ErrInvalidType("inventory", "addItem", "string", v)
+		return nil, goagrpc.ErrInvalidType("inventory", "addItem", "*inventoryviews.StoredInventory", v)
 	}
+	result := vres.Projected
+	(*hdr).Append("goa-view", vres.View)
 	resp := NewProtoAddItemResponse(result)
 	return resp, nil
 }
@@ -213,7 +215,13 @@ func DecodeAddItemRequest(ctx context.Context, v interface{}, md metadata.MD) (i
 // EncodeRemoveItemResponse encodes responses from the "inventory" service
 // "removeItem" endpoint.
 func EncodeRemoveItemResponse(ctx context.Context, v interface{}, hdr, trlr *metadata.MD) (interface{}, error) {
-	resp := NewProtoRemoveItemResponse()
+	vres, ok := v.(*inventoryviews.StoredInventory)
+	if !ok {
+		return nil, goagrpc.ErrInvalidType("inventory", "removeItem", "*inventoryviews.StoredInventory", v)
+	}
+	result := vres.Projected
+	(*hdr).Append("goa-view", vres.View)
+	resp := NewProtoRemoveItemResponse(result)
 	return resp, nil
 }
 
@@ -258,35 +266,6 @@ func DecodeRemoveRequest(ctx context.Context, v interface{}, md metadata.MD) (in
 	var payload *inventory.RemovePayload
 	{
 		payload = NewRemovePayload(message)
-	}
-	return payload, nil
-}
-
-// EncodeUpdateResponse encodes responses from the "inventory" service "update"
-// endpoint.
-func EncodeUpdateResponse(ctx context.Context, v interface{}, hdr, trlr *metadata.MD) (interface{}, error) {
-	resp := NewProtoUpdateResponse()
-	return resp, nil
-}
-
-// DecodeUpdateRequest decodes requests sent to "inventory" service "update"
-// endpoint.
-func DecodeUpdateRequest(ctx context.Context, v interface{}, md metadata.MD) (interface{}, error) {
-	var (
-		message *inventorypb.UpdateRequest
-		ok      bool
-	)
-	{
-		if message, ok = v.(*inventorypb.UpdateRequest); !ok {
-			return nil, goagrpc.ErrInvalidType("inventory", "update", "*inventorypb.UpdateRequest", v)
-		}
-		if err := ValidateUpdateRequest(message); err != nil {
-			return nil, err
-		}
-	}
-	var payload *inventory.UpdatePayload
-	{
-		payload = NewUpdatePayload(message)
 	}
 	return payload, nil
 }

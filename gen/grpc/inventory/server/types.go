@@ -71,6 +71,9 @@ func NewShowPayload(message *inventorypb.ShowRequest, view *string) *inventory.S
 	v := &inventory.ShowPayload{
 		ID: message.Id,
 	}
+	if message.CharacterId != "" {
+		v.CharacterID = &message.CharacterId
+	}
 	v.View = view
 	return v
 }
@@ -127,6 +130,9 @@ func NewShowNotFoundError(er *inventory.NotFound) *inventorypb.ShowNotFoundError
 func NewShowItemPayload(message *inventorypb.ShowItemRequest, view *string) *inventory.ShowItemPayload {
 	v := &inventory.ShowItemPayload{
 		ID: message.Id,
+	}
+	if message.CharacterId != "" {
+		v.CharacterID = &message.CharacterId
 	}
 	v.View = view
 	return v
@@ -195,6 +201,9 @@ func NewAddItemPayload(message *inventorypb.AddItemRequest) *inventory.AddItemPa
 		ID:     message.Id,
 		ItemID: message.ItemId,
 	}
+	if message.CharacterId != "" {
+		v.CharacterID = &message.CharacterId
+	}
 	if message.View != "" {
 		v.View = &message.View
 	}
@@ -203,9 +212,38 @@ func NewAddItemPayload(message *inventorypb.AddItemRequest) *inventory.AddItemPa
 
 // NewProtoAddItemResponse builds the gRPC response type from the result of the
 // "addItem" endpoint of the "inventory" service.
-func NewProtoAddItemResponse(result string) *inventorypb.AddItemResponse {
+func NewProtoAddItemResponse(result *inventoryviews.StoredInventoryView) *inventorypb.AddItemResponse {
 	message := &inventorypb.AddItemResponse{}
-	message.Field = result
+	if result.ID != nil {
+		message.Id = *result.ID
+	}
+	if result.CharacterID != nil {
+		message.CharacterId = *result.CharacterID
+	}
+	if result.Items != nil {
+		message.Items = make([]*inventorypb.StoredItem, len(result.Items))
+		for i, val := range result.Items {
+			message.Items[i] = &inventorypb.StoredItem{}
+			if val.ID != nil {
+				message.Items[i].Id = *val.ID
+			}
+			if val.Name != nil {
+				message.Items[i].Name = *val.Name
+			}
+			if val.Description != nil {
+				message.Items[i].Description = *val.Description
+			}
+			if val.Damage != nil {
+				message.Items[i].Damage = *val.Damage
+			}
+			if val.Healing != nil {
+				message.Items[i].Healing = *val.Healing
+			}
+			if val.Protection != nil {
+				message.Items[i].Protection = *val.Protection
+			}
+		}
+	}
 	return message
 }
 
@@ -216,13 +254,46 @@ func NewRemoveItemPayload(message *inventorypb.RemoveItemRequest) *inventory.Rem
 		ID:     message.Id,
 		ItemID: message.ItemId,
 	}
+	if message.CharacterId != "" {
+		v.CharacterID = &message.CharacterId
+	}
 	return v
 }
 
 // NewProtoRemoveItemResponse builds the gRPC response type from the result of
 // the "removeItem" endpoint of the "inventory" service.
-func NewProtoRemoveItemResponse() *inventorypb.RemoveItemResponse {
+func NewProtoRemoveItemResponse(result *inventoryviews.StoredInventoryView) *inventorypb.RemoveItemResponse {
 	message := &inventorypb.RemoveItemResponse{}
+	if result.ID != nil {
+		message.Id = *result.ID
+	}
+	if result.CharacterID != nil {
+		message.CharacterId = *result.CharacterID
+	}
+	if result.Items != nil {
+		message.Items = make([]*inventorypb.StoredItem, len(result.Items))
+		for i, val := range result.Items {
+			message.Items[i] = &inventorypb.StoredItem{}
+			if val.ID != nil {
+				message.Items[i].Id = *val.ID
+			}
+			if val.Name != nil {
+				message.Items[i].Name = *val.Name
+			}
+			if val.Description != nil {
+				message.Items[i].Description = *val.Description
+			}
+			if val.Damage != nil {
+				message.Items[i].Damage = *val.Damage
+			}
+			if val.Healing != nil {
+				message.Items[i].Healing = *val.Healing
+			}
+			if val.Protection != nil {
+				message.Items[i].Protection = *val.Protection
+			}
+		}
+	}
 	return message
 }
 
@@ -231,6 +302,9 @@ func NewProtoRemoveItemResponse() *inventorypb.RemoveItemResponse {
 func NewRemovePayload(message *inventorypb.RemoveRequest) *inventory.RemovePayload {
 	v := &inventory.RemovePayload{
 		ID: message.Id,
+	}
+	if message.CharacterId != "" {
+		v.CharacterID = &message.CharacterId
 	}
 	return v
 }
@@ -242,31 +316,6 @@ func NewProtoRemoveResponse() *inventorypb.RemoveResponse {
 	return message
 }
 
-// NewUpdatePayload builds the payload of the "update" endpoint of the
-// "inventory" service from the gRPC request type.
-func NewUpdatePayload(message *inventorypb.UpdateRequest) *inventory.UpdatePayload {
-	v := &inventory.UpdatePayload{
-		ID: message.Id,
-	}
-	if message.Inventory != nil {
-		v.Inventory = protobufInventorypbInventory2ToInventoryInventory(message.Inventory)
-	}
-	return v
-}
-
-// NewProtoUpdateResponse builds the gRPC response type from the result of the
-// "update" endpoint of the "inventory" service.
-func NewProtoUpdateResponse() *inventorypb.UpdateResponse {
-	message := &inventorypb.UpdateResponse{}
-	return message
-}
-
-// ValidateStoredItem runs the validations defined on StoredItem.
-func ValidateStoredItem(elem *inventorypb.StoredItem) (err error) {
-
-	return
-}
-
 // ValidateAddItemRequest runs the validations defined on AddItemRequest.
 func ValidateAddItemRequest(message *inventorypb.AddItemRequest) (err error) {
 	if message.View != "" {
@@ -275,120 +324,4 @@ func ValidateAddItemRequest(message *inventorypb.AddItemRequest) (err error) {
 		}
 	}
 	return
-}
-
-// ValidateUpdateRequest runs the validations defined on UpdateRequest.
-func ValidateUpdateRequest(message *inventorypb.UpdateRequest) (err error) {
-	if message.Inventory == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("inventory", "message"))
-	}
-	if message.Inventory != nil {
-		if err2 := ValidateInventory2(message.Inventory); err2 != nil {
-			err = goa.MergeErrors(err, err2)
-		}
-	}
-	return
-}
-
-// ValidateInventory2 runs the validations defined on Inventory2.
-func ValidateInventory2(inventory *inventorypb.Inventory2) (err error) {
-	if inventory.Character == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("character", "inventory"))
-	}
-	if inventory.Items == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("items", "inventory"))
-	}
-	return
-}
-
-// ValidateStoredCharacter runs the validations defined on StoredCharacter.
-func ValidateStoredCharacter(character *inventorypb.StoredCharacter) (err error) {
-
-	return
-}
-
-// protobufInventorypbInventory2ToInventoryInventory builds a value of type
-// *inventory.Inventory from a value of type *inventorypb.Inventory2.
-func protobufInventorypbInventory2ToInventoryInventory(v *inventorypb.Inventory2) *inventory.Inventory {
-	res := &inventory.Inventory{}
-	if v.Character != nil {
-		res.Character = protobufInventorypbStoredCharacterToInventoryStoredCharacter(v.Character)
-	}
-	if v.Items != nil {
-		res.Items = make([]*inventory.StoredItem, len(v.Items))
-		for i, val := range v.Items {
-			res.Items[i] = &inventory.StoredItem{
-				ID:         val.Id,
-				Name:       val.Name,
-				Damage:     val.Damage,
-				Healing:    val.Healing,
-				Protection: val.Protection,
-			}
-			if val.Description != "" {
-				res.Items[i].Description = &val.Description
-			}
-		}
-	}
-
-	return res
-}
-
-// protobufInventorypbStoredCharacterToInventoryStoredCharacter builds a value
-// of type *inventory.StoredCharacter from a value of type
-// *inventorypb.StoredCharacter.
-func protobufInventorypbStoredCharacterToInventoryStoredCharacter(v *inventorypb.StoredCharacter) *inventory.StoredCharacter {
-	res := &inventory.StoredCharacter{
-		ID:         v.Id,
-		Name:       v.Name,
-		Health:     v.Health,
-		Experience: v.Experience,
-	}
-	if v.Description != "" {
-		res.Description = &v.Description
-	}
-
-	return res
-}
-
-// svcInventoryInventoryToInventorypbInventory2 builds a value of type
-// *inventorypb.Inventory2 from a value of type *inventory.Inventory.
-func svcInventoryInventoryToInventorypbInventory2(v *inventory.Inventory) *inventorypb.Inventory2 {
-	res := &inventorypb.Inventory2{}
-	if v.Character != nil {
-		res.Character = svcInventoryStoredCharacterToInventorypbStoredCharacter(v.Character)
-	}
-	if v.Items != nil {
-		res.Items = make([]*inventorypb.StoredItem, len(v.Items))
-		for i, val := range v.Items {
-			res.Items[i] = &inventorypb.StoredItem{
-				Id:         val.ID,
-				Name:       val.Name,
-				Damage:     val.Damage,
-				Healing:    val.Healing,
-				Protection: val.Protection,
-			}
-			if val.Description != nil {
-				res.Items[i].Description = *val.Description
-			}
-		}
-	}
-
-	return res
-}
-
-// svcInventoryStoredCharacterToInventorypbStoredCharacter builds a value of
-// type *inventorypb.StoredCharacter from a value of type
-// *inventory.StoredCharacter.
-func svcInventoryStoredCharacterToInventorypbStoredCharacter(v *inventory.StoredCharacter) *inventorypb.StoredCharacter {
-	res := &inventorypb.StoredCharacter{
-		Id:         v.ID,
-		Name:       v.Name,
-		Health:     v.Health,
-		Experience: v.Experience,
-	}
-	if v.Description != nil {
-		res.Description = *v.Description
-	}
-
-	return res
 }

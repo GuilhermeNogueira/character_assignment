@@ -87,9 +87,10 @@ var _ = Service("item", func() {
 			Field(2, "character", Character, "item to update")
 			Required("id", "character")
 		})
+		Result(StoredItem)
 		HTTP(func() {
 			PUT("/{id}")
-			Response(StatusNoContent)
+			Response(StatusOK)
 		})
 		GRPC(func() {
 			Response(CodeOK)

@@ -25,7 +25,7 @@ func BuildListPayload(inventoryListMessage string) (*inventory.ListPayload, erro
 		if inventoryListMessage != "" {
 			err = json.Unmarshal([]byte(inventoryListMessage), &message)
 			if err != nil {
-				return nil, fmt.Errorf("invalid JSON for message, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"characterId\": \"Expedita commodi asperiores cumque dicta.\"\n   }'")
+				return nil, fmt.Errorf("invalid JSON for message, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"characterId\": \"Rerum ipsa odit officiis.\"\n   }'")
 			}
 		}
 	}
@@ -45,7 +45,7 @@ func BuildShowPayload(inventoryShowMessage string, inventoryShowView string) (*i
 		if inventoryShowMessage != "" {
 			err = json.Unmarshal([]byte(inventoryShowMessage), &message)
 			if err != nil {
-				return nil, fmt.Errorf("invalid JSON for message, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"id\": \"Sed esse in officia ut.\"\n   }'")
+				return nil, fmt.Errorf("invalid JSON for message, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"characterId\": \"Est rerum quaerat repudiandae ratione.\",\n      \"id\": \"Tenetur quo.\"\n   }'")
 			}
 		}
 	}
@@ -64,6 +64,9 @@ func BuildShowPayload(inventoryShowMessage string, inventoryShowView string) (*i
 	v := &inventory.ShowPayload{
 		ID: message.Id,
 	}
+	if message.CharacterId != "" {
+		v.CharacterID = &message.CharacterId
+	}
 	v.View = view
 
 	return v, nil
@@ -78,7 +81,7 @@ func BuildShowItemPayload(inventoryShowItemMessage string, inventoryShowItemView
 		if inventoryShowItemMessage != "" {
 			err = json.Unmarshal([]byte(inventoryShowItemMessage), &message)
 			if err != nil {
-				return nil, fmt.Errorf("invalid JSON for message, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"id\": \"Atque ab natus delectus sunt velit quos.\"\n   }'")
+				return nil, fmt.Errorf("invalid JSON for message, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"characterId\": \"Perferendis aut placeat maxime neque.\",\n      \"id\": \"Illo rerum ut consequatur rerum debitis.\"\n   }'")
 			}
 		}
 	}
@@ -97,6 +100,9 @@ func BuildShowItemPayload(inventoryShowItemMessage string, inventoryShowItemView
 	v := &inventory.ShowItemPayload{
 		ID: message.Id,
 	}
+	if message.CharacterId != "" {
+		v.CharacterID = &message.CharacterId
+	}
 	v.View = view
 
 	return v, nil
@@ -111,7 +117,7 @@ func BuildAddPayload(inventoryAddMessage string) (*inventory.AddPayload, error) 
 		if inventoryAddMessage != "" {
 			err = json.Unmarshal([]byte(inventoryAddMessage), &message)
 			if err != nil {
-				return nil, fmt.Errorf("invalid JSON for message, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"characterId\": \"Rerum ipsa odit officiis.\"\n   }'")
+				return nil, fmt.Errorf("invalid JSON for message, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"characterId\": \"Ducimus qui sit neque soluta animi porro.\"\n   }'")
 			}
 		}
 	}
@@ -131,13 +137,16 @@ func BuildAddItemPayload(inventoryAddItemMessage string) (*inventory.AddItemPayl
 		if inventoryAddItemMessage != "" {
 			err = json.Unmarshal([]byte(inventoryAddItemMessage), &message)
 			if err != nil {
-				return nil, fmt.Errorf("invalid JSON for message, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"id\": \"Doloribus tenetur.\",\n      \"itemId\": \"Rerum nesciunt provident accusamus nesciunt.\",\n      \"view\": \"tiny\"\n   }'")
+				return nil, fmt.Errorf("invalid JSON for message, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"characterId\": \"In consequatur doloremque eum.\",\n      \"id\": \"Soluta dolorum assumenda.\",\n      \"itemId\": \"Amet autem dignissimos.\",\n      \"view\": \"default\"\n   }'")
 			}
 		}
 	}
 	v := &inventory.AddItemPayload{
 		ID:     message.Id,
 		ItemID: message.ItemId,
+	}
+	if message.CharacterId != "" {
+		v.CharacterID = &message.CharacterId
 	}
 	if message.View != "" {
 		v.View = &message.View
@@ -155,13 +164,16 @@ func BuildRemoveItemPayload(inventoryRemoveItemMessage string) (*inventory.Remov
 		if inventoryRemoveItemMessage != "" {
 			err = json.Unmarshal([]byte(inventoryRemoveItemMessage), &message)
 			if err != nil {
-				return nil, fmt.Errorf("invalid JSON for message, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"id\": \"Ducimus qui sit neque soluta animi porro.\",\n      \"itemId\": \"Et laboriosam id.\"\n   }'")
+				return nil, fmt.Errorf("invalid JSON for message, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"characterId\": \"Aut perspiciatis consectetur.\",\n      \"id\": \"Est amet.\",\n      \"itemId\": \"Sit dolore.\"\n   }'")
 			}
 		}
 	}
 	v := &inventory.RemoveItemPayload{
 		ID:     message.Id,
 		ItemID: message.ItemId,
+	}
+	if message.CharacterId != "" {
+		v.CharacterID = &message.CharacterId
 	}
 
 	return v, nil
@@ -176,35 +188,15 @@ func BuildRemovePayload(inventoryRemoveMessage string) (*inventory.RemovePayload
 		if inventoryRemoveMessage != "" {
 			err = json.Unmarshal([]byte(inventoryRemoveMessage), &message)
 			if err != nil {
-				return nil, fmt.Errorf("invalid JSON for message, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"id\": \"Incidunt nobis est nostrum.\"\n   }'")
+				return nil, fmt.Errorf("invalid JSON for message, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"characterId\": \"Esse dolorem natus expedita qui.\",\n      \"id\": \"Dolores quam recusandae.\"\n   }'")
 			}
 		}
 	}
 	v := &inventory.RemovePayload{
 		ID: message.Id,
 	}
-
-	return v, nil
-}
-
-// BuildUpdatePayload builds the payload for the inventory update endpoint from
-// CLI flags.
-func BuildUpdatePayload(inventoryUpdateMessage string) (*inventory.UpdatePayload, error) {
-	var err error
-	var message inventorypb.UpdateRequest
-	{
-		if inventoryUpdateMessage != "" {
-			err = json.Unmarshal([]byte(inventoryUpdateMessage), &message)
-			if err != nil {
-				return nil, fmt.Errorf("invalid JSON for message, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"id\": \"In consequatur doloremque eum.\",\n      \"inventory\": {\n         \"character\": {\n            \"description\": \"A splintered fragment of the same primordial power as the Ancients themselves, Zet endeavors to end the disharmony among the warring factions through whatever means necessary. Solitary foes are thrown into a volatile state of Flux, ripping away their health over time. Distorting space to generate a Protective Field sheltering around allies, evading and attacking with greater efficiency. Zet summons Spark Fragments of its former self that circles in place, and seek out nearby foes. Is there one Arc Warden, or two? Armed with the original\\'s items and abilities, the Self\\'s Tempest Double duplicates each spell and every attack, bringing twice the chaos to any fight.\",\n            \"experience\": 65.21,\n            \"health\": 12.6,\n            \"id\": \"123abc\",\n            \"name\": \"Arc Warden\"\n         },\n         \"items\": [\n            {\n               \"damage\": 37.8267,\n               \"description\": \"Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.\",\n               \"healing\": 12.6,\n               \"id\": \"123abc\",\n               \"name\": \"Boots of travel\",\n               \"protection\": 65.21\n            },\n            {\n               \"damage\": 37.8267,\n               \"description\": \"Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.\",\n               \"healing\": 12.6,\n               \"id\": \"123abc\",\n               \"name\": \"Boots of travel\",\n               \"protection\": 65.21\n            },\n            {\n               \"damage\": 37.8267,\n               \"description\": \"Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.\",\n               \"healing\": 12.6,\n               \"id\": \"123abc\",\n               \"name\": \"Boots of travel\",\n               \"protection\": 65.21\n            }\n         ]\n      }\n   }'")
-			}
-		}
-	}
-	v := &inventory.UpdatePayload{
-		ID: message.Id,
-	}
-	if message.Inventory != nil {
-		v.Inventory = protobufInventorypbInventory2ToInventoryInventory(message.Inventory)
+	if message.CharacterId != "" {
+		v.CharacterID = &message.CharacterId
 	}
 
 	return v, nil

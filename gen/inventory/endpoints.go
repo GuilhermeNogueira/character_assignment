@@ -22,7 +22,6 @@ type Endpoints struct {
 	AddItem    goa.Endpoint
 	RemoveItem goa.Endpoint
 	Remove     goa.Endpoint
-	Update     goa.Endpoint
 }
 
 // NewEndpoints wraps the methods of the "inventory" service with endpoints.
@@ -35,7 +34,6 @@ func NewEndpoints(s Service) *Endpoints {
 		AddItem:    NewAddItemEndpoint(s),
 		RemoveItem: NewRemoveItemEndpoint(s),
 		Remove:     NewRemoveEndpoint(s),
-		Update:     NewUpdateEndpoint(s),
 	}
 }
 
@@ -48,7 +46,6 @@ func (e *Endpoints) Use(m func(goa.Endpoint) goa.Endpoint) {
 	e.AddItem = m(e.AddItem)
 	e.RemoveItem = m(e.RemoveItem)
 	e.Remove = m(e.Remove)
-	e.Update = m(e.Update)
 }
 
 // NewListEndpoint returns an endpoint function that calls the method "list" of
@@ -107,7 +104,12 @@ func NewAddEndpoint(s Service) goa.Endpoint {
 func NewAddItemEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
 		p := req.(*AddItemPayload)
-		return s.AddItem(ctx, p)
+		res, view, err := s.AddItem(ctx, p)
+		if err != nil {
+			return nil, err
+		}
+		vres := NewViewedStoredInventory(res, view)
+		return vres, nil
 	}
 }
 
@@ -116,7 +118,12 @@ func NewAddItemEndpoint(s Service) goa.Endpoint {
 func NewRemoveItemEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
 		p := req.(*RemoveItemPayload)
-		return nil, s.RemoveItem(ctx, p)
+		res, view, err := s.RemoveItem(ctx, p)
+		if err != nil {
+			return nil, err
+		}
+		vres := NewViewedStoredInventory(res, view)
+		return vres, nil
 	}
 }
 
@@ -126,14 +133,5 @@ func NewRemoveEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
 		p := req.(*RemovePayload)
 		return nil, s.Remove(ctx, p)
-	}
-}
-
-// NewUpdateEndpoint returns an endpoint function that calls the method
-// "update" of service "inventory".
-func NewUpdateEndpoint(s Service) goa.Endpoint {
-	return func(ctx context.Context, req interface{}) (interface{}, error) {
-		p := req.(*UpdatePayload)
-		return nil, s.Update(ctx, p)
 	}
 }

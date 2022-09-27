@@ -41,9 +41,6 @@ type Client struct {
 	// Remove Doer is the HTTP client used to make requests to the remove endpoint.
 	RemoveDoer goahttp.Doer
 
-	// Update Doer is the HTTP client used to make requests to the update endpoint.
-	UpdateDoer goahttp.Doer
-
 	// RestoreResponseBody controls whether the response bodies are reset after
 	// decoding so they can be read again.
 	RestoreResponseBody bool
@@ -71,7 +68,6 @@ func NewClient(
 		AddItemDoer:         doer,
 		RemoveItemDoer:      doer,
 		RemoveDoer:          doer,
-		UpdateDoer:          doer,
 		RestoreResponseBody: restoreBody,
 		scheme:              scheme,
 		host:                host,
@@ -151,15 +147,10 @@ func (c *Client) ShowItem() goa.Endpoint {
 // add server.
 func (c *Client) Add() goa.Endpoint {
 	var (
-		encodeRequest  = EncodeAddRequest(c.encoder)
 		decodeResponse = DecodeAddResponse(c.decoder, c.RestoreResponseBody)
 	)
 	return func(ctx context.Context, v interface{}) (interface{}, error) {
 		req, err := c.BuildAddRequest(ctx, v)
-		if err != nil {
-			return nil, err
-		}
-		err = encodeRequest(req, v)
 		if err != nil {
 			return nil, err
 		}
@@ -228,30 +219,6 @@ func (c *Client) Remove() goa.Endpoint {
 		resp, err := c.RemoveDoer.Do(req)
 		if err != nil {
 			return nil, goahttp.ErrRequestError("inventory", "remove", err)
-		}
-		return decodeResponse(resp)
-	}
-}
-
-// Update returns an endpoint that makes HTTP requests to the inventory service
-// update server.
-func (c *Client) Update() goa.Endpoint {
-	var (
-		encodeRequest  = EncodeUpdateRequest(c.encoder)
-		decodeResponse = DecodeUpdateResponse(c.decoder, c.RestoreResponseBody)
-	)
-	return func(ctx context.Context, v interface{}) (interface{}, error) {
-		req, err := c.BuildUpdateRequest(ctx, v)
-		if err != nil {
-			return nil, err
-		}
-		err = encodeRequest(req, v)
-		if err != nil {
-			return nil, err
-		}
-		resp, err := c.UpdateDoer.Do(req)
-		if err != nil {
-			return nil, goahttp.ErrRequestError("inventory", "update", err)
 		}
 		return decodeResponse(resp)
 	}

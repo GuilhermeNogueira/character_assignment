@@ -7,7 +7,6 @@ import (
 var _ = API("Character", func() {
 	Title("Character Service API")
 	Description("TODO character API")
-	//Services("character", "inventory", "swagger", "item")
 	Server("character", func() {
 		Host("localhost", func() {
 			URI("http://localhost:8000")
@@ -141,9 +140,10 @@ var StoredCharacter = ResultType("application/vnd.goa.example.character", func()
 
 var Inventory = Type("Inventory", func() {
 	Description("inventory")
-	Field(1, "character", StoredCharacter, "Character")
-	Field(2, "items", ArrayOf(StoredItem), "Character items")
-	Required("character", "items")
+	Field(1, "characterId", String, "CharacterId", func() {
+		Example("123abc")
+	})
+	Required("characterId")
 })
 
 var StoredInventory = ResultType("application/vnd.goa.example.inventory", func() {
@@ -152,7 +152,7 @@ var StoredInventory = ResultType("application/vnd.goa.example.inventory", func()
 	TypeName("StoredInventory")
 
 	Attributes(func() {
-		Attribute("id", String, "ID is the unique id of the character.", func() {
+		Attribute("id", String, "ID is the unique id of the inventory.", func() {
 			Example("123abc")
 			Meta("rpc:tag", "6")
 		})
@@ -179,7 +179,7 @@ var StoredInventory = ResultType("application/vnd.goa.example.inventory", func()
 	Required("id", "characterId", "items")
 })
 
-var NotFound = Type("NotFound", func() {
+var NotFound = Type("NotFound", func() { //TODO
 	Description("NotFound is the type returned when attempting to show or delete a resource that does not exist.")
 	Attribute("message", String, "Message of error", func() {
 		Meta("struct:error:name")
@@ -189,53 +189,3 @@ var NotFound = Type("NotFound", func() {
 	Field(2, "id", String, "ID of missing resource")
 	Required("message", "id")
 })
-
-//
-//
-//
-//var _ = API("Weather Service API", func() {
-//	Title("The Weather Service API")
-//	Description("A fully instrumented weather service API")
-//})
-//
-//var _ = Service("Forecaster", func() {
-//	Description("Service that provides weather forecasts")
-//	Method("forecast", func() {
-//		Description("Retrieve weather forecast for a given location")
-//		Payload(func() {
-//			Field(1, "lat", Float64, "Latitude", func() {
-//				Example(37.8267)
-//			})
-//			Field(2, "long", Float64, "Longitude", func() {
-//				Example(-122.4233)
-//			})
-//			Required("lat", "long")
-//		})
-//		Result(Forecast)
-//		GRPC(func() {})
-//	})
-//})
-//
-//
-//var _ = Service("calc", func() {
-//	Description("The calc service performs operations on numbers.")
-//
-//	Method("multiply", func() {
-//		Payload(func() {
-//			Field(1, "a", Int, "Left operand")
-//			Field(2, "b", Int, "Right operand")
-//			Required("a", "b")
-//		})
-//
-//		Result(Int)
-//
-//		HTTP(func() {
-//			GET("/multiply/{a}/{b}")
-//		})
-//
-//		GRPC(func() {
-//		})
-//	})
-//
-//	Files("/openapi.json", "./gen/http/openapi.json")
-//})

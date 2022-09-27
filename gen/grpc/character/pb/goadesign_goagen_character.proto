@@ -112,4 +112,14 @@ message Character2 {
 }
 
 message UpdateResponse {
+	// ID is the unique id of the character.
+	string id = 8;
+	// Name
+	string name = 2;
+	// Description
+	string description = 3;
+	// Health
+	double health = 4;
+	// Experience
+	double experience = 5;
 }

@@ -212,12 +212,22 @@ func EncodeAddItemRequest(ctx context.Context, v interface{}, md *metadata.MD) (
 
 // DecodeAddItemResponse decodes responses from the inventory addItem endpoint.
 func DecodeAddItemResponse(ctx context.Context, v interface{}, hdr, trlr metadata.MD) (interface{}, error) {
+	var view string
+	{
+		if vals := hdr.Get("goa-view"); len(vals) > 0 {
+			view = vals[0]
+		}
+	}
 	message, ok := v.(*inventorypb.AddItemResponse)
 	if !ok {
 		return nil, goagrpc.ErrInvalidType("inventory", "addItem", "*inventorypb.AddItemResponse", v)
 	}
 	res := NewAddItemResult(message)
-	return res, nil
+	vres := &inventoryviews.StoredInventory{Projected: res, View: view}
+	if err := inventoryviews.ValidateStoredInventory(vres); err != nil {
+		return nil, err
+	}
+	return inventory.NewStoredInventory(vres), nil
 }
 
 // BuildRemoveItemFunc builds the remote method to invoke for "inventory"
@@ -244,6 +254,27 @@ func EncodeRemoveItemRequest(ctx context.Context, v interface{}, md *metadata.MD
 	return NewProtoRemoveItemRequest(payload), nil
 }
 
+// DecodeRemoveItemResponse decodes responses from the inventory removeItem
+// endpoint.
+func DecodeRemoveItemResponse(ctx context.Context, v interface{}, hdr, trlr metadata.MD) (interface{}, error) {
+	var view string
+	{
+		if vals := hdr.Get("goa-view"); len(vals) > 0 {
+			view = vals[0]
+		}
+	}
+	message, ok := v.(*inventorypb.RemoveItemResponse)
+	if !ok {
+		return nil, goagrpc.ErrInvalidType("inventory", "removeItem", "*inventorypb.RemoveItemResponse", v)
+	}
+	res := NewRemoveItemResult(message)
+	vres := &inventoryviews.StoredInventory{Projected: res, View: view}
+	if err := inventoryviews.ValidateStoredInventory(vres); err != nil {
+		return nil, err
+	}
+	return inventory.NewStoredInventory(vres), nil
+}
+
 // BuildRemoveFunc builds the remote method to invoke for "inventory" service
 // "remove" endpoint.
 func BuildRemoveFunc(grpccli inventorypb.InventoryClient, cliopts ...grpc.CallOption) goagrpc.RemoteFunc {
@@ -265,27 +296,4 @@ func EncodeRemoveRequest(ctx context.Context, v interface{}, md *metadata.MD) (i
 		return nil, goagrpc.ErrInvalidType("inventory", "remove", "*inventory.RemovePayload", v)
 	}
 	return NewProtoRemoveRequest(payload), nil
-}
-
-// BuildUpdateFunc builds the remote method to invoke for "inventory" service
-// "update" endpoint.
-func BuildUpdateFunc(grpccli inventorypb.InventoryClient, cliopts ...grpc.CallOption) goagrpc.RemoteFunc {
-	return func(ctx context.Context, reqpb interface{}, opts ...grpc.CallOption) (interface{}, error) {
-		for _, opt := range cliopts {
-			opts = append(opts, opt)
-		}
-		if reqpb != nil {
-			return grpccli.Update(ctx, reqpb.(*inventorypb.UpdateRequest), opts...)
-		}
-		return grpccli.Update(ctx, &inventorypb.UpdateRequest{}, opts...)
-	}
-}
-
-// EncodeUpdateRequest encodes requests sent to inventory update endpoint.
-func EncodeUpdateRequest(ctx context.Context, v interface{}, md *metadata.MD) (interface{}, error) {
-	payload, ok := v.(*inventory.UpdatePayload)
-	if !ok {
-		return nil, goagrpc.ErrInvalidType("inventory", "update", "*inventory.UpdatePayload", v)
-	}
-	return NewProtoUpdateRequest(payload), nil
 }

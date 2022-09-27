@@ -25,7 +25,7 @@ import (
 //	command (subcommand1|subcommand2|...)
 func UsageCommands() string {
 	return `character (list|show|add|remove|update)
-inventory (list|show|show-item|add|add-item|remove-item|remove|update)
+inventory (list|show|show-item|add|add-item|remove-item|remove)
 item (list|show|add|remove|update)
 `
 }
@@ -33,7 +33,7 @@ item (list|show|add|remove|update)
 // UsageExamples produces an example of a valid invocation of the CLI tool.
 func UsageExamples() string {
 	return os.Args[0] + ` character list` + "\n" +
-		os.Args[0] + ` inventory list --character-id "Saepe quasi minima ut explicabo ut quis."` + "\n" +
+		os.Args[0] + ` inventory list --character-id "Omnis voluptate aliquid."` + "\n" +
 		os.Args[0] + ` item list` + "\n" +
 		""
 }
@@ -71,32 +71,33 @@ func ParseEndpoint(
 		inventoryListFlags           = flag.NewFlagSet("list", flag.ExitOnError)
 		inventoryListCharacterIDFlag = inventoryListFlags.String("character-id", "REQUIRED", "ID of character to show")
 
-		inventoryShowFlags    = flag.NewFlagSet("show", flag.ExitOnError)
-		inventoryShowIDFlag   = inventoryShowFlags.String("id", "REQUIRED", "ID of inventory to show")
-		inventoryShowViewFlag = inventoryShowFlags.String("view", "", "")
+		inventoryShowFlags           = flag.NewFlagSet("show", flag.ExitOnError)
+		inventoryShowCharacterIDFlag = inventoryShowFlags.String("character-id", "REQUIRED", "ID of character to show")
+		inventoryShowIDFlag          = inventoryShowFlags.String("id", "REQUIRED", "ID of inventory to show")
+		inventoryShowViewFlag        = inventoryShowFlags.String("view", "", "")
 
-		inventoryShowItemFlags    = flag.NewFlagSet("show-item", flag.ExitOnError)
-		inventoryShowItemIDFlag   = inventoryShowItemFlags.String("id", "REQUIRED", "ID of inventory to show")
-		inventoryShowItemViewFlag = inventoryShowItemFlags.String("view", "", "")
+		inventoryShowItemFlags           = flag.NewFlagSet("show-item", flag.ExitOnError)
+		inventoryShowItemCharacterIDFlag = inventoryShowItemFlags.String("character-id", "REQUIRED", "ID of character to show")
+		inventoryShowItemIDFlag          = inventoryShowItemFlags.String("id", "REQUIRED", "ID of inventory to show")
+		inventoryShowItemViewFlag        = inventoryShowItemFlags.String("view", "", "")
 
-		inventoryAddFlags    = flag.NewFlagSet("add", flag.ExitOnError)
-		inventoryAddBodyFlag = inventoryAddFlags.String("body", "REQUIRED", "")
+		inventoryAddFlags           = flag.NewFlagSet("add", flag.ExitOnError)
+		inventoryAddCharacterIDFlag = inventoryAddFlags.String("character-id", "REQUIRED", "ID of character to show")
 
-		inventoryAddItemFlags      = flag.NewFlagSet("add-item", flag.ExitOnError)
-		inventoryAddItemBodyFlag   = inventoryAddItemFlags.String("body", "REQUIRED", "")
-		inventoryAddItemIDFlag     = inventoryAddItemFlags.String("id", "REQUIRED", "ID of inventory to add")
-		inventoryAddItemItemIDFlag = inventoryAddItemFlags.String("item-id", "REQUIRED", "ID of item to add")
+		inventoryAddItemFlags           = flag.NewFlagSet("add-item", flag.ExitOnError)
+		inventoryAddItemBodyFlag        = inventoryAddItemFlags.String("body", "REQUIRED", "")
+		inventoryAddItemCharacterIDFlag = inventoryAddItemFlags.String("character-id", "REQUIRED", "ID of character to show")
+		inventoryAddItemIDFlag          = inventoryAddItemFlags.String("id", "REQUIRED", "ID of inventory to add")
+		inventoryAddItemItemIDFlag      = inventoryAddItemFlags.String("item-id", "REQUIRED", "ID of item to add")
 
-		inventoryRemoveItemFlags      = flag.NewFlagSet("remove-item", flag.ExitOnError)
-		inventoryRemoveItemIDFlag     = inventoryRemoveItemFlags.String("id", "REQUIRED", "ID of inventory to add")
-		inventoryRemoveItemItemIDFlag = inventoryRemoveItemFlags.String("item-id", "REQUIRED", "ID of item to add")
+		inventoryRemoveItemFlags           = flag.NewFlagSet("remove-item", flag.ExitOnError)
+		inventoryRemoveItemCharacterIDFlag = inventoryRemoveItemFlags.String("character-id", "REQUIRED", "ID of character to show")
+		inventoryRemoveItemIDFlag          = inventoryRemoveItemFlags.String("id", "REQUIRED", "ID of inventory to add")
+		inventoryRemoveItemItemIDFlag      = inventoryRemoveItemFlags.String("item-id", "REQUIRED", "ID of item to add")
 
-		inventoryRemoveFlags  = flag.NewFlagSet("remove", flag.ExitOnError)
-		inventoryRemoveIDFlag = inventoryRemoveFlags.String("id", "REQUIRED", "ID of inventory to remove")
-
-		inventoryUpdateFlags    = flag.NewFlagSet("update", flag.ExitOnError)
-		inventoryUpdateBodyFlag = inventoryUpdateFlags.String("body", "REQUIRED", "")
-		inventoryUpdateIDFlag   = inventoryUpdateFlags.String("id", "REQUIRED", "ID of inventory to update")
+		inventoryRemoveFlags           = flag.NewFlagSet("remove", flag.ExitOnError)
+		inventoryRemoveCharacterIDFlag = inventoryRemoveFlags.String("character-id", "REQUIRED", "ID of character to show")
+		inventoryRemoveIDFlag          = inventoryRemoveFlags.String("id", "REQUIRED", "ID of inventory to remove")
 
 		itemFlags = flag.NewFlagSet("item", flag.ContinueOnError)
 
@@ -131,7 +132,6 @@ func ParseEndpoint(
 	inventoryAddItemFlags.Usage = inventoryAddItemUsage
 	inventoryRemoveItemFlags.Usage = inventoryRemoveItemUsage
 	inventoryRemoveFlags.Usage = inventoryRemoveUsage
-	inventoryUpdateFlags.Usage = inventoryUpdateUsage
 
 	itemFlags.Usage = itemUsage
 	itemListFlags.Usage = itemListUsage
@@ -218,9 +218,6 @@ func ParseEndpoint(
 			case "remove":
 				epf = inventoryRemoveFlags
 
-			case "update":
-				epf = inventoryUpdateFlags
-
 			}
 
 		case "item":
@@ -289,25 +286,22 @@ func ParseEndpoint(
 				data, err = inventoryc.BuildListPayload(*inventoryListCharacterIDFlag)
 			case "show":
 				endpoint = c.Show()
-				data, err = inventoryc.BuildShowPayload(*inventoryShowIDFlag, *inventoryShowViewFlag)
+				data, err = inventoryc.BuildShowPayload(*inventoryShowCharacterIDFlag, *inventoryShowIDFlag, *inventoryShowViewFlag)
 			case "show-item":
 				endpoint = c.ShowItem()
-				data, err = inventoryc.BuildShowItemPayload(*inventoryShowItemIDFlag, *inventoryShowItemViewFlag)
+				data, err = inventoryc.BuildShowItemPayload(*inventoryShowItemCharacterIDFlag, *inventoryShowItemIDFlag, *inventoryShowItemViewFlag)
 			case "add":
 				endpoint = c.Add()
-				data, err = inventoryc.BuildAddPayload(*inventoryAddBodyFlag)
+				data, err = inventoryc.BuildAddPayload(*inventoryAddCharacterIDFlag)
 			case "add-item":
 				endpoint = c.AddItem()
-				data, err = inventoryc.BuildAddItemPayload(*inventoryAddItemBodyFlag, *inventoryAddItemIDFlag, *inventoryAddItemItemIDFlag)
+				data, err = inventoryc.BuildAddItemPayload(*inventoryAddItemBodyFlag, *inventoryAddItemCharacterIDFlag, *inventoryAddItemIDFlag, *inventoryAddItemItemIDFlag)
 			case "remove-item":
 				endpoint = c.RemoveItem()
-				data, err = inventoryc.BuildRemoveItemPayload(*inventoryRemoveItemIDFlag, *inventoryRemoveItemItemIDFlag)
+				data, err = inventoryc.BuildRemoveItemPayload(*inventoryRemoveItemCharacterIDFlag, *inventoryRemoveItemIDFlag, *inventoryRemoveItemItemIDFlag)
 			case "remove":
 				endpoint = c.Remove()
-				data, err = inventoryc.BuildRemovePayload(*inventoryRemoveIDFlag)
-			case "update":
-				endpoint = c.Update()
-				data, err = inventoryc.BuildUpdatePayload(*inventoryUpdateBodyFlag, *inventoryUpdateIDFlag)
+				data, err = inventoryc.BuildRemovePayload(*inventoryRemoveCharacterIDFlag, *inventoryRemoveIDFlag)
 			}
 		case "item":
 			c := itemc.NewClient(scheme, host, doer, enc, dec, restore)
@@ -373,7 +367,7 @@ Show character by Id
     -view STRING: 
 
 Example:
-    %[1]s character show --id "Veniam nam officia aspernatur itaque vero." --view "default"
+    %[1]s character show --id "Omnis reiciendis cupiditate atque." --view "tiny"
 `, os.Args[0])
 }
 
@@ -400,7 +394,7 @@ Remove character
     -id STRING: ID of character to remove
 
 Example:
-    %[1]s character remove --id "Aut aut non qui nostrum."
+    %[1]s character remove --id "Quasi dolorem quas ipsa quisquam laboriosam esse."
 `, os.Args[0])
 }
 
@@ -419,7 +413,7 @@ Example:
          "health": 12.6,
          "name": "Arc Warden"
       }
-   }' --id "Consequatur et sequi."
+   }' --id "Neque autem."
 `, os.Args[0])
 }
 
@@ -438,7 +432,6 @@ COMMAND:
     add-item: Add new item to inventory.
     remove-item: Remove an item from inventory
     remove: Remove Inventory
-    update:  update 
 
 Additional help:
     %[1]s inventory COMMAND --help
@@ -451,122 +444,85 @@ List all items in character inventory
     -character-id STRING: ID of character to show
 
 Example:
-    %[1]s inventory list --character-id "Saepe quasi minima ut explicabo ut quis."
+    %[1]s inventory list --character-id "Omnis voluptate aliquid."
 `, os.Args[0])
 }
 
 func inventoryShowUsage() {
-	fmt.Fprintf(os.Stderr, `%[1]s [flags] inventory show -id STRING -view STRING
+	fmt.Fprintf(os.Stderr, `%[1]s [flags] inventory show -character-id STRING -id STRING -view STRING
 
 Show inventory by Id
+    -character-id STRING: ID of character to show
     -id STRING: ID of inventory to show
     -view STRING: 
 
 Example:
-    %[1]s inventory show --id "Velit laborum quaerat voluptates nemo." --view "default"
+    %[1]s inventory show --character-id "Praesentium explicabo omnis libero labore sit." --id "Enim saepe distinctio voluptatem vero aspernatur." --view "tiny"
 `, os.Args[0])
 }
 
 func inventoryShowItemUsage() {
-	fmt.Fprintf(os.Stderr, `%[1]s [flags] inventory show-item -id STRING -view STRING
+	fmt.Fprintf(os.Stderr, `%[1]s [flags] inventory show-item -character-id STRING -id STRING -view STRING
 
 Show items in an inventory
+    -character-id STRING: ID of character to show
     -id STRING: ID of inventory to show
     -view STRING: 
 
 Example:
-    %[1]s inventory show-item --id "Laborum numquam." --view "default"
+    %[1]s inventory show-item --character-id "Aliquam eum est aut exercitationem." --id "Quam rerum provident et." --view "tiny"
 `, os.Args[0])
 }
 
 func inventoryAddUsage() {
-	fmt.Fprintf(os.Stderr, `%[1]s [flags] inventory add -body JSON
+	fmt.Fprintf(os.Stderr, `%[1]s [flags] inventory add -character-id STRING
 
 Add new inventory and return its ID.
-    -body JSON: 
+    -character-id STRING: ID of character to show
 
 Example:
-    %[1]s inventory add --body '{
-      "characterId": "Eum est."
-   }'
+    %[1]s inventory add --character-id "Optio commodi ut placeat ut sunt impedit."
 `, os.Args[0])
 }
 
 func inventoryAddItemUsage() {
-	fmt.Fprintf(os.Stderr, `%[1]s [flags] inventory add-item -body JSON -id STRING -item-id STRING
+	fmt.Fprintf(os.Stderr, `%[1]s [flags] inventory add-item -body JSON -character-id STRING -id STRING -item-id STRING
 
 Add new item to inventory.
     -body JSON: 
+    -character-id STRING: ID of character to show
     -id STRING: ID of inventory to add
     -item-id STRING: ID of item to add
 
 Example:
     %[1]s inventory add-item --body '{
-      "view": "tiny"
-   }' --id "Commodi ut placeat ut." --item-id "Impedit eos ut."
+      "view": "default"
+   }' --character-id "Provident in atque." --id "Doloremque consequatur quibusdam." --item-id "Ut error et et."
 `, os.Args[0])
 }
 
 func inventoryRemoveItemUsage() {
-	fmt.Fprintf(os.Stderr, `%[1]s [flags] inventory remove-item -id STRING -item-id STRING
+	fmt.Fprintf(os.Stderr, `%[1]s [flags] inventory remove-item -character-id STRING -id STRING -item-id STRING
 
 Remove an item from inventory
+    -character-id STRING: ID of character to show
     -id STRING: ID of inventory to add
     -item-id STRING: ID of item to add
 
 Example:
-    %[1]s inventory remove-item --id "In doloremque." --item-id "Commodi rerum deserunt unde."
+    %[1]s inventory remove-item --character-id "Ut alias." --id "Fugit perferendis voluptatem provident et." --item-id "Quibusdam repudiandae iste ut."
 `, os.Args[0])
 }
 
 func inventoryRemoveUsage() {
-	fmt.Fprintf(os.Stderr, `%[1]s [flags] inventory remove -id STRING
+	fmt.Fprintf(os.Stderr, `%[1]s [flags] inventory remove -character-id STRING -id STRING
 
 Remove Inventory
+    -character-id STRING: ID of character to show
     -id STRING: ID of inventory to remove
 
 Example:
-    %[1]s inventory remove --id "Eum ut error et et."
-`, os.Args[0])
-}
-
-func inventoryUpdateUsage() {
-	fmt.Fprintf(os.Stderr, `%[1]s [flags] inventory update -body JSON -id STRING
-
- update 
-    -body JSON: 
-    -id STRING: ID of inventory to update
-
-Example:
-    %[1]s inventory update --body '{
-      "inventory": {
-         "character": {
-            "description": "A splintered fragment of the same primordial power as the Ancients themselves, Zet endeavors to end the disharmony among the warring factions through whatever means necessary. Solitary foes are thrown into a volatile state of Flux, ripping away their health over time. Distorting space to generate a Protective Field sheltering around allies, evading and attacking with greater efficiency. Zet summons Spark Fragments of its former self that circles in place, and seek out nearby foes. Is there one Arc Warden, or two? Armed with the original\'s items and abilities, the Self\'s Tempest Double duplicates each spell and every attack, bringing twice the chaos to any fight.",
-            "experience": 65.21,
-            "health": 12.6,
-            "id": "123abc",
-            "name": "Arc Warden"
-         },
-         "items": [
-            {
-               "damage": 37.8267,
-               "description": "Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.",
-               "healing": 12.6,
-               "id": "123abc",
-               "name": "Boots of travel",
-               "protection": 65.21
-            },
-            {
-               "damage": 37.8267,
-               "description": "Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.",
-               "healing": 12.6,
-               "id": "123abc",
-               "name": "Boots of travel",
-               "protection": 65.21
-            }
-         ]
-      }
-   }' --id "Consequuntur necessitatibus dolorem optio quia."
+    %[1]s inventory remove --character-id "Qui qui porro dolorum." --id "Consectetur vel quo dolores voluptatem quo."
 `, os.Args[0])
 }
 
@@ -605,7 +561,7 @@ Show character by Id
     -view STRING: 
 
 Example:
-    %[1]s item show --id "Molestias ut alias et." --view "default"
+    %[1]s item show --id "Esse nobis." --view "tiny"
 `, os.Args[0])
 }
 
@@ -633,7 +589,7 @@ Remove character
     -id STRING: ID of item to remove
 
 Example:
-    %[1]s item remove --id "Odit voluptatibus voluptatem."
+    %[1]s item remove --id "Dolore culpa."
 `, os.Args[0])
 }
 
@@ -652,6 +608,6 @@ Example:
          "health": 12.6,
          "name": "Arc Warden"
       }
-   }' --id "Consectetur vel quo dolores voluptatem quo."
+   }' --id "Atque eligendi."
 `, os.Args[0])
 }

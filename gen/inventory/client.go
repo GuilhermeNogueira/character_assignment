@@ -22,11 +22,10 @@ type Client struct {
 	AddItemEndpoint    goa.Endpoint
 	RemoveItemEndpoint goa.Endpoint
 	RemoveEndpoint     goa.Endpoint
-	UpdateEndpoint     goa.Endpoint
 }
 
 // NewClient initializes a "inventory" service client given the endpoints.
-func NewClient(list, show, showItem, add, addItem, removeItem, remove, update goa.Endpoint) *Client {
+func NewClient(list, show, showItem, add, addItem, removeItem, remove goa.Endpoint) *Client {
 	return &Client{
 		ListEndpoint:       list,
 		ShowEndpoint:       show,
@@ -35,7 +34,6 @@ func NewClient(list, show, showItem, add, addItem, removeItem, remove, update go
 		AddItemEndpoint:    addItem,
 		RemoveItemEndpoint: removeItem,
 		RemoveEndpoint:     remove,
-		UpdateEndpoint:     update,
 	}
 }
 
@@ -86,19 +84,23 @@ func (c *Client) Add(ctx context.Context, p *AddPayload) (res string, err error)
 }
 
 // AddItem calls the "addItem" endpoint of the "inventory" service.
-func (c *Client) AddItem(ctx context.Context, p *AddItemPayload) (res string, err error) {
+func (c *Client) AddItem(ctx context.Context, p *AddItemPayload) (res *StoredInventory, err error) {
 	var ires interface{}
 	ires, err = c.AddItemEndpoint(ctx, p)
 	if err != nil {
 		return
 	}
-	return ires.(string), nil
+	return ires.(*StoredInventory), nil
 }
 
 // RemoveItem calls the "removeItem" endpoint of the "inventory" service.
-func (c *Client) RemoveItem(ctx context.Context, p *RemoveItemPayload) (err error) {
-	_, err = c.RemoveItemEndpoint(ctx, p)
-	return
+func (c *Client) RemoveItem(ctx context.Context, p *RemoveItemPayload) (res *StoredInventory, err error) {
+	var ires interface{}
+	ires, err = c.RemoveItemEndpoint(ctx, p)
+	if err != nil {
+		return
+	}
+	return ires.(*StoredInventory), nil
 }
 
 // Remove calls the "remove" endpoint of the "inventory" service.
@@ -107,11 +109,5 @@ func (c *Client) RemoveItem(ctx context.Context, p *RemoveItemPayload) (err erro
 //   - error: internal error
 func (c *Client) Remove(ctx context.Context, p *RemovePayload) (err error) {
 	_, err = c.RemoveEndpoint(ctx, p)
-	return
-}
-
-// Update calls the "update" endpoint of the "inventory" service.
-func (c *Client) Update(ctx context.Context, p *UpdatePayload) (err error) {
-	_, err = c.UpdateEndpoint(ctx, p)
 	return
 }

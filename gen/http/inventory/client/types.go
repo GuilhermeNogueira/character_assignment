@@ -14,25 +14,11 @@ import (
 	goa "goa.design/goa/v3/pkg"
 )
 
-// AddRequestBody is the type of the "inventory" service "add" endpoint HTTP
-// request body.
-type AddRequestBody struct {
-	// ID of character to show
-	CharacterID string `form:"characterId" json:"characterId" xml:"characterId"`
-}
-
 // AddItemRequestBody is the type of the "inventory" service "addItem" endpoint
 // HTTP request body.
 type AddItemRequestBody struct {
 	// View to render
 	View *string `form:"view,omitempty" json:"view,omitempty" xml:"view,omitempty"`
-}
-
-// UpdateRequestBody is the type of the "inventory" service "update" endpoint
-// HTTP request body.
-type UpdateRequestBody struct {
-	// inventory to update
-	Inventory *InventoryRequestBody `form:"inventory" json:"inventory" xml:"inventory"`
 }
 
 // ListResponseBody is the type of the "inventory" service "list" endpoint HTTP
@@ -42,8 +28,9 @@ type ListResponseBody []*StoredInventoryResponse
 // ShowResponseBody is the type of the "inventory" service "show" endpoint HTTP
 // response body.
 type ShowResponseBody struct {
-	// ID is the unique id of the character.
-	ID          *string `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	// ID is the unique id of the inventory.
+	ID *string `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	// CharacterId
 	CharacterID *string `form:"characterId,omitempty" json:"characterId,omitempty" xml:"characterId,omitempty"`
 	// Character items
 	Items []*StoredItemResponseBody `form:"items,omitempty" json:"items,omitempty" xml:"items,omitempty"`
@@ -52,6 +39,28 @@ type ShowResponseBody struct {
 // ShowItemResponseBody is the type of the "inventory" service "showItem"
 // endpoint HTTP response body.
 type ShowItemResponseBody []*StoredItemResponse
+
+// AddItemResponseBody is the type of the "inventory" service "addItem"
+// endpoint HTTP response body.
+type AddItemResponseBody struct {
+	// ID is the unique id of the inventory.
+	ID *string `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	// CharacterId
+	CharacterID *string `form:"characterId,omitempty" json:"characterId,omitempty" xml:"characterId,omitempty"`
+	// Character items
+	Items []*StoredItemResponseBody `form:"items,omitempty" json:"items,omitempty" xml:"items,omitempty"`
+}
+
+// RemoveItemResponseBody is the type of the "inventory" service "removeItem"
+// endpoint HTTP response body.
+type RemoveItemResponseBody struct {
+	// ID is the unique id of the inventory.
+	ID *string `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	// CharacterId
+	CharacterID *string `form:"characterId,omitempty" json:"characterId,omitempty" xml:"characterId,omitempty"`
+	// Character items
+	Items []*StoredItemResponseBody `form:"items,omitempty" json:"items,omitempty" xml:"items,omitempty"`
+}
 
 // ShowNotFoundResponseBody is the type of the "inventory" service "show"
 // endpoint HTTP response body for the "not_found" error.
@@ -73,8 +82,9 @@ type ShowItemNotFoundResponseBody struct {
 
 // StoredInventoryResponse is used to define fields on response body types.
 type StoredInventoryResponse struct {
-	// ID is the unique id of the character.
-	ID          *string `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	// ID is the unique id of the inventory.
+	ID *string `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	// CharacterId
 	CharacterID *string `form:"characterId,omitempty" json:"characterId,omitempty" xml:"characterId,omitempty"`
 	// Character items
 	Items []*StoredItemResponse `form:"items,omitempty" json:"items,omitempty" xml:"items,omitempty"`
@@ -112,68 +122,11 @@ type StoredItemResponseBody struct {
 	Protection *float64 `form:"protection,omitempty" json:"protection,omitempty" xml:"protection,omitempty"`
 }
 
-// InventoryRequestBody is used to define fields on request body types.
-type InventoryRequestBody struct {
-	// Character
-	Character *StoredCharacterRequestBody `form:"character" json:"character" xml:"character"`
-	// Character items
-	Items []*StoredItemRequestBody `form:"items" json:"items" xml:"items"`
-}
-
-// StoredCharacterRequestBody is used to define fields on request body types.
-type StoredCharacterRequestBody struct {
-	// ID is the unique id of the character.
-	ID string `form:"id" json:"id" xml:"id"`
-	// Name
-	Name string `form:"name" json:"name" xml:"name"`
-	// Description
-	Description *string `form:"description,omitempty" json:"description,omitempty" xml:"description,omitempty"`
-	// Health
-	Health float64 `form:"health" json:"health" xml:"health"`
-	// Experience
-	Experience float64 `form:"experience" json:"experience" xml:"experience"`
-}
-
-// StoredItemRequestBody is used to define fields on request body types.
-type StoredItemRequestBody struct {
-	// ID is the unique id of the Item.
-	ID string `form:"id" json:"id" xml:"id"`
-	// Name
-	Name string `form:"name" json:"name" xml:"name"`
-	// Description
-	Description *string `form:"description,omitempty" json:"description,omitempty" xml:"description,omitempty"`
-	// Damage
-	Damage float64 `form:"damage" json:"damage" xml:"damage"`
-	// Healing
-	Healing float64 `form:"healing" json:"healing" xml:"healing"`
-	// Protection
-	Protection float64 `form:"protection" json:"protection" xml:"protection"`
-}
-
-// NewAddRequestBody builds the HTTP request body from the payload of the "add"
-// endpoint of the "inventory" service.
-func NewAddRequestBody(p *inventory.AddPayload) *AddRequestBody {
-	body := &AddRequestBody{
-		CharacterID: p.CharacterID,
-	}
-	return body
-}
-
 // NewAddItemRequestBody builds the HTTP request body from the payload of the
 // "addItem" endpoint of the "inventory" service.
 func NewAddItemRequestBody(p *inventory.AddItemPayload) *AddItemRequestBody {
 	body := &AddItemRequestBody{
 		View: p.View,
-	}
-	return body
-}
-
-// NewUpdateRequestBody builds the HTTP request body from the payload of the
-// "update" endpoint of the "inventory" service.
-func NewUpdateRequestBody(p *inventory.UpdatePayload) *UpdateRequestBody {
-	body := &UpdateRequestBody{}
-	if p.Inventory != nil {
-		body.Inventory = marshalInventoryInventoryToInventoryRequestBody(p.Inventory)
 	}
 	return body
 }
@@ -231,6 +184,36 @@ func NewShowItemNotFound(body *ShowItemNotFoundResponseBody) *inventory.NotFound
 	v := &inventory.NotFound{
 		Message: *body.Message,
 		ID:      *body.ID,
+	}
+
+	return v
+}
+
+// NewAddItemStoredInventoryOK builds a "inventory" service "addItem" endpoint
+// result from a HTTP "OK" response.
+func NewAddItemStoredInventoryOK(body *AddItemResponseBody) *inventoryviews.StoredInventoryView {
+	v := &inventoryviews.StoredInventoryView{
+		ID:          body.ID,
+		CharacterID: body.CharacterID,
+	}
+	v.Items = make([]*inventoryviews.StoredItemView, len(body.Items))
+	for i, val := range body.Items {
+		v.Items[i] = unmarshalStoredItemResponseBodyToInventoryviewsStoredItemView(val)
+	}
+
+	return v
+}
+
+// NewRemoveItemStoredInventoryOK builds a "inventory" service "removeItem"
+// endpoint result from a HTTP "OK" response.
+func NewRemoveItemStoredInventoryOK(body *RemoveItemResponseBody) *inventoryviews.StoredInventoryView {
+	v := &inventoryviews.StoredInventoryView{
+		ID:          body.ID,
+		CharacterID: body.CharacterID,
+	}
+	v.Items = make([]*inventoryviews.StoredItemView, len(body.Items))
+	for i, val := range body.Items {
+		v.Items[i] = unmarshalStoredItemResponseBodyToInventoryviewsStoredItemView(val)
 	}
 
 	return v
@@ -301,18 +284,6 @@ func ValidateStoredItemResponseBody(body *StoredItemResponseBody) (err error) {
 	}
 	if body.Name == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
-	}
-	return
-}
-
-// ValidateInventoryRequestBody runs the validations defined on
-// InventoryRequestBody
-func ValidateInventoryRequestBody(body *InventoryRequestBody) (err error) {
-	if body.Character == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("character", "body"))
-	}
-	if body.Items == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("items", "body"))
 	}
 	return
 }

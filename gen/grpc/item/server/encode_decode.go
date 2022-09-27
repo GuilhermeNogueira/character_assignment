@@ -134,7 +134,13 @@ func DecodeRemoveRequest(ctx context.Context, v interface{}, md metadata.MD) (in
 // EncodeUpdateResponse encodes responses from the "item" service "update"
 // endpoint.
 func EncodeUpdateResponse(ctx context.Context, v interface{}, hdr, trlr *metadata.MD) (interface{}, error) {
-	resp := NewProtoUpdateResponse()
+	vres, ok := v.(*itemviews.StoredItem)
+	if !ok {
+		return nil, goagrpc.ErrInvalidType("item", "update", "*itemviews.StoredItem", v)
+	}
+	result := vres.Projected
+	(*hdr).Append("goa-view", vres.View)
+	resp := NewProtoUpdateResponse(result)
 	return resp, nil
 }
 

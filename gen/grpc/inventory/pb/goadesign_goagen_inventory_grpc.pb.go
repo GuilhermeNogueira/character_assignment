@@ -36,8 +36,6 @@ type InventoryClient interface {
 	RemoveItem(ctx context.Context, in *RemoveItemRequest, opts ...grpc.CallOption) (*RemoveItemResponse, error)
 	// Remove Inventory
 	Remove(ctx context.Context, in *RemoveRequest, opts ...grpc.CallOption) (*RemoveResponse, error)
-	// update
-	Update(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*UpdateResponse, error)
 }
 
 type inventoryClient struct {
@@ -111,15 +109,6 @@ func (c *inventoryClient) Remove(ctx context.Context, in *RemoveRequest, opts ..
 	return out, nil
 }
 
-func (c *inventoryClient) Update(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*UpdateResponse, error) {
-	out := new(UpdateResponse)
-	err := c.cc.Invoke(ctx, "/inventory.Inventory/Update", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // InventoryServer is the server API for Inventory service.
 // All implementations must embed UnimplementedInventoryServer
 // for forward compatibility
@@ -138,8 +127,6 @@ type InventoryServer interface {
 	RemoveItem(context.Context, *RemoveItemRequest) (*RemoveItemResponse, error)
 	// Remove Inventory
 	Remove(context.Context, *RemoveRequest) (*RemoveResponse, error)
-	// update
-	Update(context.Context, *UpdateRequest) (*UpdateResponse, error)
 	mustEmbedUnimplementedInventoryServer()
 }
 
@@ -167,9 +154,6 @@ func (UnimplementedInventoryServer) RemoveItem(context.Context, *RemoveItemReque
 }
 func (UnimplementedInventoryServer) Remove(context.Context, *RemoveRequest) (*RemoveResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Remove not implemented")
-}
-func (UnimplementedInventoryServer) Update(context.Context, *UpdateRequest) (*UpdateResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
 }
 func (UnimplementedInventoryServer) mustEmbedUnimplementedInventoryServer() {}
 
@@ -310,24 +294,6 @@ func _Inventory_Remove_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Inventory_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(InventoryServer).Update(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/inventory.Inventory/Update",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InventoryServer).Update(ctx, req.(*UpdateRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // Inventory_ServiceDesc is the grpc.ServiceDesc for Inventory service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -362,10 +328,6 @@ var Inventory_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Remove",
 			Handler:    _Inventory_Remove_Handler,
-		},
-		{
-			MethodName: "Update",
-			Handler:    _Inventory_Update_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

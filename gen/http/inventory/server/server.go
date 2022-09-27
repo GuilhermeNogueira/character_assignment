@@ -26,7 +26,6 @@ type Server struct {
 	AddItem    http.Handler
 	RemoveItem http.Handler
 	Remove     http.Handler
-	Update     http.Handler
 }
 
 // ErrorNamer is an interface implemented by generated error structs that
@@ -62,14 +61,13 @@ func New(
 ) *Server {
 	return &Server{
 		Mounts: []*MountPoint{
-			{"List", "GET", "/inventory/character/{characterId}/"},
-			{"Show", "GET", "/inventory/{id}"},
-			{"ShowItem", "GET", "/inventory/{id}/item"},
-			{"Add", "POST", "/inventory"},
-			{"AddItem", "POST", "/inventory/{id}/item/{itemId}"},
-			{"RemoveItem", "DELETE", "/inventory/{id}/item/{itemId}"},
-			{"Remove", "DELETE", "/inventory/{id}"},
-			{"Update", "PUT", "/inventory/{id}"},
+			{"List", "GET", "/character/{characterId}/inventory"},
+			{"Show", "GET", "/character/{characterId}/inventory/{id}"},
+			{"ShowItem", "GET", "/character/{characterId}/inventory/{id}/item"},
+			{"Add", "POST", "/character/{characterId}/inventory"},
+			{"AddItem", "POST", "/character/{characterId}/inventory/{id}/item/{itemId}"},
+			{"RemoveItem", "DELETE", "/character/{characterId}/inventory/{id}/item/{itemId}"},
+			{"Remove", "DELETE", "/character/{characterId}/inventory/{id}"},
 		},
 		List:       NewListHandler(e.List, mux, decoder, encoder, errhandler, formatter),
 		Show:       NewShowHandler(e.Show, mux, decoder, encoder, errhandler, formatter),
@@ -78,7 +76,6 @@ func New(
 		AddItem:    NewAddItemHandler(e.AddItem, mux, decoder, encoder, errhandler, formatter),
 		RemoveItem: NewRemoveItemHandler(e.RemoveItem, mux, decoder, encoder, errhandler, formatter),
 		Remove:     NewRemoveHandler(e.Remove, mux, decoder, encoder, errhandler, formatter),
-		Update:     NewUpdateHandler(e.Update, mux, decoder, encoder, errhandler, formatter),
 	}
 }
 
@@ -94,7 +91,6 @@ func (s *Server) Use(m func(http.Handler) http.Handler) {
 	s.AddItem = m(s.AddItem)
 	s.RemoveItem = m(s.RemoveItem)
 	s.Remove = m(s.Remove)
-	s.Update = m(s.Update)
 }
 
 // Mount configures the mux to serve the inventory endpoints.
@@ -106,7 +102,6 @@ func Mount(mux goahttp.Muxer, h *Server) {
 	MountAddItemHandler(mux, h.AddItem)
 	MountRemoveItemHandler(mux, h.RemoveItem)
 	MountRemoveHandler(mux, h.Remove)
-	MountUpdateHandler(mux, h.Update)
 }
 
 // Mount configures the mux to serve the inventory endpoints.
@@ -123,7 +118,7 @@ func MountListHandler(mux goahttp.Muxer, h http.Handler) {
 			h.ServeHTTP(w, r)
 		}
 	}
-	mux.Handle("GET", "/inventory/character/{characterId}/", f)
+	mux.Handle("GET", "/character/{characterId}/inventory", f)
 }
 
 // NewListHandler creates a HTTP handler which loads the HTTP request and calls
@@ -174,7 +169,7 @@ func MountShowHandler(mux goahttp.Muxer, h http.Handler) {
 			h.ServeHTTP(w, r)
 		}
 	}
-	mux.Handle("GET", "/inventory/{id}", f)
+	mux.Handle("GET", "/character/{characterId}/inventory/{id}", f)
 }
 
 // NewShowHandler creates a HTTP handler which loads the HTTP request and calls
@@ -225,7 +220,7 @@ func MountShowItemHandler(mux goahttp.Muxer, h http.Handler) {
 			h.ServeHTTP(w, r)
 		}
 	}
-	mux.Handle("GET", "/inventory/{id}/item", f)
+	mux.Handle("GET", "/character/{characterId}/inventory/{id}/item", f)
 }
 
 // NewShowItemHandler creates a HTTP handler which loads the HTTP request and
@@ -276,7 +271,7 @@ func MountAddHandler(mux goahttp.Muxer, h http.Handler) {
 			h.ServeHTTP(w, r)
 		}
 	}
-	mux.Handle("POST", "/inventory", f)
+	mux.Handle("POST", "/character/{characterId}/inventory", f)
 }
 
 // NewAddHandler creates a HTTP handler which loads the HTTP request and calls
@@ -327,7 +322,7 @@ func MountAddItemHandler(mux goahttp.Muxer, h http.Handler) {
 			h.ServeHTTP(w, r)
 		}
 	}
-	mux.Handle("POST", "/inventory/{id}/item/{itemId}", f)
+	mux.Handle("POST", "/character/{characterId}/inventory/{id}/item/{itemId}", f)
 }
 
 // NewAddItemHandler creates a HTTP handler which loads the HTTP request and
@@ -378,7 +373,7 @@ func MountRemoveItemHandler(mux goahttp.Muxer, h http.Handler) {
 			h.ServeHTTP(w, r)
 		}
 	}
-	mux.Handle("DELETE", "/inventory/{id}/item/{itemId}", f)
+	mux.Handle("DELETE", "/character/{characterId}/inventory/{id}/item/{itemId}", f)
 }
 
 // NewRemoveItemHandler creates a HTTP handler which loads the HTTP request and
@@ -429,7 +424,7 @@ func MountRemoveHandler(mux goahttp.Muxer, h http.Handler) {
 			h.ServeHTTP(w, r)
 		}
 	}
-	mux.Handle("DELETE", "/inventory/{id}", f)
+	mux.Handle("DELETE", "/character/{characterId}/inventory/{id}", f)
 }
 
 // NewRemoveHandler creates a HTTP handler which loads the HTTP request and
@@ -450,57 +445,6 @@ func NewRemoveHandler(
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
 		ctx = context.WithValue(ctx, goa.MethodKey, "remove")
-		ctx = context.WithValue(ctx, goa.ServiceKey, "inventory")
-		payload, err := decodeRequest(r)
-		if err != nil {
-			if err := encodeError(ctx, w, err); err != nil {
-				errhandler(ctx, w, err)
-			}
-			return
-		}
-		res, err := endpoint(ctx, payload)
-		if err != nil {
-			if err := encodeError(ctx, w, err); err != nil {
-				errhandler(ctx, w, err)
-			}
-			return
-		}
-		if err := encodeResponse(ctx, w, res); err != nil {
-			errhandler(ctx, w, err)
-		}
-	})
-}
-
-// MountUpdateHandler configures the mux to serve the "inventory" service
-// "update" endpoint.
-func MountUpdateHandler(mux goahttp.Muxer, h http.Handler) {
-	f, ok := h.(http.HandlerFunc)
-	if !ok {
-		f = func(w http.ResponseWriter, r *http.Request) {
-			h.ServeHTTP(w, r)
-		}
-	}
-	mux.Handle("PUT", "/inventory/{id}", f)
-}
-
-// NewUpdateHandler creates a HTTP handler which loads the HTTP request and
-// calls the "inventory" service "update" endpoint.
-func NewUpdateHandler(
-	endpoint goa.Endpoint,
-	mux goahttp.Muxer,
-	decoder func(*http.Request) goahttp.Decoder,
-	encoder func(context.Context, http.ResponseWriter) goahttp.Encoder,
-	errhandler func(context.Context, http.ResponseWriter, error),
-	formatter func(err error) goahttp.Statuser,
-) http.Handler {
-	var (
-		decodeRequest  = DecodeUpdateRequest(mux, decoder)
-		encodeResponse = EncodeUpdateResponse(encoder)
-		encodeError    = goahttp.ErrorEncoder(encoder, formatter)
-	)
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
-		ctx = context.WithValue(ctx, goa.MethodKey, "update")
 		ctx = context.WithValue(ctx, goa.ServiceKey, "inventory")
 		payload, err := decodeRequest(r)
 		if err != nil {

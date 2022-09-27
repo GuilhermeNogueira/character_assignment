@@ -131,7 +131,7 @@ func (c *Client) RemoveItem() goa.Endpoint {
 		inv := goagrpc.NewInvoker(
 			BuildRemoveItemFunc(c.grpccli, c.opts...),
 			EncodeRemoveItemRequest,
-			nil)
+			DecodeRemoveItemResponse)
 		res, err := inv.Invoke(ctx, v)
 		if err != nil {
 			return nil, goa.Fault(err.Error())
@@ -146,21 +146,6 @@ func (c *Client) Remove() goa.Endpoint {
 		inv := goagrpc.NewInvoker(
 			BuildRemoveFunc(c.grpccli, c.opts...),
 			EncodeRemoveRequest,
-			nil)
-		res, err := inv.Invoke(ctx, v)
-		if err != nil {
-			return nil, goa.Fault(err.Error())
-		}
-		return res, nil
-	}
-}
-
-// Update calls the "Update" function in inventorypb.InventoryClient interface.
-func (c *Client) Update() goa.Endpoint {
-	return func(ctx context.Context, v interface{}) (interface{}, error) {
-		inv := goagrpc.NewInvoker(
-			BuildUpdateFunc(c.grpccli, c.opts...),
-			EncodeUpdateRequest,
 			nil)
 		res, err := inv.Invoke(ctx, v)
 		if err != nil {

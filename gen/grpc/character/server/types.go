@@ -135,8 +135,23 @@ func NewUpdatePayload(message *characterpb.UpdateRequest) *character.UpdatePaylo
 
 // NewProtoUpdateResponse builds the gRPC response type from the result of the
 // "update" endpoint of the "character" service.
-func NewProtoUpdateResponse() *characterpb.UpdateResponse {
+func NewProtoUpdateResponse(result *characterviews.StoredCharacterView) *characterpb.UpdateResponse {
 	message := &characterpb.UpdateResponse{}
+	if result.ID != nil {
+		message.Id = *result.ID
+	}
+	if result.Name != nil {
+		message.Name = *result.Name
+	}
+	if result.Description != nil {
+		message.Description = *result.Description
+	}
+	if result.Health != nil {
+		message.Health = *result.Health
+	}
+	if result.Experience != nil {
+		message.Experience = *result.Experience
+	}
 	return message
 }
 

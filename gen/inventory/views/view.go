@@ -43,8 +43,9 @@ type StoredInventoryCollectionView []*StoredInventoryView
 
 // StoredInventoryView is a type that runs validations on a projected type.
 type StoredInventoryView struct {
-	// ID is the unique id of the character.
-	ID          *string
+	// ID is the unique id of the inventory.
+	ID *string
+	// CharacterId
 	CharacterID *string
 	// Character items
 	Items []*StoredItemView

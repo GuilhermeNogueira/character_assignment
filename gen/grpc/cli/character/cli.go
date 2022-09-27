@@ -24,7 +24,7 @@ import (
 //	command (subcommand1|subcommand2|...)
 func UsageCommands() string {
 	return `character (list|show|add|remove|update)
-inventory (list|show|show-item|add|add-item|remove-item|remove|update)
+inventory (list|show|show-item|add|add-item|remove-item|remove)
 item (list|show|add|remove|update)
 `
 }
@@ -33,7 +33,7 @@ item (list|show|add|remove|update)
 func UsageExamples() string {
 	return os.Args[0] + ` character list` + "\n" +
 		os.Args[0] + ` inventory list --message '{
-      "characterId": "Expedita commodi asperiores cumque dicta."
+      "characterId": "Rerum ipsa odit officiis."
    }'` + "\n" +
 		os.Args[0] + ` item list` + "\n" +
 		""
@@ -85,9 +85,6 @@ func ParseEndpoint(cc *grpc.ClientConn, opts ...grpc.CallOption) (goa.Endpoint, 
 		inventoryRemoveFlags       = flag.NewFlagSet("remove", flag.ExitOnError)
 		inventoryRemoveMessageFlag = inventoryRemoveFlags.String("message", "", "")
 
-		inventoryUpdateFlags       = flag.NewFlagSet("update", flag.ExitOnError)
-		inventoryUpdateMessageFlag = inventoryUpdateFlags.String("message", "", "")
-
 		itemFlags = flag.NewFlagSet("item", flag.ContinueOnError)
 
 		itemListFlags = flag.NewFlagSet("list", flag.ExitOnError)
@@ -120,7 +117,6 @@ func ParseEndpoint(cc *grpc.ClientConn, opts ...grpc.CallOption) (goa.Endpoint, 
 	inventoryAddItemFlags.Usage = inventoryAddItemUsage
 	inventoryRemoveItemFlags.Usage = inventoryRemoveItemUsage
 	inventoryRemoveFlags.Usage = inventoryRemoveUsage
-	inventoryUpdateFlags.Usage = inventoryUpdateUsage
 
 	itemFlags.Usage = itemUsage
 	itemListFlags.Usage = itemListUsage
@@ -207,9 +203,6 @@ func ParseEndpoint(cc *grpc.ClientConn, opts ...grpc.CallOption) (goa.Endpoint, 
 			case "remove":
 				epf = inventoryRemoveFlags
 
-			case "update":
-				epf = inventoryUpdateFlags
-
 			}
 
 		case "item":
@@ -294,9 +287,6 @@ func ParseEndpoint(cc *grpc.ClientConn, opts ...grpc.CallOption) (goa.Endpoint, 
 			case "remove":
 				endpoint = c.Remove()
 				data, err = inventoryc.BuildRemovePayload(*inventoryRemoveMessageFlag)
-			case "update":
-				endpoint = c.Update()
-				data, err = inventoryc.BuildUpdatePayload(*inventoryUpdateMessageFlag)
 			}
 		case "item":
 			c := itemc.NewClient(cc, opts...)
@@ -363,8 +353,8 @@ Show character by Id
 
 Example:
     %[1]s character show --message '{
-      "id": "Nobis blanditiis pariatur odio architecto nihil."
-   }' --view "default"
+      "id": "Officia ut id magnam deleniti."
+   }' --view "tiny"
 `, os.Args[0])
 }
 
@@ -392,7 +382,7 @@ Remove character
 
 Example:
     %[1]s character remove --message '{
-      "id": "Consectetur qui nostrum labore facilis."
+      "id": "Numquam delectus."
    }'
 `, os.Args[0])
 }
@@ -411,7 +401,7 @@ Example:
          "health": 12.6,
          "name": "Arc Warden"
       },
-      "id": "Dolore culpa."
+      "id": "Atque ab natus delectus sunt velit quos."
    }'
 `, os.Args[0])
 }
@@ -431,7 +421,6 @@ COMMAND:
     add-item: Add new item to inventory.
     remove-item: Remove an item from inventory
     remove: Remove Inventory
-    update:  update 
 
 Additional help:
     %[1]s inventory COMMAND --help
@@ -445,7 +434,7 @@ List all items in character inventory
 
 Example:
     %[1]s inventory list --message '{
-      "characterId": "Expedita commodi asperiores cumque dicta."
+      "characterId": "Rerum ipsa odit officiis."
    }'
 `, os.Args[0])
 }
@@ -459,7 +448,8 @@ Show inventory by Id
 
 Example:
     %[1]s inventory show --message '{
-      "id": "Sed esse in officia ut."
+      "characterId": "Est rerum quaerat repudiandae ratione.",
+      "id": "Tenetur quo."
    }' --view "default"
 `, os.Args[0])
 }
@@ -473,8 +463,9 @@ Show items in an inventory
 
 Example:
     %[1]s inventory show-item --message '{
-      "id": "Atque ab natus delectus sunt velit quos."
-   }' --view "tiny"
+      "characterId": "Perferendis aut placeat maxime neque.",
+      "id": "Illo rerum ut consequatur rerum debitis."
+   }' --view "default"
 `, os.Args[0])
 }
 
@@ -486,7 +477,7 @@ Add new inventory and return its ID.
 
 Example:
     %[1]s inventory add --message '{
-      "characterId": "Rerum ipsa odit officiis."
+      "characterId": "Ducimus qui sit neque soluta animi porro."
    }'
 `, os.Args[0])
 }
@@ -499,9 +490,10 @@ Add new item to inventory.
 
 Example:
     %[1]s inventory add-item --message '{
-      "id": "Doloribus tenetur.",
-      "itemId": "Rerum nesciunt provident accusamus nesciunt.",
-      "view": "tiny"
+      "characterId": "In consequatur doloremque eum.",
+      "id": "Soluta dolorum assumenda.",
+      "itemId": "Amet autem dignissimos.",
+      "view": "default"
    }'
 `, os.Args[0])
 }
@@ -514,8 +506,9 @@ Remove an item from inventory
 
 Example:
     %[1]s inventory remove-item --message '{
-      "id": "Ducimus qui sit neque soluta animi porro.",
-      "itemId": "Et laboriosam id."
+      "characterId": "Aut perspiciatis consectetur.",
+      "id": "Est amet.",
+      "itemId": "Sit dolore."
    }'
 `, os.Args[0])
 }
@@ -528,55 +521,8 @@ Remove Inventory
 
 Example:
     %[1]s inventory remove --message '{
-      "id": "Incidunt nobis est nostrum."
-   }'
-`, os.Args[0])
-}
-
-func inventoryUpdateUsage() {
-	fmt.Fprintf(os.Stderr, `%[1]s [flags] inventory update -message JSON
-
- update 
-    -message JSON: 
-
-Example:
-    %[1]s inventory update --message '{
-      "id": "In consequatur doloremque eum.",
-      "inventory": {
-         "character": {
-            "description": "A splintered fragment of the same primordial power as the Ancients themselves, Zet endeavors to end the disharmony among the warring factions through whatever means necessary. Solitary foes are thrown into a volatile state of Flux, ripping away their health over time. Distorting space to generate a Protective Field sheltering around allies, evading and attacking with greater efficiency. Zet summons Spark Fragments of its former self that circles in place, and seek out nearby foes. Is there one Arc Warden, or two? Armed with the original\'s items and abilities, the Self\'s Tempest Double duplicates each spell and every attack, bringing twice the chaos to any fight.",
-            "experience": 65.21,
-            "health": 12.6,
-            "id": "123abc",
-            "name": "Arc Warden"
-         },
-         "items": [
-            {
-               "damage": 37.8267,
-               "description": "Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.",
-               "healing": 12.6,
-               "id": "123abc",
-               "name": "Boots of travel",
-               "protection": 65.21
-            },
-            {
-               "damage": 37.8267,
-               "description": "Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.",
-               "healing": 12.6,
-               "id": "123abc",
-               "name": "Boots of travel",
-               "protection": 65.21
-            },
-            {
-               "damage": 37.8267,
-               "description": "Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.",
-               "healing": 12.6,
-               "id": "123abc",
-               "name": "Boots of travel",
-               "protection": 65.21
-            }
-         ]
-      }
+      "characterId": "Esse dolorem natus expedita qui.",
+      "id": "Dolores quam recusandae."
    }'
 `, os.Args[0])
 }
@@ -617,8 +563,8 @@ Show character by Id
 
 Example:
     %[1]s item show --message '{
-      "id": "Autem dignissimos ex et qui aut."
-   }' --view "default"
+      "id": "Exercitationem ea autem."
+   }' --view "tiny"
 `, os.Args[0])
 }
 
@@ -647,7 +593,7 @@ Remove character
 
 Example:
     %[1]s item remove --message '{
-      "id": "Expedita qui neque."
+      "id": "Repudiandae sit veniam voluptas sed soluta animi."
    }'
 `, os.Args[0])
 }
@@ -666,7 +612,7 @@ Example:
          "health": 12.6,
          "name": "Arc Warden"
       },
-      "id": "Quam recusandae totam maxime qui."
+      "id": "Consectetur ea."
    }'
 `, os.Args[0])
 }

@@ -90,16 +90,20 @@ func DecodeListResponse(decoder func(*http.Response) goahttp.Decoder, restoreBod
 // to call the "inventory" service "show" endpoint
 func (c *Client) BuildShowRequest(ctx context.Context, v interface{}) (*http.Request, error) {
 	var (
-		id string
+		characterID string
+		id          string
 	)
 	{
 		p, ok := v.(*inventory.ShowPayload)
 		if !ok {
 			return nil, goahttp.ErrInvalidType("inventory", "show", "*inventory.ShowPayload", v)
 		}
+		if p.CharacterID != nil {
+			characterID = *p.CharacterID
+		}
 		id = p.ID
 	}
-	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: ShowInventoryPath(id)}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: ShowInventoryPath(characterID, id)}
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
 		return nil, goahttp.ErrInvalidURL("inventory", "show", u.String(), err)
@@ -191,16 +195,20 @@ func DecodeShowResponse(decoder func(*http.Response) goahttp.Decoder, restoreBod
 // set to call the "inventory" service "showItem" endpoint
 func (c *Client) BuildShowItemRequest(ctx context.Context, v interface{}) (*http.Request, error) {
 	var (
-		id string
+		characterID string
+		id          string
 	)
 	{
 		p, ok := v.(*inventory.ShowItemPayload)
 		if !ok {
 			return nil, goahttp.ErrInvalidType("inventory", "showItem", "*inventory.ShowItemPayload", v)
 		}
+		if p.CharacterID != nil {
+			characterID = *p.CharacterID
+		}
 		id = p.ID
 	}
-	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: ShowItemInventoryPath(id)}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: ShowItemInventoryPath(characterID, id)}
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
 		return nil, goahttp.ErrInvalidURL("inventory", "showItem", u.String(), err)
@@ -291,7 +299,17 @@ func DecodeShowItemResponse(decoder func(*http.Response) goahttp.Decoder, restor
 // BuildAddRequest instantiates a HTTP request object with method and path set
 // to call the "inventory" service "add" endpoint
 func (c *Client) BuildAddRequest(ctx context.Context, v interface{}) (*http.Request, error) {
-	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: AddInventoryPath()}
+	var (
+		characterID string
+	)
+	{
+		p, ok := v.(*inventory.AddPayload)
+		if !ok {
+			return nil, goahttp.ErrInvalidType("inventory", "add", "*inventory.AddPayload", v)
+		}
+		characterID = p.CharacterID
+	}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: AddInventoryPath(characterID)}
 	req, err := http.NewRequest("POST", u.String(), nil)
 	if err != nil {
 		return nil, goahttp.ErrInvalidURL("inventory", "add", u.String(), err)
@@ -301,22 +319,6 @@ func (c *Client) BuildAddRequest(ctx context.Context, v interface{}) (*http.Requ
 	}
 
 	return req, nil
-}
-
-// EncodeAddRequest returns an encoder for requests sent to the inventory add
-// server.
-func EncodeAddRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, interface{}) error {
-	return func(req *http.Request, v interface{}) error {
-		p, ok := v.(*inventory.AddPayload)
-		if !ok {
-			return goahttp.ErrInvalidType("inventory", "add", "*inventory.AddPayload", v)
-		}
-		body := NewAddRequestBody(p)
-		if err := encoder(req).Encode(&body); err != nil {
-			return goahttp.ErrEncodingError("inventory", "add", err)
-		}
-		return nil
-	}
 }
 
 // DecodeAddResponse returns a decoder for responses returned by the inventory
@@ -358,18 +360,22 @@ func DecodeAddResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody
 // set to call the "inventory" service "addItem" endpoint
 func (c *Client) BuildAddItemRequest(ctx context.Context, v interface{}) (*http.Request, error) {
 	var (
-		id     string
-		itemID string
+		characterID string
+		id          string
+		itemID      string
 	)
 	{
 		p, ok := v.(*inventory.AddItemPayload)
 		if !ok {
 			return nil, goahttp.ErrInvalidType("inventory", "addItem", "*inventory.AddItemPayload", v)
 		}
+		if p.CharacterID != nil {
+			characterID = *p.CharacterID
+		}
 		id = p.ID
 		itemID = p.ItemID
 	}
-	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: AddItemInventoryPath(id, itemID)}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: AddItemInventoryPath(characterID, id, itemID)}
 	req, err := http.NewRequest("POST", u.String(), nil)
 	if err != nil {
 		return nil, goahttp.ErrInvalidURL("inventory", "addItem", u.String(), err)
@@ -415,16 +421,23 @@ func DecodeAddItemResponse(decoder func(*http.Response) goahttp.Decoder, restore
 			defer resp.Body.Close()
 		}
 		switch resp.StatusCode {
-		case http.StatusCreated:
+		case http.StatusOK:
 			var (
-				body string
+				body AddItemResponseBody
 				err  error
 			)
 			err = decoder(resp).Decode(&body)
 			if err != nil {
 				return nil, goahttp.ErrDecodingError("inventory", "addItem", err)
 			}
-			return body, nil
+			p := NewAddItemStoredInventoryOK(&body)
+			view := resp.Header.Get("goa-view")
+			vres := &inventoryviews.StoredInventory{Projected: p, View: view}
+			if err = inventoryviews.ValidateStoredInventory(vres); err != nil {
+				return nil, goahttp.ErrValidationError("inventory", "addItem", err)
+			}
+			res := inventory.NewStoredInventory(vres)
+			return res, nil
 		default:
 			body, _ := io.ReadAll(resp.Body)
 			return nil, goahttp.ErrInvalidResponse("inventory", "addItem", resp.StatusCode, string(body))
@@ -436,18 +449,22 @@ func DecodeAddItemResponse(decoder func(*http.Response) goahttp.Decoder, restore
 // path set to call the "inventory" service "removeItem" endpoint
 func (c *Client) BuildRemoveItemRequest(ctx context.Context, v interface{}) (*http.Request, error) {
 	var (
-		id     string
-		itemID string
+		characterID string
+		id          string
+		itemID      string
 	)
 	{
 		p, ok := v.(*inventory.RemoveItemPayload)
 		if !ok {
 			return nil, goahttp.ErrInvalidType("inventory", "removeItem", "*inventory.RemoveItemPayload", v)
 		}
+		if p.CharacterID != nil {
+			characterID = *p.CharacterID
+		}
 		id = p.ID
 		itemID = p.ItemID
 	}
-	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: RemoveItemInventoryPath(id, itemID)}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: RemoveItemInventoryPath(characterID, id, itemID)}
 	req, err := http.NewRequest("DELETE", u.String(), nil)
 	if err != nil {
 		return nil, goahttp.ErrInvalidURL("inventory", "removeItem", u.String(), err)
@@ -477,8 +494,23 @@ func DecodeRemoveItemResponse(decoder func(*http.Response) goahttp.Decoder, rest
 			defer resp.Body.Close()
 		}
 		switch resp.StatusCode {
-		case http.StatusNoContent:
-			return nil, nil
+		case http.StatusOK:
+			var (
+				body RemoveItemResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("inventory", "removeItem", err)
+			}
+			p := NewRemoveItemStoredInventoryOK(&body)
+			view := resp.Header.Get("goa-view")
+			vres := &inventoryviews.StoredInventory{Projected: p, View: view}
+			if err = inventoryviews.ValidateStoredInventory(vres); err != nil {
+				return nil, goahttp.ErrValidationError("inventory", "removeItem", err)
+			}
+			res := inventory.NewStoredInventory(vres)
+			return res, nil
 		default:
 			body, _ := io.ReadAll(resp.Body)
 			return nil, goahttp.ErrInvalidResponse("inventory", "removeItem", resp.StatusCode, string(body))
@@ -490,16 +522,20 @@ func DecodeRemoveItemResponse(decoder func(*http.Response) goahttp.Decoder, rest
 // set to call the "inventory" service "remove" endpoint
 func (c *Client) BuildRemoveRequest(ctx context.Context, v interface{}) (*http.Request, error) {
 	var (
-		id string
+		characterID string
+		id          string
 	)
 	{
 		p, ok := v.(*inventory.RemovePayload)
 		if !ok {
 			return nil, goahttp.ErrInvalidType("inventory", "remove", "*inventory.RemovePayload", v)
 		}
+		if p.CharacterID != nil {
+			characterID = *p.CharacterID
+		}
 		id = p.ID
 	}
-	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: RemoveInventoryPath(id)}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: RemoveInventoryPath(characterID, id)}
 	req, err := http.NewRequest("DELETE", u.String(), nil)
 	if err != nil {
 		return nil, goahttp.ErrInvalidURL("inventory", "remove", u.String(), err)
@@ -534,74 +570,6 @@ func DecodeRemoveResponse(decoder func(*http.Response) goahttp.Decoder, restoreB
 		default:
 			body, _ := io.ReadAll(resp.Body)
 			return nil, goahttp.ErrInvalidResponse("inventory", "remove", resp.StatusCode, string(body))
-		}
-	}
-}
-
-// BuildUpdateRequest instantiates a HTTP request object with method and path
-// set to call the "inventory" service "update" endpoint
-func (c *Client) BuildUpdateRequest(ctx context.Context, v interface{}) (*http.Request, error) {
-	var (
-		id string
-	)
-	{
-		p, ok := v.(*inventory.UpdatePayload)
-		if !ok {
-			return nil, goahttp.ErrInvalidType("inventory", "update", "*inventory.UpdatePayload", v)
-		}
-		id = p.ID
-	}
-	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: UpdateInventoryPath(id)}
-	req, err := http.NewRequest("PUT", u.String(), nil)
-	if err != nil {
-		return nil, goahttp.ErrInvalidURL("inventory", "update", u.String(), err)
-	}
-	if ctx != nil {
-		req = req.WithContext(ctx)
-	}
-
-	return req, nil
-}
-
-// EncodeUpdateRequest returns an encoder for requests sent to the inventory
-// update server.
-func EncodeUpdateRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, interface{}) error {
-	return func(req *http.Request, v interface{}) error {
-		p, ok := v.(*inventory.UpdatePayload)
-		if !ok {
-			return goahttp.ErrInvalidType("inventory", "update", "*inventory.UpdatePayload", v)
-		}
-		body := NewUpdateRequestBody(p)
-		if err := encoder(req).Encode(&body); err != nil {
-			return goahttp.ErrEncodingError("inventory", "update", err)
-		}
-		return nil
-	}
-}
-
-// DecodeUpdateResponse returns a decoder for responses returned by the
-// inventory update endpoint. restoreBody controls whether the response body
-// should be restored after having been read.
-func DecodeUpdateResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
-	return func(resp *http.Response) (interface{}, error) {
-		if restoreBody {
-			b, err := io.ReadAll(resp.Body)
-			if err != nil {
-				return nil, err
-			}
-			resp.Body = io.NopCloser(bytes.NewBuffer(b))
-			defer func() {
-				resp.Body = io.NopCloser(bytes.NewBuffer(b))
-			}()
-		} else {
-			defer resp.Body.Close()
-		}
-		switch resp.StatusCode {
-		case http.StatusNoContent:
-			return nil, nil
-		default:
-			body, _ := io.ReadAll(resp.Body)
-			return nil, goahttp.ErrInvalidResponse("inventory", "update", resp.StatusCode, string(body))
 		}
 	}
 }
@@ -648,136 +616,6 @@ func unmarshalStoredItemResponseBodyToInventoryviewsStoredItemView(v *StoredItem
 		Damage:      v.Damage,
 		Healing:     v.Healing,
 		Protection:  v.Protection,
-	}
-
-	return res
-}
-
-// marshalInventoryInventoryToInventoryRequestBody builds a value of type
-// *InventoryRequestBody from a value of type *inventory.Inventory.
-func marshalInventoryInventoryToInventoryRequestBody(v *inventory.Inventory) *InventoryRequestBody {
-	res := &InventoryRequestBody{}
-	if v.Character != nil {
-		res.Character = marshalInventoryStoredCharacterToStoredCharacterRequestBody(v.Character)
-	}
-	if v.Items != nil {
-		res.Items = make([]*StoredItemRequestBody, len(v.Items))
-		for i, val := range v.Items {
-			res.Items[i] = marshalInventoryStoredItemToStoredItemRequestBody(val)
-		}
-	}
-
-	return res
-}
-
-// marshalInventoryStoredCharacterToStoredCharacterRequestBody builds a value
-// of type *StoredCharacterRequestBody from a value of type
-// *inventory.StoredCharacter.
-func marshalInventoryStoredCharacterToStoredCharacterRequestBody(v *inventory.StoredCharacter) *StoredCharacterRequestBody {
-	res := &StoredCharacterRequestBody{
-		ID:          v.ID,
-		Name:        v.Name,
-		Description: v.Description,
-		Health:      v.Health,
-		Experience:  v.Experience,
-	}
-
-	return res
-}
-
-// marshalInventoryStoredItemToStoredItemRequestBody builds a value of type
-// *StoredItemRequestBody from a value of type *inventory.StoredItem.
-func marshalInventoryStoredItemToStoredItemRequestBody(v *inventory.StoredItem) *StoredItemRequestBody {
-	res := &StoredItemRequestBody{
-		ID:          v.ID,
-		Name:        v.Name,
-		Description: v.Description,
-		Damage:      v.Damage,
-		Healing:     v.Healing,
-		Protection:  v.Protection,
-	}
-	{
-		var zero float64
-		if res.Damage == zero {
-			res.Damage = 0
-		}
-	}
-	{
-		var zero float64
-		if res.Healing == zero {
-			res.Healing = 0
-		}
-	}
-	{
-		var zero float64
-		if res.Protection == zero {
-			res.Protection = 0
-		}
-	}
-
-	return res
-}
-
-// marshalInventoryRequestBodyToInventoryInventory builds a value of type
-// *inventory.Inventory from a value of type *InventoryRequestBody.
-func marshalInventoryRequestBodyToInventoryInventory(v *InventoryRequestBody) *inventory.Inventory {
-	res := &inventory.Inventory{}
-	if v.Character != nil {
-		res.Character = marshalStoredCharacterRequestBodyToInventoryStoredCharacter(v.Character)
-	}
-	if v.Items != nil {
-		res.Items = make([]*inventory.StoredItem, len(v.Items))
-		for i, val := range v.Items {
-			res.Items[i] = marshalStoredItemRequestBodyToInventoryStoredItem(val)
-		}
-	}
-
-	return res
-}
-
-// marshalStoredCharacterRequestBodyToInventoryStoredCharacter builds a value
-// of type *inventory.StoredCharacter from a value of type
-// *StoredCharacterRequestBody.
-func marshalStoredCharacterRequestBodyToInventoryStoredCharacter(v *StoredCharacterRequestBody) *inventory.StoredCharacter {
-	res := &inventory.StoredCharacter{
-		ID:          v.ID,
-		Name:        v.Name,
-		Description: v.Description,
-		Health:      v.Health,
-		Experience:  v.Experience,
-	}
-
-	return res
-}
-
-// marshalStoredItemRequestBodyToInventoryStoredItem builds a value of type
-// *inventory.StoredItem from a value of type *StoredItemRequestBody.
-func marshalStoredItemRequestBodyToInventoryStoredItem(v *StoredItemRequestBody) *inventory.StoredItem {
-	res := &inventory.StoredItem{
-		ID:          v.ID,
-		Name:        v.Name,
-		Description: v.Description,
-		Damage:      v.Damage,
-		Healing:     v.Healing,
-		Protection:  v.Protection,
-	}
-	{
-		var zero float64
-		if res.Damage == zero {
-			res.Damage = 0
-		}
-	}
-	{
-		var zero float64
-		if res.Healing == zero {
-			res.Healing = 0
-		}
-	}
-	{
-		var zero float64
-		if res.Protection == zero {
-			res.Protection = 0
-		}
 	}
 
 	return res

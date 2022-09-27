@@ -29,14 +29,6 @@ paths:
                                   health: 12.6
                                   id: 123abc
                                   name: Arc Warden
-                                - experience: 65.21
-                                  health: 12.6
-                                  id: 123abc
-                                  name: Arc Warden
-                                - experience: 65.21
-                                  health: 12.6
-                                  id: 123abc
-                                  name: Arc Warden
         post:
             tags:
                 - character
@@ -61,8 +53,451 @@ paths:
                         application/json:
                             schema:
                                 type: string
-                                example: Aut ut consequuntur.
-                            example: Quas inventore ea similique necessitatibus.
+                                example: Eveniet ex praesentium.
+                            example: Est magni ut officia tempora.
+    /character/{characterId}/inventory:
+        get:
+            tags:
+                - inventory
+            summary: list inventory
+            description: List all items in character inventory
+            operationId: inventory#list
+            parameters:
+                - name: characterId
+                  in: path
+                  description: ID of character to show
+                  required: true
+                  schema:
+                    type: string
+                    description: ID of character to show
+                    example: Expedita dolore eos dolores ut hic animi.
+                  example: Cupiditate exercitationem suscipit voluptatem dolorem numquam eveniet.
+            responses:
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/StoredInventoryResponseTinyCollection'
+                            example:
+                                - characterId: 123abc
+                                  id: 123abc
+                                  items:
+                                    - damage: 37.8267
+                                      healing: 12.6
+                                      id: 123abc
+                                      name: Boots of travel
+                                      protection: 65.21
+                                    - damage: 37.8267
+                                      healing: 12.6
+                                      id: 123abc
+                                      name: Boots of travel
+                                      protection: 65.21
+                                    - damage: 37.8267
+                                      healing: 12.6
+                                      id: 123abc
+                                      name: Boots of travel
+                                      protection: 65.21
+                                    - damage: 37.8267
+                                      healing: 12.6
+                                      id: 123abc
+                                      name: Boots of travel
+                                      protection: 65.21
+                                - characterId: 123abc
+                                  id: 123abc
+                                  items:
+                                    - damage: 37.8267
+                                      healing: 12.6
+                                      id: 123abc
+                                      name: Boots of travel
+                                      protection: 65.21
+                                    - damage: 37.8267
+                                      healing: 12.6
+                                      id: 123abc
+                                      name: Boots of travel
+                                      protection: 65.21
+                                    - damage: 37.8267
+                                      healing: 12.6
+                                      id: 123abc
+                                      name: Boots of travel
+                                      protection: 65.21
+                                    - damage: 37.8267
+                                      healing: 12.6
+                                      id: 123abc
+                                      name: Boots of travel
+                                      protection: 65.21
+                                - characterId: 123abc
+                                  id: 123abc
+                                  items:
+                                    - damage: 37.8267
+                                      healing: 12.6
+                                      id: 123abc
+                                      name: Boots of travel
+                                      protection: 65.21
+                                    - damage: 37.8267
+                                      healing: 12.6
+                                      id: 123abc
+                                      name: Boots of travel
+                                      protection: 65.21
+                                    - damage: 37.8267
+                                      healing: 12.6
+                                      id: 123abc
+                                      name: Boots of travel
+                                      protection: 65.21
+                                    - damage: 37.8267
+                                      healing: 12.6
+                                      id: 123abc
+                                      name: Boots of travel
+                                      protection: 65.21
+                                - characterId: 123abc
+                                  id: 123abc
+                                  items:
+                                    - damage: 37.8267
+                                      healing: 12.6
+                                      id: 123abc
+                                      name: Boots of travel
+                                      protection: 65.21
+                                    - damage: 37.8267
+                                      healing: 12.6
+                                      id: 123abc
+                                      name: Boots of travel
+                                      protection: 65.21
+                                    - damage: 37.8267
+                                      healing: 12.6
+                                      id: 123abc
+                                      name: Boots of travel
+                                      protection: 65.21
+                                    - damage: 37.8267
+                                      healing: 12.6
+                                      id: 123abc
+                                      name: Boots of travel
+                                      protection: 65.21
+        post:
+            tags:
+                - inventory
+            summary: add inventory
+            description: Add new inventory and return its ID.
+            operationId: inventory#add
+            parameters:
+                - name: characterId
+                  in: path
+                  description: ID of character to show
+                  required: true
+                  schema:
+                    type: string
+                    description: ID of character to show
+                    example: Ut veniam dolores.
+                  example: Itaque beatae unde dolor.
+            responses:
+                "201":
+                    description: Created response.
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: Excepturi nostrum.
+                            example: Et ex aperiam dolore omnis.
+    /character/{characterId}/inventory/{id}:
+        delete:
+            tags:
+                - inventory
+            summary: remove inventory
+            description: Remove Inventory
+            operationId: inventory#remove
+            parameters:
+                - name: characterId
+                  in: path
+                  description: ID of character to show
+                  required: true
+                  schema:
+                    type: string
+                    description: ID of character to show
+                    example: Laudantium voluptatem.
+                  example: Nulla dolore maxime.
+                - name: id
+                  in: path
+                  description: ID of inventory to remove
+                  required: true
+                  schema:
+                    type: string
+                    description: ID of inventory to remove
+                    example: Recusandae architecto odio ut.
+                  example: Eveniet illo eum voluptatibus.
+            responses:
+                "204":
+                    description: No Content response.
+        get:
+            tags:
+                - inventory
+            summary: show inventory
+            description: Show inventory by Id
+            operationId: inventory#show
+            parameters:
+                - name: view
+                  in: query
+                  description: View to render
+                  allowEmptyValue: true
+                  schema:
+                    type: string
+                    description: View to render
+                    example: default
+                    enum:
+                        - default
+                        - tiny
+                  example: default
+                - name: characterId
+                  in: path
+                  description: ID of character to show
+                  required: true
+                  schema:
+                    type: string
+                    description: ID of character to show
+                    example: Quaerat ea molestias molestiae.
+                  example: Ipsa nulla iste.
+                - name: id
+                  in: path
+                  description: ID of inventory to show
+                  required: true
+                  schema:
+                    type: string
+                    description: ID of inventory to show
+                    example: Earum quas inventore ea.
+                  example: Necessitatibus eaque.
+            responses:
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                description: 'Response body may alternatively be #/components/schemas/StoredInventoryResponseTiny'
+                                $ref: '#/components/schemas/StoredInventory'
+                            example:
+                                characterId: 123abc
+                                id: 123abc
+                                items:
+                                    - damage: 37.8267
+                                      description: Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.
+                                      healing: 12.6
+                                      id: 123abc
+                                      name: Boots of travel
+                                      protection: 65.21
+                                    - damage: 37.8267
+                                      description: Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.
+                                      healing: 12.6
+                                      id: 123abc
+                                      name: Boots of travel
+                                      protection: 65.21
+                "404":
+                    description: 'not_found: Character not found'
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/NotFound'
+    /character/{characterId}/inventory/{id}/item:
+        get:
+            tags:
+                - inventory
+            summary: showItem inventory
+            description: Show items in an inventory
+            operationId: inventory#showItem
+            parameters:
+                - name: view
+                  in: query
+                  description: View to render
+                  allowEmptyValue: true
+                  schema:
+                    type: string
+                    description: View to render
+                    example: tiny
+                    enum:
+                        - default
+                        - tiny
+                  example: default
+                - name: characterId
+                  in: path
+                  description: ID of character to show
+                  required: true
+                  schema:
+                    type: string
+                    description: ID of character to show
+                    example: Cumque et reprehenderit.
+                  example: Doloremque consequatur.
+                - name: id
+                  in: path
+                  description: ID of inventory to show
+                  required: true
+                  schema:
+                    type: string
+                    description: ID of inventory to show
+                    example: Ullam voluptatibus ipsa est.
+                  example: Doloremque reprehenderit quas.
+            responses:
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/StoredItemResponseTinyCollection'
+                            example:
+                                - damage: 37.8267
+                                  healing: 12.6
+                                  id: 123abc
+                                  name: Boots of travel
+                                  protection: 65.21
+                                - damage: 37.8267
+                                  healing: 12.6
+                                  id: 123abc
+                                  name: Boots of travel
+                                  protection: 65.21
+                "404":
+                    description: 'not_found: Character not found'
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/NotFound'
+    /character/{characterId}/inventory/{id}/item/{itemId}:
+        delete:
+            tags:
+                - inventory
+            summary: removeItem inventory
+            description: Remove an item from inventory
+            operationId: inventory#removeItem
+            parameters:
+                - name: characterId
+                  in: path
+                  description: ID of character to show
+                  required: true
+                  schema:
+                    type: string
+                    description: ID of character to show
+                    example: Nesciunt aliquid libero delectus sint numquam corrupti.
+                  example: Quis velit nesciunt.
+                - name: id
+                  in: path
+                  description: ID of inventory to add
+                  required: true
+                  schema:
+                    type: string
+                    description: ID of inventory to add
+                    example: Vel illo adipisci.
+                  example: Et perspiciatis qui.
+                - name: itemId
+                  in: path
+                  description: ID of item to add
+                  required: true
+                  schema:
+                    type: string
+                    description: ID of item to add
+                    example: Iusto consequatur nulla temporibus id necessitatibus.
+                  example: Illo facere reprehenderit rerum est.
+            responses:
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                description: 'Response body may alternatively be #/components/schemas/StoredInventoryResponseTiny'
+                                $ref: '#/components/schemas/StoredInventory'
+                            example:
+                                characterId: 123abc
+                                id: 123abc
+                                items:
+                                    - damage: 37.8267
+                                      description: Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.
+                                      healing: 12.6
+                                      id: 123abc
+                                      name: Boots of travel
+                                      protection: 65.21
+                                    - damage: 37.8267
+                                      description: Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.
+                                      healing: 12.6
+                                      id: 123abc
+                                      name: Boots of travel
+                                      protection: 65.21
+                                    - damage: 37.8267
+                                      description: Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.
+                                      healing: 12.6
+                                      id: 123abc
+                                      name: Boots of travel
+                                      protection: 65.21
+        post:
+            tags:
+                - inventory
+            summary: addItem inventory
+            description: Add new item to inventory.
+            operationId: inventory#addItem
+            parameters:
+                - name: characterId
+                  in: path
+                  description: ID of character to show
+                  required: true
+                  schema:
+                    type: string
+                    description: ID of character to show
+                    example: Quia explicabo reprehenderit itaque amet quia.
+                  example: Maxime quo.
+                - name: id
+                  in: path
+                  description: ID of inventory to add
+                  required: true
+                  schema:
+                    type: string
+                    description: ID of inventory to add
+                    example: Quos laudantium occaecati consequatur occaecati.
+                  example: Aut odio qui consequatur et autem nobis.
+                - name: itemId
+                  in: path
+                  description: ID of item to add
+                  required: true
+                  schema:
+                    type: string
+                    description: ID of item to add
+                    example: Molestiae asperiores accusantium dolorem.
+                  example: Magnam dolor consequatur eos.
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/AddItemRequestBody'
+                        example:
+                            view: default
+            responses:
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                description: 'Response body may alternatively be #/components/schemas/StoredInventoryResponseTiny'
+                                $ref: '#/components/schemas/StoredInventory'
+                            example:
+                                characterId: 123abc
+                                id: 123abc
+                                items:
+                                    - damage: 37.8267
+                                      description: Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.
+                                      healing: 12.6
+                                      id: 123abc
+                                      name: Boots of travel
+                                      protection: 65.21
+                                    - damage: 37.8267
+                                      description: Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.
+                                      healing: 12.6
+                                      id: 123abc
+                                      name: Boots of travel
+                                      protection: 65.21
+                                    - damage: 37.8267
+                                      description: Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.
+                                      healing: 12.6
+                                      id: 123abc
+                                      name: Boots of travel
+                                      protection: 65.21
+                                    - damage: 37.8267
+                                      description: Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.
+                                      healing: 12.6
+                                      id: 123abc
+                                      name: Boots of travel
+                                      protection: 65.21
     /character/{id}:
         delete:
             tags:
@@ -78,8 +513,8 @@ paths:
                   schema:
                     type: string
                     description: ID of character to remove
-                    example: Debitis est officiis cumque et.
-                  example: Omnis doloremque consequatur.
+                    example: Ab alias voluptatum modi occaecati blanditiis veniam.
+                  example: Nam ex corporis.
             responses:
                 "204":
                     description: No Content response.
@@ -97,11 +532,11 @@ paths:
                   schema:
                     type: string
                     description: View to render
-                    example: tiny
+                    example: default
                     enum:
                         - default
                         - tiny
-                  example: tiny
+                  example: default
                 - name: id
                   in: path
                   description: ID of character to show
@@ -109,8 +544,8 @@ paths:
                   schema:
                     type: string
                     description: ID of character to show
-                    example: Molestiae dolorum.
-                  example: Nulla iste dolor.
+                    example: Adipisci perspiciatis voluptas quaerat.
+                  example: Magni veniam.
             responses:
                 "200":
                     description: OK response.
@@ -145,8 +580,8 @@ paths:
                   schema:
                     type: string
                     description: ID of character to update
-                    example: Ullam voluptatibus ipsa est.
-                  example: Doloremque reprehenderit quas.
+                    example: Quis exercitationem iste.
+                  example: Molestiae delectus molestiae.
             requestBody:
                 required: true
                 content:
@@ -160,402 +595,19 @@ paths:
                                 health: 12.6
                                 name: Arc Warden
             responses:
-                "204":
-                    description: No Content response.
-    /inventory:
-        post:
-            tags:
-                - inventory
-            summary: add inventory
-            description: Add new inventory and return its ID.
-            operationId: inventory#add
-            requestBody:
-                required: true
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/AddRequestBody2'
-                        example:
-                            characterId: Eum est.
-            responses:
-                "201":
-                    description: Created response.
-                    content:
-                        application/json:
-                            schema:
-                                type: string
-                                example: Delectus molestiae ut expedita dolore eos.
-                            example: Qui consequatur et autem nobis minus.
-    /inventory/{id}:
-        delete:
-            tags:
-                - inventory
-            summary: remove inventory
-            description: Remove Inventory
-            operationId: inventory#remove
-            parameters:
-                - name: id
-                  in: path
-                  description: ID of inventory to remove
-                  required: true
-                  schema:
-                    type: string
-                    description: ID of inventory to remove
-                    example: Maxime recusandae architecto odio.
-                  example: Quis eveniet illo eum.
-            responses:
-                "204":
-                    description: No Content response.
-        get:
-            tags:
-                - inventory
-            summary: show inventory
-            description: Show inventory by Id
-            operationId: inventory#show
-            parameters:
-                - name: view
-                  in: query
-                  description: View to render
-                  allowEmptyValue: true
-                  schema:
-                    type: string
-                    description: View to render
-                    example: default
-                    enum:
-                        - default
-                        - tiny
-                  example: default
-                - name: id
-                  in: path
-                  description: ID of inventory to show
-                  required: true
-                  schema:
-                    type: string
-                    description: ID of inventory to show
-                    example: Aperiam dolore omnis.
-                  example: Quia explicabo reprehenderit itaque amet quia.
-            responses:
                 "200":
                     description: OK response.
                     content:
                         application/json:
                             schema:
-                                description: 'Response body may alternatively be #/components/schemas/StoredInventoryResponseTiny'
-                                $ref: '#/components/schemas/StoredInventory'
+                                description: 'Response body may alternatively be #/components/schemas/StoredCharacterResponseTiny'
+                                $ref: '#/components/schemas/StoredCharacter'
                             example:
-                                characterId: Sit omnis enim saepe.
+                                description: A splintered fragment of the same primordial power as the Ancients themselves, Zet endeavors to end the disharmony among the warring factions through whatever means necessary. Solitary foes are thrown into a volatile state of Flux, ripping away their health over time. Distorting space to generate a Protective Field sheltering around allies, evading and attacking with greater efficiency. Zet summons Spark Fragments of its former self that circles in place, and seek out nearby foes. Is there one Arc Warden, or two? Armed with the original's items and abilities, the Self's Tempest Double duplicates each spell and every attack, bringing twice the chaos to any fight.
+                                experience: 65.21
+                                health: 12.6
                                 id: 123abc
-                                items:
-                                    - damage: 37.8267
-                                      description: Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.
-                                      healing: 12.6
-                                      id: 123abc
-                                      name: Boots of travel
-                                      protection: 65.21
-                                    - damage: 37.8267
-                                      description: Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.
-                                      healing: 12.6
-                                      id: 123abc
-                                      name: Boots of travel
-                                      protection: 65.21
-                "404":
-                    description: 'not_found: Character not found'
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/NotFound'
-        put:
-            tags:
-                - inventory
-            summary: update inventory
-            description: ' update '
-            operationId: inventory#update
-            parameters:
-                - name: id
-                  in: path
-                  description: ID of inventory to update
-                  required: true
-                  schema:
-                    type: string
-                    description: ID of inventory to update
-                    example: Non voluptatibus et.
-                  example: Numquam nam expedita maiores.
-            requestBody:
-                required: true
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/UpdateRequestBody2'
-                        example:
-                            inventory:
-                                character:
-                                    description: A splintered fragment of the same primordial power as the Ancients themselves, Zet endeavors to end the disharmony among the warring factions through whatever means necessary. Solitary foes are thrown into a volatile state of Flux, ripping away their health over time. Distorting space to generate a Protective Field sheltering around allies, evading and attacking with greater efficiency. Zet summons Spark Fragments of its former self that circles in place, and seek out nearby foes. Is there one Arc Warden, or two? Armed with the original's items and abilities, the Self's Tempest Double duplicates each spell and every attack, bringing twice the chaos to any fight.
-                                    experience: 65.21
-                                    health: 12.6
-                                    id: 123abc
-                                    name: Arc Warden
-                                items:
-                                    - damage: 37.8267
-                                      description: Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.
-                                      healing: 12.6
-                                      id: 123abc
-                                      name: Boots of travel
-                                      protection: 65.21
-                                    - damage: 37.8267
-                                      description: Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.
-                                      healing: 12.6
-                                      id: 123abc
-                                      name: Boots of travel
-                                      protection: 65.21
-            responses:
-                "204":
-                    description: No Content response.
-    /inventory/{id}/item:
-        get:
-            tags:
-                - inventory
-            summary: showItem inventory
-            description: Show items in an inventory
-            operationId: inventory#showItem
-            parameters:
-                - name: view
-                  in: query
-                  description: View to render
-                  allowEmptyValue: true
-                  schema:
-                    type: string
-                    description: View to render
-                    example: default
-                    enum:
-                        - default
-                        - tiny
-                  example: tiny
-                - name: id
-                  in: path
-                  description: ID of inventory to show
-                  required: true
-                  schema:
-                    type: string
-                    description: ID of inventory to show
-                    example: Ratione quos laudantium occaecati consequatur.
-                  example: Blanditiis aut.
-            responses:
-                "200":
-                    description: OK response.
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/StoredItemResponseTinyCollection'
-                            example:
-                                - damage: 37.8267
-                                  healing: 12.6
-                                  id: 123abc
-                                  name: Boots of travel
-                                  protection: 65.21
-                                - damage: 37.8267
-                                  healing: 12.6
-                                  id: 123abc
-                                  name: Boots of travel
-                                  protection: 65.21
-                                - damage: 37.8267
-                                  healing: 12.6
-                                  id: 123abc
-                                  name: Boots of travel
-                                  protection: 65.21
-                "404":
-                    description: 'not_found: Character not found'
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/NotFound'
-    /inventory/{id}/item/{itemId}:
-        delete:
-            tags:
-                - inventory
-            summary: removeItem inventory
-            description: Remove an item from inventory
-            operationId: inventory#removeItem
-            parameters:
-                - name: id
-                  in: path
-                  description: ID of inventory to add
-                  required: true
-                  schema:
-                    type: string
-                    description: ID of inventory to add
-                    example: Qui sit iusto consequatur nulla.
-                  example: Id necessitatibus tenetur illo facere reprehenderit.
-                - name: itemId
-                  in: path
-                  description: ID of item to add
-                  required: true
-                  schema:
-                    type: string
-                    description: ID of item to add
-                    example: Est dicta laudantium.
-                  example: Exercitationem nulla dolore.
-            responses:
-                "204":
-                    description: No Content response.
-        post:
-            tags:
-                - inventory
-            summary: addItem inventory
-            description: Add new item to inventory.
-            operationId: inventory#addItem
-            parameters:
-                - name: id
-                  in: path
-                  description: ID of inventory to add
-                  required: true
-                  schema:
-                    type: string
-                    description: ID of inventory to add
-                    example: Asperiores accusantium dolorem sint.
-                  example: Dolor consequatur eos quidem.
-                - name: itemId
-                  in: path
-                  description: ID of item to add
-                  required: true
-                  schema:
-                    type: string
-                    description: ID of item to add
-                    example: Aliquid libero delectus sint numquam.
-                  example: Asperiores quis velit nesciunt natus vel.
-            requestBody:
-                required: true
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/AddItemRequestBody'
-                        example:
-                            view: tiny
-            responses:
-                "201":
-                    description: Created response.
-                    content:
-                        application/json:
-                            schema:
-                                type: string
-                                example: Animi eum cupiditate exercitationem suscipit voluptatem dolorem.
-                            example: Adipisci exercitationem et.
-    /inventory/character/{characterId}/:
-        get:
-            tags:
-                - inventory
-            summary: list inventory
-            description: List all items in character inventory
-            operationId: inventory#list
-            parameters:
-                - name: characterId
-                  in: path
-                  description: ID of character to show
-                  required: true
-                  schema:
-                    type: string
-                    description: ID of character to show
-                    example: Ut veniam dolores.
-                  example: Itaque beatae unde dolor.
-            responses:
-                "200":
-                    description: OK response.
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/StoredInventoryResponseTinyCollection'
-                            example:
-                                - characterId: Omnis voluptate aliquid.
-                                  id: 123abc
-                                  items:
-                                    - damage: 37.8267
-                                      healing: 12.6
-                                      id: 123abc
-                                      name: Boots of travel
-                                      protection: 65.21
-                                    - damage: 37.8267
-                                      healing: 12.6
-                                      id: 123abc
-                                      name: Boots of travel
-                                      protection: 65.21
-                                    - damage: 37.8267
-                                      healing: 12.6
-                                      id: 123abc
-                                      name: Boots of travel
-                                      protection: 65.21
-                                    - damage: 37.8267
-                                      healing: 12.6
-                                      id: 123abc
-                                      name: Boots of travel
-                                      protection: 65.21
-                                - characterId: Omnis voluptate aliquid.
-                                  id: 123abc
-                                  items:
-                                    - damage: 37.8267
-                                      healing: 12.6
-                                      id: 123abc
-                                      name: Boots of travel
-                                      protection: 65.21
-                                    - damage: 37.8267
-                                      healing: 12.6
-                                      id: 123abc
-                                      name: Boots of travel
-                                      protection: 65.21
-                                    - damage: 37.8267
-                                      healing: 12.6
-                                      id: 123abc
-                                      name: Boots of travel
-                                      protection: 65.21
-                                    - damage: 37.8267
-                                      healing: 12.6
-                                      id: 123abc
-                                      name: Boots of travel
-                                      protection: 65.21
-                                - characterId: Omnis voluptate aliquid.
-                                  id: 123abc
-                                  items:
-                                    - damage: 37.8267
-                                      healing: 12.6
-                                      id: 123abc
-                                      name: Boots of travel
-                                      protection: 65.21
-                                    - damage: 37.8267
-                                      healing: 12.6
-                                      id: 123abc
-                                      name: Boots of travel
-                                      protection: 65.21
-                                    - damage: 37.8267
-                                      healing: 12.6
-                                      id: 123abc
-                                      name: Boots of travel
-                                      protection: 65.21
-                                    - damage: 37.8267
-                                      healing: 12.6
-                                      id: 123abc
-                                      name: Boots of travel
-                                      protection: 65.21
-                                - characterId: Omnis voluptate aliquid.
-                                  id: 123abc
-                                  items:
-                                    - damage: 37.8267
-                                      healing: 12.6
-                                      id: 123abc
-                                      name: Boots of travel
-                                      protection: 65.21
-                                    - damage: 37.8267
-                                      healing: 12.6
-                                      id: 123abc
-                                      name: Boots of travel
-                                      protection: 65.21
-                                    - damage: 37.8267
-                                      healing: 12.6
-                                      id: 123abc
-                                      name: Boots of travel
-                                      protection: 65.21
-                                    - damage: 37.8267
-                                      healing: 12.6
-                                      id: 123abc
-                                      name: Boots of travel
-                                      protection: 65.21
+                                name: Arc Warden
     /item:
         get:
             tags:
@@ -581,11 +633,6 @@ paths:
                                   id: 123abc
                                   name: Boots of travel
                                   protection: 65.21
-                                - damage: 37.8267
-                                  healing: 12.6
-                                  id: 123abc
-                                  name: Boots of travel
-                                  protection: 65.21
         post:
             tags:
                 - item
@@ -597,7 +644,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/AddRequestBody3'
+                            $ref: '#/components/schemas/AddRequestBody2'
                         example:
                             damage: 37.8267
                             description: Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.
@@ -611,8 +658,8 @@ paths:
                         application/json:
                             schema:
                                 type: string
-                                example: Dolor sed.
-                            example: Doloribus fugiat quo sit sunt sint.
+                                example: Sunt repudiandae quasi quod et at minus.
+                            example: Rerum vel quisquam voluptate laudantium necessitatibus mollitia.
     /item/{id}:
         delete:
             tags:
@@ -628,8 +675,8 @@ paths:
                   schema:
                     type: string
                     description: ID of item to remove
-                    example: Est dolore quam sequi nihil delectus.
-                  example: Repellendus animi recusandae sint rerum.
+                    example: Veniam id consequatur doloribus fugiat.
+                  example: Sit sunt sint.
             responses:
                 "204":
                     description: No Content response.
@@ -647,7 +694,7 @@ paths:
                   schema:
                     type: string
                     description: View to render
-                    example: tiny
+                    example: default
                     enum:
                         - default
                         - tiny
@@ -659,8 +706,8 @@ paths:
                   schema:
                     type: string
                     description: ID of item to show
-                    example: Accusantium aut illum animi rerum vel.
-                  example: Voluptate laudantium necessitatibus mollitia sit veniam id.
+                    example: Tempore numquam nam expedita maiores.
+                  example: Aspernatur facilis accusantium aut illum.
             responses:
                 "200":
                     description: OK response.
@@ -696,8 +743,8 @@ paths:
                   schema:
                     type: string
                     description: ID of item to update
-                    example: Excepturi in minus provident quis reiciendis nobis.
-                  example: Qui recusandae dolor dolor.
+                    example: Est dolore quam sequi nihil delectus.
+                  example: Repellendus animi recusandae sint rerum.
             requestBody:
                 required: true
                 content:
@@ -711,8 +758,20 @@ paths:
                                 health: 12.6
                                 name: Arc Warden
             responses:
-                "204":
-                    description: No Content response.
+                "200":
+                    description: OK response.
+                    content:
+                        application/json:
+                            schema:
+                                description: 'Response body may alternatively be #/components/schemas/StoredItemResponseTiny'
+                                $ref: '#/components/schemas/JSON'
+                            example:
+                                damage: 37.8267
+                                description: Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.
+                                healing: 12.6
+                                id: 123abc
+                                name: Boots of travel
+                                protection: 65.21
     /swagger/swagger.json:
         get:
             tags:
@@ -770,17 +829,6 @@ components:
         AddRequestBody2:
             type: object
             properties:
-                characterId:
-                    type: string
-                    description: ID of character to show
-                    example: Modi occaecati blanditiis veniam ex nam.
-            example:
-                characterId: Corporis ipsa quis exercitationem iste harum.
-            required:
-                - characterId
-        AddRequestBody3:
-            type: object
-            properties:
                 damage:
                     type: number
                     description: Damage
@@ -815,77 +863,6 @@ components:
                 protection: 65.21
             required:
                 - name
-        Inventory:
-            type: object
-            properties:
-                character:
-                    $ref: '#/components/schemas/StoredCharacter'
-                items:
-                    type: array
-                    items:
-                        $ref: '#/components/schemas/JSON'
-                    description: Character items
-                    example:
-                        - damage: 37.8267
-                          description: Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.
-                          healing: 12.6
-                          id: 123abc
-                          name: Boots of travel
-                          protection: 65.21
-                        - damage: 37.8267
-                          description: Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.
-                          healing: 12.6
-                          id: 123abc
-                          name: Boots of travel
-                          protection: 65.21
-                        - damage: 37.8267
-                          description: Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.
-                          healing: 12.6
-                          id: 123abc
-                          name: Boots of travel
-                          protection: 65.21
-                        - damage: 37.8267
-                          description: Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.
-                          healing: 12.6
-                          id: 123abc
-                          name: Boots of travel
-                          protection: 65.21
-            description: inventory
-            example:
-                character:
-                    description: A splintered fragment of the same primordial power as the Ancients themselves, Zet endeavors to end the disharmony among the warring factions through whatever means necessary. Solitary foes are thrown into a volatile state of Flux, ripping away their health over time. Distorting space to generate a Protective Field sheltering around allies, evading and attacking with greater efficiency. Zet summons Spark Fragments of its former self that circles in place, and seek out nearby foes. Is there one Arc Warden, or two? Armed with the original's items and abilities, the Self's Tempest Double duplicates each spell and every attack, bringing twice the chaos to any fight.
-                    experience: 65.21
-                    health: 12.6
-                    id: 123abc
-                    name: Arc Warden
-                items:
-                    - damage: 37.8267
-                      description: Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.
-                      healing: 12.6
-                      id: 123abc
-                      name: Boots of travel
-                      protection: 65.21
-                    - damage: 37.8267
-                      description: Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.
-                      healing: 12.6
-                      id: 123abc
-                      name: Boots of travel
-                      protection: 65.21
-                    - damage: 37.8267
-                      description: Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.
-                      healing: 12.6
-                      id: 123abc
-                      name: Boots of travel
-                      protection: 65.21
-                    - damage: 37.8267
-                      description: Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.
-                      healing: 12.6
-                      id: 123abc
-                      name: Boots of travel
-                      protection: 65.21
-            required:
-                - character
-                - items
         JSON:
             type: object
             properties:
@@ -936,14 +913,14 @@ components:
                 id:
                     type: string
                     description: ID of missing resource
-                    example: Labore officia.
+                    example: A in perferendis incidunt.
                 message:
                     type: string
                     description: Message of error
                     example: resource 1 not found
             description: Character not found
             example:
-                id: Eveniet ex praesentium.
+                id: Quibusdam labore officia.
                 message: resource 1 not found
             required:
                 - message
@@ -1030,15 +1007,24 @@ components:
                   health: 12.6
                   id: 123abc
                   name: Arc Warden
+                - experience: 65.21
+                  health: 12.6
+                  id: 123abc
+                  name: Arc Warden
+                - experience: 65.21
+                  health: 12.6
+                  id: 123abc
+                  name: Arc Warden
         StoredInventory:
             type: object
             properties:
                 characterId:
                     type: string
-                    example: Voluptas quaerat rem magni veniam.
+                    description: CharacterId
+                    example: 123abc
                 id:
                     type: string
-                    description: ID is the unique id of the character.
+                    description: ID is the unique id of the inventory.
                     example: 123abc
                 items:
                     type: array
@@ -1059,7 +1045,7 @@ components:
                           name: Boots of travel
                           protection: 65.21
             example:
-                characterId: Magni ut officia tempora hic.
+                characterId: 123abc
                 id: 123abc
                 items:
                     - damage: 37.8267
@@ -1084,16 +1070,16 @@ components:
                 - id
                 - characterId
                 - items
-                - character
         StoredInventoryResponseTiny:
             type: object
             properties:
                 characterId:
                     type: string
-                    example: Rerum dicta excepturi nostrum incidunt vitae itaque.
+                    description: CharacterId
+                    example: 123abc
                 id:
                     type: string
-                    description: ID is the unique id of the character.
+                    description: ID is the unique id of the inventory.
                     example: 123abc
                 items:
                     type: array
@@ -1123,9 +1109,19 @@ components:
                           protection: 65.21
             description: A StoredInventory describes a StoredInventory retrieved by the db. (tiny view)
             example:
-                characterId: Quasi quod et at minus non nostrum.
+                characterId: 123abc
                 id: 123abc
                 items:
+                    - damage: 37.8267
+                      healing: 12.6
+                      id: 123abc
+                      name: Boots of travel
+                      protection: 65.21
+                    - damage: 37.8267
+                      healing: 12.6
+                      id: 123abc
+                      name: Boots of travel
+                      protection: 65.21
                     - damage: 37.8267
                       healing: 12.6
                       id: 123abc
@@ -1146,7 +1142,7 @@ components:
                 $ref: '#/components/schemas/StoredInventoryResponseTiny'
             description: ListResponseBody is the result type for an array of StoredInventoryResponse (tiny view)
             example:
-                - characterId: Omnis voluptate aliquid.
+                - characterId: 123abc
                   id: 123abc
                   items:
                     - damage: 37.8267
@@ -1169,7 +1165,7 @@ components:
                       id: 123abc
                       name: Boots of travel
                       protection: 65.21
-                - characterId: Omnis voluptate aliquid.
+                - characterId: 123abc
                   id: 123abc
                   items:
                     - damage: 37.8267
@@ -1192,7 +1188,7 @@ components:
                       id: 123abc
                       name: Boots of travel
                       protection: 65.21
-                - characterId: Omnis voluptate aliquid.
+                - characterId: 123abc
                   id: 123abc
                   items:
                     - damage: 37.8267
@@ -1215,7 +1211,7 @@ components:
                       id: 123abc
                       name: Boots of travel
                       protection: 65.21
-                - characterId: Omnis voluptate aliquid.
+                - characterId: 123abc
                   id: 123abc
                   items:
                     - damage: 37.8267
@@ -1293,11 +1289,6 @@ components:
                   id: 123abc
                   name: Boots of travel
                   protection: 65.21
-                - damage: 37.8267
-                  healing: 12.6
-                  id: 123abc
-                  name: Boots of travel
-                  protection: 65.21
         UpdateRequestBody:
             type: object
             properties:
@@ -1311,34 +1302,6 @@ components:
                     name: Arc Warden
             required:
                 - character
-        UpdateRequestBody2:
-            type: object
-            properties:
-                inventory:
-                    $ref: '#/components/schemas/Inventory'
-            example:
-                inventory:
-                    character:
-                        description: A splintered fragment of the same primordial power as the Ancients themselves, Zet endeavors to end the disharmony among the warring factions through whatever means necessary. Solitary foes are thrown into a volatile state of Flux, ripping away their health over time. Distorting space to generate a Protective Field sheltering around allies, evading and attacking with greater efficiency. Zet summons Spark Fragments of its former self that circles in place, and seek out nearby foes. Is there one Arc Warden, or two? Armed with the original's items and abilities, the Self's Tempest Double duplicates each spell and every attack, bringing twice the chaos to any fight.
-                        experience: 65.21
-                        health: 12.6
-                        id: 123abc
-                        name: Arc Warden
-                    items:
-                        - damage: 37.8267
-                          description: Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.
-                          healing: 12.6
-                          id: 123abc
-                          name: Boots of travel
-                          protection: 65.21
-                        - damage: 37.8267
-                          description: Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.
-                          healing: 12.6
-                          id: 123abc
-                          name: Boots of travel
-                          protection: 65.21
-            required:
-                - inventory
 tags:
     - name: character
       description: Public HTTP frontend

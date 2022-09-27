@@ -27,8 +27,6 @@ service Inventory {
 	rpc RemoveItem (RemoveItemRequest) returns (RemoveItemResponse);
 	// Remove Inventory
 	rpc Remove (RemoveRequest) returns (RemoveResponse);
-	// update
-	rpc Update (UpdateRequest) returns (UpdateResponse);
 }
 
 message ListRequest {
@@ -41,8 +39,9 @@ message StoredInventoryCollection {
 }
 // A StoredInventory describes a StoredInventory retrieved by the db.
 message StoredInventory {
-	// ID is the unique id of the character.
+	// ID is the unique id of the inventory.
 	string id = 6;
+	// CharacterId
 	string character_id = 2;
 	// Character items
 	repeated StoredItem items = 3;
@@ -71,13 +70,16 @@ message ShowNotFoundError {
 }
 
 message ShowRequest {
+	// ID of character to show
+	string character_id = 1;
 	// ID of inventory to show
 	string id = 2;
 }
 
 message ShowResponse {
-	// ID is the unique id of the character.
+	// ID is the unique id of the inventory.
 	string id = 6;
+	// CharacterId
 	string character_id = 2;
 	// Character items
 	repeated StoredItem items = 3;
@@ -91,8 +93,10 @@ message ShowItemNotFoundError {
 }
 
 message ShowItemRequest {
+	// ID of character to show
+	string character_id = 1;
 	// ID of inventory to show
-	string id = 1;
+	string id = 2;
 }
 
 message StoredItemCollection {
@@ -109,6 +113,8 @@ message AddResponse {
 }
 
 message AddItemRequest {
+	// ID of character to show
+	string character_id = 1;
 	// ID of inventory to add
 	string id = 2;
 	// ID of item to add
@@ -118,10 +124,17 @@ message AddItemRequest {
 }
 
 message AddItemResponse {
-	string field = 1;
+	// ID is the unique id of the inventory.
+	string id = 6;
+	// CharacterId
+	string character_id = 2;
+	// Character items
+	repeated StoredItem items = 3;
 }
 
 message RemoveItemRequest {
+	// ID of character to show
+	string character_id = 1;
 	// ID of inventory to add
 	string id = 2;
 	// ID of item to add
@@ -129,42 +142,20 @@ message RemoveItemRequest {
 }
 
 message RemoveItemResponse {
+	// ID is the unique id of the inventory.
+	string id = 6;
+	// CharacterId
+	string character_id = 2;
+	// Character items
+	repeated StoredItem items = 3;
 }
 
 message RemoveRequest {
+	// ID of character to show
+	string character_id = 1;
 	// ID of inventory to remove
-	string id = 1;
+	string id = 2;
 }
 
 message RemoveResponse {
-}
-
-message UpdateRequest {
-	// ID of inventory to update
-	string id = 1;
-	// inventory to update
-	Inventory2 inventory = 2;
-}
-// inventory
-message Inventory2 {
-	// Character
-	StoredCharacter character = 1;
-	// Character items
-	repeated StoredItem items = 2;
-}
-// A StoredCharacter describes a character retrieved by the db.
-message StoredCharacter {
-	// ID is the unique id of the character.
-	string id = 8;
-	// Name
-	string name = 2;
-	// Description
-	string description = 3;
-	// Health
-	double health = 4;
-	// Experience
-	double experience = 5;
-}
-
-message UpdateResponse {
 }

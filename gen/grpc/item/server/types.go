@@ -142,8 +142,26 @@ func NewUpdatePayload(message *itempb.UpdateRequest) *item.UpdatePayload {
 
 // NewProtoUpdateResponse builds the gRPC response type from the result of the
 // "update" endpoint of the "item" service.
-func NewProtoUpdateResponse() *itempb.UpdateResponse {
+func NewProtoUpdateResponse(result *itemviews.StoredItemView) *itempb.UpdateResponse {
 	message := &itempb.UpdateResponse{}
+	if result.ID != nil {
+		message.Id = *result.ID
+	}
+	if result.Name != nil {
+		message.Name = *result.Name
+	}
+	if result.Description != nil {
+		message.Description = *result.Description
+	}
+	if result.Damage != nil {
+		message.Damage = *result.Damage
+	}
+	if result.Healing != nil {
+		message.Healing = *result.Healing
+	}
+	if result.Protection != nil {
+		message.Protection = *result.Protection
+	}
 	return message
 }
 

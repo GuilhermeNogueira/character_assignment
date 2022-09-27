@@ -118,4 +118,16 @@ message Character {
 }
 
 message UpdateResponse {
+	// ID is the unique id of the Item.
+	string id = 1;
+	// Name
+	string name = 2;
+	// Description
+	string description = 3;
+	// Damage
+	double damage = 4;
+	// Healing
+	double healing = 5;
+	// Protection
+	double protection = 6;
 }

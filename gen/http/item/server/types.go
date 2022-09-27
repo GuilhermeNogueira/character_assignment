@@ -72,6 +72,38 @@ type ShowResponseBodyTiny struct {
 	Protection float64 `form:"protection" json:"protection" xml:"protection"`
 }
 
+// UpdateResponseBody is the type of the "item" service "update" endpoint HTTP
+// response body.
+type UpdateResponseBody struct {
+	// ID is the unique id of the Item.
+	ID string `form:"id" json:"id" xml:"id"`
+	// Name
+	Name string `form:"name" json:"name" xml:"name"`
+	// Description
+	Description *string `form:"description,omitempty" json:"description,omitempty" xml:"description,omitempty"`
+	// Damage
+	Damage float64 `form:"damage" json:"damage" xml:"damage"`
+	// Healing
+	Healing float64 `form:"healing" json:"healing" xml:"healing"`
+	// Protection
+	Protection float64 `form:"protection" json:"protection" xml:"protection"`
+}
+
+// UpdateResponseBodyTiny is the type of the "item" service "update" endpoint
+// HTTP response body.
+type UpdateResponseBodyTiny struct {
+	// ID is the unique id of the Item.
+	ID string `form:"id" json:"id" xml:"id"`
+	// Name
+	Name string `form:"name" json:"name" xml:"name"`
+	// Damage
+	Damage float64 `form:"damage" json:"damage" xml:"damage"`
+	// Healing
+	Healing float64 `form:"healing" json:"healing" xml:"healing"`
+	// Protection
+	Protection float64 `form:"protection" json:"protection" xml:"protection"`
+}
+
 // ShowNotFoundResponseBody is the type of the "item" service "show" endpoint
 // HTTP response body for the "not_found" error.
 type ShowNotFoundResponseBody struct {
@@ -150,6 +182,63 @@ func NewShowResponseBody(res *itemviews.StoredItemView) *ShowResponseBody {
 // "show" endpoint of the "item" service.
 func NewShowResponseBodyTiny(res *itemviews.StoredItemView) *ShowResponseBodyTiny {
 	body := &ShowResponseBodyTiny{
+		ID:   *res.ID,
+		Name: *res.Name,
+	}
+	if res.Damage != nil {
+		body.Damage = *res.Damage
+	}
+	if res.Healing != nil {
+		body.Healing = *res.Healing
+	}
+	if res.Protection != nil {
+		body.Protection = *res.Protection
+	}
+	if res.Damage == nil {
+		body.Damage = 0
+	}
+	if res.Healing == nil {
+		body.Healing = 0
+	}
+	if res.Protection == nil {
+		body.Protection = 0
+	}
+	return body
+}
+
+// NewUpdateResponseBody builds the HTTP response body from the result of the
+// "update" endpoint of the "item" service.
+func NewUpdateResponseBody(res *itemviews.StoredItemView) *UpdateResponseBody {
+	body := &UpdateResponseBody{
+		ID:          *res.ID,
+		Name:        *res.Name,
+		Description: res.Description,
+	}
+	if res.Damage != nil {
+		body.Damage = *res.Damage
+	}
+	if res.Healing != nil {
+		body.Healing = *res.Healing
+	}
+	if res.Protection != nil {
+		body.Protection = *res.Protection
+	}
+	if res.Damage == nil {
+		body.Damage = 0
+	}
+	if res.Healing == nil {
+		body.Healing = 0
+	}
+	if res.Protection == nil {
+		body.Protection = 0
+	}
+	return body
+}
+
+// NewUpdateResponseBodyTiny builds the HTTP response body from the result of
+// the "update" endpoint of the "item" service.
+func NewUpdateResponseBodyTiny(res *itemviews.StoredItemView) *UpdateResponseBodyTiny {
+	body := &UpdateResponseBodyTiny{
 		ID:   *res.ID,
 		Name: *res.Name,
 	}

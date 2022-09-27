@@ -71,12 +71,14 @@ func EncodeShowResponse(encoder func(context.Context, http.ResponseWriter) goaht
 func DecodeShowRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
 	return func(r *http.Request) (interface{}, error) {
 		var (
-			id   string
-			view *string
-			err  error
+			characterID string
+			id          string
+			view        *string
+			err         error
 
 			params = mux.Vars(r)
 		)
+		characterID = params["characterId"]
 		id = params["id"]
 		viewRaw := r.URL.Query().Get("view")
 		if viewRaw != "" {
@@ -90,7 +92,7 @@ func DecodeShowRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.De
 		if err != nil {
 			return nil, err
 		}
-		payload := NewShowPayload(id, view)
+		payload := NewShowPayload(characterID, id, view)
 
 		return payload, nil
 	}
@@ -142,12 +144,14 @@ func EncodeShowItemResponse(encoder func(context.Context, http.ResponseWriter) g
 func DecodeShowItemRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
 	return func(r *http.Request) (interface{}, error) {
 		var (
-			id   string
-			view *string
-			err  error
+			characterID string
+			id          string
+			view        *string
+			err         error
 
 			params = mux.Vars(r)
 		)
+		characterID = params["characterId"]
 		id = params["id"]
 		viewRaw := r.URL.Query().Get("view")
 		if viewRaw != "" {
@@ -161,7 +165,7 @@ func DecodeShowItemRequest(mux goahttp.Muxer, decoder func(*http.Request) goahtt
 		if err != nil {
 			return nil, err
 		}
-		payload := NewShowItemPayload(id, view)
+		payload := NewShowItemPayload(characterID, id, view)
 
 		return payload, nil
 	}
@@ -213,21 +217,12 @@ func EncodeAddResponse(encoder func(context.Context, http.ResponseWriter) goahtt
 func DecodeAddRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
 	return func(r *http.Request) (interface{}, error) {
 		var (
-			body AddRequestBody
-			err  error
+			characterID string
+
+			params = mux.Vars(r)
 		)
-		err = decoder(r).Decode(&body)
-		if err != nil {
-			if err == io.EOF {
-				return nil, goa.MissingPayloadError()
-			}
-			return nil, goa.DecodePayloadError(err.Error())
-		}
-		err = ValidateAddRequestBody(&body)
-		if err != nil {
-			return nil, err
-		}
-		payload := NewAddPayload(&body)
+		characterID = params["characterId"]
+		payload := NewAddPayload(characterID)
 
 		return payload, nil
 	}
@@ -237,10 +232,17 @@ func DecodeAddRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Dec
 // inventory addItem endpoint.
 func EncodeAddItemResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
 	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
-		res, _ := v.(string)
+		res := v.(*inventoryviews.StoredInventory)
+		w.Header().Set("goa-view", res.View)
 		enc := encoder(ctx, w)
-		body := res
-		w.WriteHeader(http.StatusCreated)
+		var body interface{}
+		switch res.View {
+		case "default", "":
+			body = NewAddItemResponseBody(res.Projected)
+		case "tiny":
+			body = NewAddItemResponseBodyTiny(res.Projected)
+		}
+		w.WriteHeader(http.StatusOK)
 		return enc.Encode(body)
 	}
 }
@@ -266,14 +268,16 @@ func DecodeAddItemRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp
 		}
 
 		var (
-			id     string
-			itemID string
+			characterID string
+			id          string
+			itemID      string
 
 			params = mux.Vars(r)
 		)
+		characterID = params["characterId"]
 		id = params["id"]
 		itemID = params["itemId"]
-		payload := NewAddItemPayload(&body, id, itemID)
+		payload := NewAddItemPayload(&body, characterID, id, itemID)
 
 		return payload, nil
 	}
@@ -283,8 +287,18 @@ func DecodeAddItemRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp
 // inventory removeItem endpoint.
 func EncodeRemoveItemResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
 	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
-		w.WriteHeader(http.StatusNoContent)
-		return nil
+		res := v.(*inventoryviews.StoredInventory)
+		w.Header().Set("goa-view", res.View)
+		enc := encoder(ctx, w)
+		var body interface{}
+		switch res.View {
+		case "default", "":
+			body = NewRemoveItemResponseBody(res.Projected)
+		case "tiny":
+			body = NewRemoveItemResponseBodyTiny(res.Projected)
+		}
+		w.WriteHeader(http.StatusOK)
+		return enc.Encode(body)
 	}
 }
 
@@ -293,14 +307,16 @@ func EncodeRemoveItemResponse(encoder func(context.Context, http.ResponseWriter)
 func DecodeRemoveItemRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
 	return func(r *http.Request) (interface{}, error) {
 		var (
-			id     string
-			itemID string
+			characterID string
+			id          string
+			itemID      string
 
 			params = mux.Vars(r)
 		)
+		characterID = params["characterId"]
 		id = params["id"]
 		itemID = params["itemId"]
-		payload := NewRemoveItemPayload(id, itemID)
+		payload := NewRemoveItemPayload(characterID, id, itemID)
 
 		return payload, nil
 	}
@@ -320,53 +336,14 @@ func EncodeRemoveResponse(encoder func(context.Context, http.ResponseWriter) goa
 func DecodeRemoveRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
 	return func(r *http.Request) (interface{}, error) {
 		var (
-			id string
+			characterID string
+			id          string
 
 			params = mux.Vars(r)
 		)
+		characterID = params["characterId"]
 		id = params["id"]
-		payload := NewRemovePayload(id)
-
-		return payload, nil
-	}
-}
-
-// EncodeUpdateResponse returns an encoder for responses returned by the
-// inventory update endpoint.
-func EncodeUpdateResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
-	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
-		w.WriteHeader(http.StatusNoContent)
-		return nil
-	}
-}
-
-// DecodeUpdateRequest returns a decoder for requests sent to the inventory
-// update endpoint.
-func DecodeUpdateRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
-	return func(r *http.Request) (interface{}, error) {
-		var (
-			body UpdateRequestBody
-			err  error
-		)
-		err = decoder(r).Decode(&body)
-		if err != nil {
-			if err == io.EOF {
-				return nil, goa.MissingPayloadError()
-			}
-			return nil, goa.DecodePayloadError(err.Error())
-		}
-		err = ValidateUpdateRequestBody(&body)
-		if err != nil {
-			return nil, err
-		}
-
-		var (
-			id string
-
-			params = mux.Vars(r)
-		)
-		id = params["id"]
-		payload := NewUpdatePayload(&body, id)
+		payload := NewRemovePayload(characterID, id)
 
 		return payload, nil
 	}
@@ -427,64 +404,6 @@ func marshalInventoryviewsStoredItemViewToStoredItemResponseBodyTiny(v *inventor
 	res := &StoredItemResponseBodyTiny{
 		ID:   *v.ID,
 		Name: *v.Name,
-	}
-	if v.Damage != nil {
-		res.Damage = *v.Damage
-	}
-	if v.Healing != nil {
-		res.Healing = *v.Healing
-	}
-	if v.Protection != nil {
-		res.Protection = *v.Protection
-	}
-	if v.Damage == nil {
-		res.Damage = 0
-	}
-	if v.Healing == nil {
-		res.Healing = 0
-	}
-	if v.Protection == nil {
-		res.Protection = 0
-	}
-
-	return res
-}
-
-// unmarshalInventoryRequestBodyToInventoryInventory builds a value of type
-// *inventory.Inventory from a value of type *InventoryRequestBody.
-func unmarshalInventoryRequestBodyToInventoryInventory(v *InventoryRequestBody) *inventory.Inventory {
-	res := &inventory.Inventory{}
-	res.Character = unmarshalStoredCharacterRequestBodyToInventoryStoredCharacter(v.Character)
-	res.Items = make([]*inventory.StoredItem, len(v.Items))
-	for i, val := range v.Items {
-		res.Items[i] = unmarshalStoredItemRequestBodyToInventoryStoredItem(val)
-	}
-
-	return res
-}
-
-// unmarshalStoredCharacterRequestBodyToInventoryStoredCharacter builds a value
-// of type *inventory.StoredCharacter from a value of type
-// *StoredCharacterRequestBody.
-func unmarshalStoredCharacterRequestBodyToInventoryStoredCharacter(v *StoredCharacterRequestBody) *inventory.StoredCharacter {
-	res := &inventory.StoredCharacter{
-		ID:          *v.ID,
-		Name:        *v.Name,
-		Description: v.Description,
-		Health:      *v.Health,
-		Experience:  *v.Experience,
-	}
-
-	return res
-}
-
-// unmarshalStoredItemRequestBodyToInventoryStoredItem builds a value of type
-// *inventory.StoredItem from a value of type *StoredItemRequestBody.
-func unmarshalStoredItemRequestBodyToInventoryStoredItem(v *StoredItemRequestBody) *inventory.StoredItem {
-	res := &inventory.StoredItem{
-		ID:          *v.ID,
-		Name:        *v.Name,
-		Description: v.Description,
 	}
 	if v.Damage != nil {
 		res.Damage = *v.Damage

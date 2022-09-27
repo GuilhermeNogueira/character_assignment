@@ -92,6 +92,11 @@ func NewRemoveEndpoint(s Service) goa.Endpoint {
 func NewUpdateEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
 		p := req.(*UpdatePayload)
-		return nil, s.Update(ctx, p)
+		res, view, err := s.Update(ctx, p)
+		if err != nil {
+			return nil, err
+		}
+		vres := NewViewedStoredCharacter(res, view)
+		return vres, nil
 	}
 }

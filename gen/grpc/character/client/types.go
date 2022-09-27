@@ -114,6 +114,21 @@ func NewProtoUpdateRequest(payload *character.UpdatePayload) *characterpb.Update
 	return message
 }
 
+// NewUpdateResult builds the result type of the "update" endpoint of the
+// "character" service from the gRPC response type.
+func NewUpdateResult(message *characterpb.UpdateResponse) *characterviews.StoredCharacterView {
+	result := &characterviews.StoredCharacterView{
+		ID:         &message.Id,
+		Name:       &message.Name,
+		Health:     &message.Health,
+		Experience: &message.Experience,
+	}
+	if message.Description != "" {
+		result.Description = &message.Description
+	}
+	return result
+}
+
 // protobufCharacterpbCharacter2ToCharacterCharacter builds a value of type
 // *character.Character from a value of type *characterpb.Character2.
 func protobufCharacterpbCharacter2ToCharacterCharacter(v *characterpb.Character2) *character.Character {

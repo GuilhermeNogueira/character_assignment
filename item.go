@@ -44,7 +44,9 @@ func (s *itemsrvc) Remove(ctx context.Context, p *item.RemovePayload) (err error
 }
 
 // update
-func (s *itemsrvc) Update(ctx context.Context, p *item.UpdatePayload) (err error) {
+func (s *itemsrvc) Update(ctx context.Context, p *item.UpdatePayload) (res *item.StoredItem, view string, err error) {
+	res = &item.StoredItem{}
+	view = "default"
 	s.logger.Print("item.update")
 	return
 }
