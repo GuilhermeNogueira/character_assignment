@@ -13,35 +13,35 @@ import (
 
 // ListInventoryPath returns the URL path to the inventory service list HTTP endpoint.
 func ListInventoryPath(characterID string) string {
-	return fmt.Sprintf("/character/%v/inventory", characterID)
+	return fmt.Sprintf("/inventory/character/%v", characterID)
 }
 
 // ShowInventoryPath returns the URL path to the inventory service show HTTP endpoint.
-func ShowInventoryPath(characterID string, id string) string {
-	return fmt.Sprintf("/character/%v/inventory/%v", characterID, id)
+func ShowInventoryPath(id string) string {
+	return fmt.Sprintf("/inventory/%v", id)
 }
 
 // ShowItemInventoryPath returns the URL path to the inventory service showItem HTTP endpoint.
-func ShowItemInventoryPath(characterID string, id string) string {
-	return fmt.Sprintf("/character/%v/inventory/%v/item", characterID, id)
+func ShowItemInventoryPath(id string) string {
+	return fmt.Sprintf("/inventory/%v/item", id)
 }
 
 // AddInventoryPath returns the URL path to the inventory service add HTTP endpoint.
 func AddInventoryPath(characterID string) string {
-	return fmt.Sprintf("/character/%v/inventory", characterID)
+	return fmt.Sprintf("/inventory/character/%v", characterID)
 }
 
 // AddItemInventoryPath returns the URL path to the inventory service addItem HTTP endpoint.
-func AddItemInventoryPath(characterID string, id string, itemID string) string {
-	return fmt.Sprintf("/character/%v/inventory/%v/item/%v", characterID, id, itemID)
+func AddItemInventoryPath(id string, itemID string) string {
+	return fmt.Sprintf("/inventory/%v/item/%v", id, itemID)
 }
 
 // RemoveItemInventoryPath returns the URL path to the inventory service removeItem HTTP endpoint.
-func RemoveItemInventoryPath(characterID string, id string, itemID string) string {
-	return fmt.Sprintf("/character/%v/inventory/%v/item/%v", characterID, id, itemID)
+func RemoveItemInventoryPath(id string, itemID string) string {
+	return fmt.Sprintf("/inventory/%v/item/%v", id, itemID)
 }
 
 // RemoveInventoryPath returns the URL path to the inventory service remove HTTP endpoint.
-func RemoveInventoryPath(characterID string, id string) string {
-	return fmt.Sprintf("/character/%v/inventory/%v", characterID, id)
+func RemoveInventoryPath(id string) string {
+	return fmt.Sprintf("/inventory/%v", id)
 }

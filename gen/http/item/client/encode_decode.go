@@ -392,27 +392,29 @@ func unmarshalStoredItemResponseToItemviewsStoredItemView(v *StoredItemResponse)
 	return res
 }
 
-// marshalItemCharacterToCharacterRequestBody builds a value of type
-// *CharacterRequestBody from a value of type *item.Character.
-func marshalItemCharacterToCharacterRequestBody(v *item.Character) *CharacterRequestBody {
-	res := &CharacterRequestBody{
+// marshalItemItemToItemRequestBody builds a value of type *ItemRequestBody
+// from a value of type *item.Item.
+func marshalItemItemToItemRequestBody(v *item.Item) *ItemRequestBody {
+	res := &ItemRequestBody{
 		Name:        v.Name,
 		Description: v.Description,
-		Health:      v.Health,
-		Experience:  v.Experience,
+		Damage:      v.Damage,
+		Healing:     v.Healing,
+		Protection:  v.Protection,
 	}
 
 	return res
 }
 
-// marshalCharacterRequestBodyToItemCharacter builds a value of type
-// *item.Character from a value of type *CharacterRequestBody.
-func marshalCharacterRequestBodyToItemCharacter(v *CharacterRequestBody) *item.Character {
-	res := &item.Character{
+// marshalItemRequestBodyToItemItem builds a value of type *item.Item from a
+// value of type *ItemRequestBody.
+func marshalItemRequestBodyToItemItem(v *ItemRequestBody) *item.Item {
+	res := &item.Item{
 		Name:        v.Name,
 		Description: v.Description,
-		Health:      v.Health,
-		Experience:  v.Experience,
+		Damage:      v.Damage,
+		Healing:     v.Healing,
+		Protection:  v.Protection,
 	}
 
 	return res

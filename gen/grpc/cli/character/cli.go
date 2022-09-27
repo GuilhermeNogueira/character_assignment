@@ -33,7 +33,7 @@ item (list|show|add|remove|update)
 func UsageExamples() string {
 	return os.Args[0] + ` character list` + "\n" +
 		os.Args[0] + ` inventory list --message '{
-      "characterId": "Rerum ipsa odit officiis."
+      "characterId": "Pariatur odio architecto nihil."
    }'` + "\n" +
 		os.Args[0] + ` item list` + "\n" +
 		""
@@ -353,7 +353,7 @@ Show character by Id
 
 Example:
     %[1]s character show --message '{
-      "id": "Officia ut id magnam deleniti."
+      "id": "Odit voluptatibus voluptatem."
    }' --view "tiny"
 `, os.Args[0])
 }
@@ -382,7 +382,7 @@ Remove character
 
 Example:
     %[1]s character remove --message '{
-      "id": "Numquam delectus."
+      "id": "Velit aliquid dignissimos et perspiciatis ipsa."
    }'
 `, os.Args[0])
 }
@@ -401,7 +401,7 @@ Example:
          "health": 12.6,
          "name": "Arc Warden"
       },
-      "id": "Atque ab natus delectus sunt velit quos."
+      "id": "Esse nobis."
    }'
 `, os.Args[0])
 }
@@ -434,7 +434,7 @@ List all items in character inventory
 
 Example:
     %[1]s inventory list --message '{
-      "characterId": "Rerum ipsa odit officiis."
+      "characterId": "Pariatur odio architecto nihil."
    }'
 `, os.Args[0])
 }
@@ -448,8 +448,7 @@ Show inventory by Id
 
 Example:
     %[1]s inventory show --message '{
-      "characterId": "Est rerum quaerat repudiandae ratione.",
-      "id": "Tenetur quo."
+      "id": "Sit quia provident consectetur."
    }' --view "default"
 `, os.Args[0])
 }
@@ -463,8 +462,7 @@ Show items in an inventory
 
 Example:
     %[1]s inventory show-item --message '{
-      "characterId": "Perferendis aut placeat maxime neque.",
-      "id": "Illo rerum ut consequatur rerum debitis."
+      "id": "Culpa ipsam expedita."
    }' --view "default"
 `, os.Args[0])
 }
@@ -477,7 +475,7 @@ Add new inventory and return its ID.
 
 Example:
     %[1]s inventory add --message '{
-      "characterId": "Ducimus qui sit neque soluta animi porro."
+      "characterId": "Asperiores cumque dicta minima atque."
    }'
 `, os.Args[0])
 }
@@ -490,10 +488,9 @@ Add new item to inventory.
 
 Example:
     %[1]s inventory add-item --message '{
-      "characterId": "In consequatur doloremque eum.",
-      "id": "Soluta dolorum assumenda.",
-      "itemId": "Amet autem dignissimos.",
-      "view": "default"
+      "id": "Nisi nam iste facere iusto numquam.",
+      "itemId": "Eum atque ab natus delectus.",
+      "view": "tiny"
    }'
 `, os.Args[0])
 }
@@ -506,9 +503,8 @@ Remove an item from inventory
 
 Example:
     %[1]s inventory remove-item --message '{
-      "characterId": "Aut perspiciatis consectetur.",
-      "id": "Est amet.",
-      "itemId": "Sit dolore."
+      "id": "Error rerum ipsa odit officiis eum impedit.",
+      "itemId": "Qui et commodi iure est rerum quaerat."
    }'
 `, os.Args[0])
 }
@@ -521,8 +517,7 @@ Remove Inventory
 
 Example:
     %[1]s inventory remove --message '{
-      "characterId": "Esse dolorem natus expedita qui.",
-      "id": "Dolores quam recusandae."
+      "id": "Doloribus tenetur."
    }'
 `, os.Args[0])
 }
@@ -563,7 +558,7 @@ Show character by Id
 
 Example:
     %[1]s item show --message '{
-      "id": "Exercitationem ea autem."
+      "id": "Architecto aliquam perferendis aut placeat maxime neque."
    }' --view "tiny"
 `, os.Args[0])
 }
@@ -593,7 +588,7 @@ Remove character
 
 Example:
     %[1]s item remove --message '{
-      "id": "Repudiandae sit veniam voluptas sed soluta animi."
+      "id": "Et laboriosam id."
    }'
 `, os.Args[0])
 }
@@ -606,13 +601,14 @@ func itemUpdateUsage() {
 
 Example:
     %[1]s item update --message '{
-      "character": {
-         "description": "A splintered fragment of the same primordial power as the Ancients themselves, Zet endeavors to end the disharmony among the warring factions through whatever means necessary. Solitary foes are thrown into a volatile state of Flux, ripping away their health over time. Distorting space to generate a Protective Field sheltering around allies, evading and attacking with greater efficiency. Zet summons Spark Fragments of its former self that circles in place, and seek out nearby foes. Is there one Arc Warden, or two? Armed with the original\'s items and abilities, the Self\'s Tempest Double duplicates each spell and every attack, bringing twice the chaos to any fight.",
-         "experience": 65.21,
-         "health": 12.6,
-         "name": "Arc Warden"
-      },
-      "id": "Consectetur ea."
+      "id": "Incidunt nobis est nostrum.",
+      "item": {
+         "damage": 37.8267,
+         "description": "Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.",
+         "healing": 12.6,
+         "name": "Boots of travel",
+         "protection": 65.21
+      }
    }'
 `, os.Args[0])
 }

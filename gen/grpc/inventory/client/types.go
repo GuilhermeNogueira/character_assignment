@@ -11,8 +11,6 @@ import (
 	inventorypb "characters/gen/grpc/inventory/pb"
 	inventory "characters/gen/inventory"
 	inventoryviews "characters/gen/inventory/views"
-
-	goa "goa.design/goa/v3/pkg"
 )
 
 // NewProtoListRequest builds the gRPC request type from the payload of the
@@ -58,9 +56,6 @@ func NewProtoShowRequest(payload *inventory.ShowPayload) *inventorypb.ShowReques
 	message := &inventorypb.ShowRequest{
 		Id: payload.ID,
 	}
-	if payload.CharacterID != nil {
-		message.CharacterId = *payload.CharacterID
-	}
 	return message
 }
 
@@ -104,9 +99,6 @@ func NewShowNotFoundError(message *inventorypb.ShowNotFoundError) *inventory.Not
 func NewProtoShowItemRequest(payload *inventory.ShowItemPayload) *inventorypb.ShowItemRequest {
 	message := &inventorypb.ShowItemRequest{
 		Id: payload.ID,
-	}
-	if payload.CharacterID != nil {
-		message.CharacterId = *payload.CharacterID
 	}
 	return message
 }
@@ -163,9 +155,6 @@ func NewProtoAddItemRequest(payload *inventory.AddItemPayload) *inventorypb.AddI
 		Id:     payload.ID,
 		ItemId: payload.ItemID,
 	}
-	if payload.CharacterID != nil {
-		message.CharacterId = *payload.CharacterID
-	}
 	if payload.View != nil {
 		message.View = *payload.View
 	}
@@ -204,9 +193,6 @@ func NewProtoRemoveItemRequest(payload *inventory.RemoveItemPayload) *inventoryp
 		Id:     payload.ID,
 		ItemId: payload.ItemID,
 	}
-	if payload.CharacterID != nil {
-		message.CharacterId = *payload.CharacterID
-	}
 	return message
 }
 
@@ -241,60 +227,5 @@ func NewProtoRemoveRequest(payload *inventory.RemovePayload) *inventorypb.Remove
 	message := &inventorypb.RemoveRequest{
 		Id: payload.ID,
 	}
-	if payload.CharacterID != nil {
-		message.CharacterId = *payload.CharacterID
-	}
 	return message
-}
-
-// ValidateStoredInventoryCollection runs the validations defined on
-// StoredInventoryCollection.
-func ValidateStoredInventoryCollection(message *inventorypb.StoredInventoryCollection) (err error) {
-	for _, e := range message.Field {
-		if e != nil {
-			if err2 := ValidateStoredInventory(e); err2 != nil {
-				err = goa.MergeErrors(err, err2)
-			}
-		}
-	}
-	return
-}
-
-// ValidateStoredInventory runs the validations defined on StoredInventory.
-func ValidateStoredInventory(elem *inventorypb.StoredInventory) (err error) {
-	if elem.Items == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("items", "elem"))
-	}
-	return
-}
-
-// ValidateStoredItem runs the validations defined on StoredItem.
-func ValidateStoredItem(elem *inventorypb.StoredItem) (err error) {
-
-	return
-}
-
-// ValidateShowResponse runs the validations defined on ShowResponse.
-func ValidateShowResponse(message *inventorypb.ShowResponse) (err error) {
-	if message.Items == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("items", "message"))
-	}
-	return
-}
-
-// ValidateAddItemResponse runs the validations defined on AddItemResponse.
-func ValidateAddItemResponse(message *inventorypb.AddItemResponse) (err error) {
-	if message.Items == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("items", "message"))
-	}
-	return
-}
-
-// ValidateRemoveItemResponse runs the validations defined on
-// RemoveItemResponse.
-func ValidateRemoveItemResponse(message *inventorypb.RemoveItemResponse) (err error) {
-	if message.Items == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("items", "message"))
-	}
-	return
 }

@@ -33,7 +33,7 @@ type ShowResponseBody struct {
 	// CharacterId
 	CharacterID string `form:"characterId" json:"characterId" xml:"characterId"`
 	// Character items
-	Items []*StoredItemResponseBodyTiny `form:"items" json:"items" xml:"items"`
+	Items []*StoredItemResponseBodyTiny `form:"items,omitempty" json:"items,omitempty" xml:"items,omitempty"`
 }
 
 // ShowResponseBodyTiny is the type of the "inventory" service "show" endpoint
@@ -44,7 +44,7 @@ type ShowResponseBodyTiny struct {
 	// CharacterId
 	CharacterID string `form:"characterId" json:"characterId" xml:"characterId"`
 	// Character items
-	Items []*StoredItemResponseBodyTiny `form:"items" json:"items" xml:"items"`
+	Items []*StoredItemResponseBodyTiny `form:"items,omitempty" json:"items,omitempty" xml:"items,omitempty"`
 }
 
 // StoredItemResponseTinyCollection is the type of the "inventory" service
@@ -59,7 +59,7 @@ type AddItemResponseBody struct {
 	// CharacterId
 	CharacterID string `form:"characterId" json:"characterId" xml:"characterId"`
 	// Character items
-	Items []*StoredItemResponseBodyTiny `form:"items" json:"items" xml:"items"`
+	Items []*StoredItemResponseBodyTiny `form:"items,omitempty" json:"items,omitempty" xml:"items,omitempty"`
 }
 
 // AddItemResponseBodyTiny is the type of the "inventory" service "addItem"
@@ -70,7 +70,7 @@ type AddItemResponseBodyTiny struct {
 	// CharacterId
 	CharacterID string `form:"characterId" json:"characterId" xml:"characterId"`
 	// Character items
-	Items []*StoredItemResponseBodyTiny `form:"items" json:"items" xml:"items"`
+	Items []*StoredItemResponseBodyTiny `form:"items,omitempty" json:"items,omitempty" xml:"items,omitempty"`
 }
 
 // RemoveItemResponseBody is the type of the "inventory" service "removeItem"
@@ -81,7 +81,7 @@ type RemoveItemResponseBody struct {
 	// CharacterId
 	CharacterID string `form:"characterId" json:"characterId" xml:"characterId"`
 	// Character items
-	Items []*StoredItemResponseBodyTiny `form:"items" json:"items" xml:"items"`
+	Items []*StoredItemResponseBodyTiny `form:"items,omitempty" json:"items,omitempty" xml:"items,omitempty"`
 }
 
 // RemoveItemResponseBodyTiny is the type of the "inventory" service
@@ -92,7 +92,7 @@ type RemoveItemResponseBodyTiny struct {
 	// CharacterId
 	CharacterID string `form:"characterId" json:"characterId" xml:"characterId"`
 	// Character items
-	Items []*StoredItemResponseBodyTiny `form:"items" json:"items" xml:"items"`
+	Items []*StoredItemResponseBodyTiny `form:"items,omitempty" json:"items,omitempty" xml:"items,omitempty"`
 }
 
 // ShowNotFoundResponseBody is the type of the "inventory" service "show"
@@ -120,7 +120,7 @@ type StoredInventoryResponseTiny struct {
 	// CharacterId
 	CharacterID string `form:"characterId" json:"characterId" xml:"characterId"`
 	// Character items
-	Items []*StoredItemResponseTiny `form:"items" json:"items" xml:"items"`
+	Items []*StoredItemResponseTiny `form:"items,omitempty" json:"items,omitempty" xml:"items,omitempty"`
 }
 
 // StoredItemResponseTiny is used to define fields on response body types.
@@ -296,9 +296,8 @@ func NewListPayload(characterID string) *inventory.ListPayload {
 }
 
 // NewShowPayload builds a inventory service show endpoint payload.
-func NewShowPayload(characterID string, id string, view *string) *inventory.ShowPayload {
+func NewShowPayload(id string, view *string) *inventory.ShowPayload {
 	v := &inventory.ShowPayload{}
-	v.CharacterID = &characterID
 	v.ID = id
 	v.View = view
 
@@ -306,9 +305,8 @@ func NewShowPayload(characterID string, id string, view *string) *inventory.Show
 }
 
 // NewShowItemPayload builds a inventory service showItem endpoint payload.
-func NewShowItemPayload(characterID string, id string, view *string) *inventory.ShowItemPayload {
+func NewShowItemPayload(id string, view *string) *inventory.ShowItemPayload {
 	v := &inventory.ShowItemPayload{}
-	v.CharacterID = &characterID
 	v.ID = id
 	v.View = view
 
@@ -324,11 +322,10 @@ func NewAddPayload(characterID string) *inventory.AddPayload {
 }
 
 // NewAddItemPayload builds a inventory service addItem endpoint payload.
-func NewAddItemPayload(body *AddItemRequestBody, characterID string, id string, itemID string) *inventory.AddItemPayload {
+func NewAddItemPayload(body *AddItemRequestBody, id string, itemID string) *inventory.AddItemPayload {
 	v := &inventory.AddItemPayload{
 		View: body.View,
 	}
-	v.CharacterID = &characterID
 	v.ID = id
 	v.ItemID = itemID
 
@@ -336,9 +333,8 @@ func NewAddItemPayload(body *AddItemRequestBody, characterID string, id string, 
 }
 
 // NewRemoveItemPayload builds a inventory service removeItem endpoint payload.
-func NewRemoveItemPayload(characterID string, id string, itemID string) *inventory.RemoveItemPayload {
+func NewRemoveItemPayload(id string, itemID string) *inventory.RemoveItemPayload {
 	v := &inventory.RemoveItemPayload{}
-	v.CharacterID = &characterID
 	v.ID = id
 	v.ItemID = itemID
 
@@ -346,9 +342,8 @@ func NewRemoveItemPayload(characterID string, id string, itemID string) *invento
 }
 
 // NewRemovePayload builds a inventory service remove endpoint payload.
-func NewRemovePayload(characterID string, id string) *inventory.RemovePayload {
+func NewRemovePayload(id string) *inventory.RemovePayload {
 	v := &inventory.RemovePayload{}
-	v.CharacterID = &characterID
 	v.ID = id
 
 	return v

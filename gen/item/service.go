@@ -42,18 +42,6 @@ const ServiceName = "item"
 // MethodKey key.
 var MethodNames = [5]string{"list", "show", "add", "remove", "update"}
 
-// Character
-type Character struct {
-	// Name
-	Name string
-	// Description
-	Description *string
-	// Health
-	Health float64
-	// Experience
-	Experience float64
-}
-
 // Item is the payload type of the item service add method.
 type Item struct {
 	// Name
@@ -115,7 +103,7 @@ type UpdatePayload struct {
 	// ID of item to update
 	ID string
 	// item to update
-	Character *Character
+	Item *Item
 }
 
 // Error returns an error description.

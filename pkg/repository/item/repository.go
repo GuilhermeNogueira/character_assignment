@@ -4,7 +4,9 @@ import (
 	"characters/gen/item"
 	"characters/pkg/database"
 	"errors"
+	"fmt"
 	"log"
+	"strings"
 )
 
 import "characters/gen/inventory"
@@ -13,7 +15,7 @@ type Repository interface {
 	Insert(item *item.Item) (*inventory.StoredItem, error)
 	GetItemForRepo(id string) (*inventory.StoredItem, error)
 	Get(id string) (*item.StoredItem, error)
-	Update(id string, item *item.Item) (*inventory.StoredItem, error)
+	Update(id string, item *item.Item) (*item.StoredItem, error)
 	Delete(id string) error
 	ListAll() []*item.StoredItem
 }
@@ -68,6 +70,12 @@ func (i *InMemoryRepository) modelToDto(object database.DbObject) (*inventory.St
 
 func (i *InMemoryRepository) Insert(item *item.Item) (*inventory.StoredItem, error) {
 
+	err := i.validate(item)
+
+	if err != nil {
+		return nil, err
+	}
+
 	model := toModel(item)
 
 	object, err := i.db.Insert(model, itemIdentifier)
@@ -81,6 +89,28 @@ func (i *InMemoryRepository) Insert(item *item.Item) (*inventory.StoredItem, err
 	}
 
 	return dto, nil
+}
+
+func (i *InMemoryRepository) validate(item *item.Item) error {
+	exists := len(i.db.ListAllMatchingCriteria(func(object database.DbObject) bool {
+		convert, err := i.modelToDto(object)
+
+		if err != nil {
+			return false
+		}
+
+		if strings.EqualFold(convert.Name, item.Name) {
+			return true
+		}
+
+		return false
+	})) > 0
+
+	if exists {
+		return errors.New(fmt.Sprintf("name [ %s ] already exists", item.Name))
+	}
+
+	return nil
 }
 
 func (i *InMemoryRepository) GetItemForRepo(id string) (*inventory.StoredItem, error) {
@@ -99,22 +129,26 @@ func (i *InMemoryRepository) GetItemForRepo(id string) (*inventory.StoredItem, e
 	return dto, nil
 }
 
-func (i *InMemoryRepository) Update(id string, item *item.Item) (*inventory.StoredItem, error) {
+func (i *InMemoryRepository) Update(id string, itemToUpdate *item.Item) (*item.StoredItem, error) {
 
-	model := toModel(item)
+	err := i.validate(itemToUpdate)
+
+	if err != nil {
+		return nil, err
+	}
+
+	model := toModel(itemToUpdate)
 
 	object, err := i.db.Update(model, id)
 	if err != nil {
 		return nil, err
 	}
 
-	dto, err := i.modelToDto(object)
-
-	if err != nil {
-		return nil, err
+	if v, ok := object.(*DbItem); ok {
+		return (*item.StoredItem)(v), nil
 	}
 
-	return dto, nil
+	return nil, errors.New("not able to convert")
 }
 
 func (i *InMemoryRepository) Delete(id string) error {

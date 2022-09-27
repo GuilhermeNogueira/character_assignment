@@ -10,10 +10,10 @@ import (
 
 type Repository interface {
 	Insert(characterId string) (*inventory.StoredInventory, error)
-	Get(characterId string, id string) (*inventory.StoredInventory, error)
+	Get(id string) (*inventory.StoredInventory, error)
 	ListAll(characterId string) ([]*inventory.StoredInventory, error)
-	AddItem(characterId string, id string, itemId string) (*inventory.StoredInventory, error)
-	DeleteItem(characterId string, id string, itemId string) (*inventory.StoredInventory, error)
+	AddItem(id string, itemId string) (*inventory.StoredInventory, error)
+	DeleteItem(id string, itemId string) (*inventory.StoredInventory, error)
 	Delete(id string) error
 }
 
@@ -81,15 +81,9 @@ func (i *InMemoryRepository) Insert(characterId string) (*inventory.StoredInvent
 	return i.modelToDto(object)
 }
 
-func (i *InMemoryRepository) Get(characterId string, id string) (*inventory.StoredInventory, error) {
+func (i *InMemoryRepository) Get(id string) (*inventory.StoredInventory, error) {
 
-	object, err := i.db.GetByIdAndMatchCriteria(id, func(object database.DbObject) bool {
-		dto, err := i.modelToDto(object)
-		if err != nil {
-			return false
-		}
-		return dto.CharacterID == characterId
-	})
+	object, err := i.db.Get(id)
 
 	if err != nil {
 		return nil, err
@@ -122,7 +116,7 @@ func (i *InMemoryRepository) ListAll(characterId string) ([]*inventory.StoredInv
 	return result, nil
 }
 
-func (i *InMemoryRepository) AddItem(characterId string, id string, itemId string) (*inventory.StoredInventory, error) {
+func (i *InMemoryRepository) AddItem(id string, itemId string) (*inventory.StoredInventory, error) {
 
 	object, err := i.db.Get(id)
 
@@ -144,7 +138,7 @@ func (i *InMemoryRepository) AddItem(characterId string, id string, itemId strin
 
 	dto.Items = append(dto.Items, storedItem)
 
-	model := toModelWithItem(characterId, id, dto.Items)
+	model := toModelWithItem(dto.CharacterID, id, dto.Items)
 
 	update, err := i.db.Update(model, id)
 
@@ -161,7 +155,7 @@ func (i *InMemoryRepository) AddItem(characterId string, id string, itemId strin
 	return modelToDto, nil
 }
 
-func (i *InMemoryRepository) DeleteItem(characterId string, id string, itemId string) (*inventory.StoredInventory, error) {
+func (i *InMemoryRepository) DeleteItem(id string, itemId string) (*inventory.StoredInventory, error) {
 	object, err := i.db.Get(id)
 
 	if err != nil {
@@ -182,7 +176,7 @@ func (i *InMemoryRepository) DeleteItem(characterId string, id string, itemId st
 		}
 	}
 
-	model := toModelWithItem(characterId, id, resultItems)
+	model := toModelWithItem(dto.CharacterID, id, resultItems)
 
 	update, err := i.db.Update(model, id)
 

@@ -25,7 +25,7 @@ func BuildShowPayload(itemShowMessage string, itemShowView string) (*item.ShowPa
 		if itemShowMessage != "" {
 			err = json.Unmarshal([]byte(itemShowMessage), &message)
 			if err != nil {
-				return nil, fmt.Errorf("invalid JSON for message, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"id\": \"Exercitationem ea autem.\"\n   }'")
+				return nil, fmt.Errorf("invalid JSON for message, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"id\": \"Architecto aliquam perferendis aut placeat maxime neque.\"\n   }'")
 			}
 		}
 	}
@@ -83,7 +83,7 @@ func BuildRemovePayload(itemRemoveMessage string) (*item.RemovePayload, error) {
 		if itemRemoveMessage != "" {
 			err = json.Unmarshal([]byte(itemRemoveMessage), &message)
 			if err != nil {
-				return nil, fmt.Errorf("invalid JSON for message, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"id\": \"Repudiandae sit veniam voluptas sed soluta animi.\"\n   }'")
+				return nil, fmt.Errorf("invalid JSON for message, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"id\": \"Et laboriosam id.\"\n   }'")
 			}
 		}
 	}
@@ -103,15 +103,15 @@ func BuildUpdatePayload(itemUpdateMessage string) (*item.UpdatePayload, error) {
 		if itemUpdateMessage != "" {
 			err = json.Unmarshal([]byte(itemUpdateMessage), &message)
 			if err != nil {
-				return nil, fmt.Errorf("invalid JSON for message, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"character\": {\n         \"description\": \"A splintered fragment of the same primordial power as the Ancients themselves, Zet endeavors to end the disharmony among the warring factions through whatever means necessary. Solitary foes are thrown into a volatile state of Flux, ripping away their health over time. Distorting space to generate a Protective Field sheltering around allies, evading and attacking with greater efficiency. Zet summons Spark Fragments of its former self that circles in place, and seek out nearby foes. Is there one Arc Warden, or two? Armed with the original\\'s items and abilities, the Self\\'s Tempest Double duplicates each spell and every attack, bringing twice the chaos to any fight.\",\n         \"experience\": 65.21,\n         \"health\": 12.6,\n         \"name\": \"Arc Warden\"\n      },\n      \"id\": \"Consectetur ea.\"\n   }'")
+				return nil, fmt.Errorf("invalid JSON for message, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"id\": \"Incidunt nobis est nostrum.\",\n      \"item\": {\n         \"damage\": 37.8267,\n         \"description\": \"Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.\",\n         \"healing\": 12.6,\n         \"name\": \"Boots of travel\",\n         \"protection\": 65.21\n      }\n   }'")
 			}
 		}
 	}
 	v := &item.UpdatePayload{
 		ID: message.Id,
 	}
-	if message.Character != nil {
-		v.Character = protobufItempbCharacterToItemCharacter(message.Character)
+	if message.Item != nil {
+		v.Item = protobufItempbItem2ToItemItem(message.Item)
 	}
 
 	return v, nil

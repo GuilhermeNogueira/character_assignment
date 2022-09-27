@@ -212,9 +212,6 @@ func ValidateStoredInventoryView(result *StoredInventoryView) (err error) {
 	if result.CharacterID == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("characterId", "result"))
 	}
-	if result.Items == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("items", "result"))
-	}
 	for _, e := range result.Items {
 		if e != nil {
 			if err2 := ValidateStoredItemView(e); err2 != nil {
@@ -233,9 +230,6 @@ func ValidateStoredInventoryViewTiny(result *StoredInventoryView) (err error) {
 	}
 	if result.CharacterID == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("characterId", "result"))
-	}
-	if result.Items == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("items", "result"))
 	}
 	for _, e := range result.Items {
 		if e != nil {

@@ -71,14 +71,12 @@ func EncodeShowResponse(encoder func(context.Context, http.ResponseWriter) goaht
 func DecodeShowRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
 	return func(r *http.Request) (interface{}, error) {
 		var (
-			characterID string
-			id          string
-			view        *string
-			err         error
+			id   string
+			view *string
+			err  error
 
 			params = mux.Vars(r)
 		)
-		characterID = params["characterId"]
 		id = params["id"]
 		viewRaw := r.URL.Query().Get("view")
 		if viewRaw != "" {
@@ -92,7 +90,7 @@ func DecodeShowRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.De
 		if err != nil {
 			return nil, err
 		}
-		payload := NewShowPayload(characterID, id, view)
+		payload := NewShowPayload(id, view)
 
 		return payload, nil
 	}
@@ -144,14 +142,12 @@ func EncodeShowItemResponse(encoder func(context.Context, http.ResponseWriter) g
 func DecodeShowItemRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
 	return func(r *http.Request) (interface{}, error) {
 		var (
-			characterID string
-			id          string
-			view        *string
-			err         error
+			id   string
+			view *string
+			err  error
 
 			params = mux.Vars(r)
 		)
-		characterID = params["characterId"]
 		id = params["id"]
 		viewRaw := r.URL.Query().Get("view")
 		if viewRaw != "" {
@@ -165,7 +161,7 @@ func DecodeShowItemRequest(mux goahttp.Muxer, decoder func(*http.Request) goahtt
 		if err != nil {
 			return nil, err
 		}
-		payload := NewShowItemPayload(characterID, id, view)
+		payload := NewShowItemPayload(id, view)
 
 		return payload, nil
 	}
@@ -268,16 +264,14 @@ func DecodeAddItemRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp
 		}
 
 		var (
-			characterID string
-			id          string
-			itemID      string
+			id     string
+			itemID string
 
 			params = mux.Vars(r)
 		)
-		characterID = params["characterId"]
 		id = params["id"]
 		itemID = params["itemId"]
-		payload := NewAddItemPayload(&body, characterID, id, itemID)
+		payload := NewAddItemPayload(&body, id, itemID)
 
 		return payload, nil
 	}
@@ -307,16 +301,14 @@ func EncodeRemoveItemResponse(encoder func(context.Context, http.ResponseWriter)
 func DecodeRemoveItemRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
 	return func(r *http.Request) (interface{}, error) {
 		var (
-			characterID string
-			id          string
-			itemID      string
+			id     string
+			itemID string
 
 			params = mux.Vars(r)
 		)
-		characterID = params["characterId"]
 		id = params["id"]
 		itemID = params["itemId"]
-		payload := NewRemoveItemPayload(characterID, id, itemID)
+		payload := NewRemoveItemPayload(id, itemID)
 
 		return payload, nil
 	}
@@ -336,14 +328,12 @@ func EncodeRemoveResponse(encoder func(context.Context, http.ResponseWriter) goa
 func DecodeRemoveRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
 	return func(r *http.Request) (interface{}, error) {
 		var (
-			characterID string
-			id          string
+			id string
 
 			params = mux.Vars(r)
 		)
-		characterID = params["characterId"]
 		id = params["id"]
-		payload := NewRemovePayload(characterID, id)
+		payload := NewRemovePayload(id)
 
 		return payload, nil
 	}
@@ -371,6 +361,9 @@ func marshalInventoryviewsStoredInventoryViewToStoredInventoryResponseTiny(v *in
 // of type *StoredItemResponseTiny from a value of type
 // *inventoryviews.StoredItemView.
 func marshalInventoryviewsStoredItemViewToStoredItemResponseTiny(v *inventoryviews.StoredItemView) *StoredItemResponseTiny {
+	if v == nil {
+		return nil
+	}
 	res := &StoredItemResponseTiny{
 		ID:         *v.ID,
 		Name:       *v.Name,
@@ -386,6 +379,9 @@ func marshalInventoryviewsStoredItemViewToStoredItemResponseTiny(v *inventoryvie
 // value of type *StoredItemResponseBodyTiny from a value of type
 // *inventoryviews.StoredItemView.
 func marshalInventoryviewsStoredItemViewToStoredItemResponseBodyTiny(v *inventoryviews.StoredItemView) *StoredItemResponseBodyTiny {
+	if v == nil {
+		return nil
+	}
 	res := &StoredItemResponseBodyTiny{
 		ID:         *v.ID,
 		Name:       *v.Name,

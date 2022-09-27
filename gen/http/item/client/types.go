@@ -33,7 +33,7 @@ type AddRequestBody struct {
 // request body.
 type UpdateRequestBody struct {
 	// item to update
-	Character *CharacterRequestBody `form:"character" json:"character" xml:"character"`
+	Item *ItemRequestBody `form:"item" json:"item" xml:"item"`
 }
 
 // ListResponseBody is the type of the "item" service "list" endpoint HTTP
@@ -99,16 +99,18 @@ type StoredItemResponse struct {
 	Protection *float64 `form:"protection,omitempty" json:"protection,omitempty" xml:"protection,omitempty"`
 }
 
-// CharacterRequestBody is used to define fields on request body types.
-type CharacterRequestBody struct {
+// ItemRequestBody is used to define fields on request body types.
+type ItemRequestBody struct {
 	// Name
 	Name string `form:"name" json:"name" xml:"name"`
 	// Description
 	Description *string `form:"description,omitempty" json:"description,omitempty" xml:"description,omitempty"`
-	// Health
-	Health float64 `form:"health" json:"health" xml:"health"`
-	// Experience
-	Experience float64 `form:"experience" json:"experience" xml:"experience"`
+	// Damage
+	Damage float64 `form:"damage" json:"damage" xml:"damage"`
+	// Healing
+	Healing float64 `form:"healing" json:"healing" xml:"healing"`
+	// Protection
+	Protection float64 `form:"protection" json:"protection" xml:"protection"`
 }
 
 // NewAddRequestBody builds the HTTP request body from the payload of the "add"
@@ -128,8 +130,8 @@ func NewAddRequestBody(p *item.Item) *AddRequestBody {
 // "update" endpoint of the "item" service.
 func NewUpdateRequestBody(p *item.UpdatePayload) *UpdateRequestBody {
 	body := &UpdateRequestBody{}
-	if p.Character != nil {
-		body.Character = marshalItemCharacterToCharacterRequestBody(p.Character)
+	if p.Item != nil {
+		body.Item = marshalItemItemToItemRequestBody(p.Item)
 	}
 	return body
 }

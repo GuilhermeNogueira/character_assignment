@@ -37,7 +37,8 @@ func (s *inventorysrvc) Show(ctx context.Context, p *inventory.ShowPayload) (res
 	view = "default"
 	s.logger.Print("inventory.show")
 
-	storedInventory, err := s.repository.Get(*p.CharacterID, p.ID)
+	s.logger.Printf("Looking for inventoryId [ %s ]", p.ID)
+	storedInventory, err := s.repository.Get(p.ID)
 
 	if err != nil {
 		return nil, view, err
@@ -49,7 +50,7 @@ func (s *inventorysrvc) Show(ctx context.Context, p *inventory.ShowPayload) (res
 func (s *inventorysrvc) ShowItem(ctx context.Context, p *inventory.ShowItemPayload) (res inventory.StoredItemCollection, err error) {
 	s.logger.Print("inventory.showItem")
 
-	get, err := s.repository.Get(*p.CharacterID, p.ID)
+	get, err := s.repository.Get(p.ID)
 
 	if err != nil {
 		return nil, err
@@ -62,6 +63,8 @@ func (s *inventorysrvc) ShowItem(ctx context.Context, p *inventory.ShowItemPaylo
 func (s *inventorysrvc) Add(ctx context.Context, p *inventory.AddPayload) (res string, err error) {
 	s.logger.Print("inventory.add")
 
+	s.logger.Printf("Adding inventory for character [ %s ]", p.CharacterID)
+
 	storedInventory, err := s.repository.Insert(p.CharacterID)
 	if err != nil {
 		return "", err
@@ -72,8 +75,9 @@ func (s *inventorysrvc) Add(ctx context.Context, p *inventory.AddPayload) (res s
 // Add new item to inventory.
 func (s *inventorysrvc) AddItem(ctx context.Context, p *inventory.AddItemPayload) (res *inventory.StoredInventory, view string, err error) {
 	s.logger.Print("inventory.addItem")
+	s.logger.Printf("Adding item [ %s ] to inventory [ %s ]", p.ItemID, p.ID)
 
-	item, err := s.repository.AddItem(*p.CharacterID, p.ID, p.ItemID)
+	item, err := s.repository.AddItem(p.ID, p.ItemID)
 
 	if err != nil {
 		return nil, "default", err
@@ -85,7 +89,7 @@ func (s *inventorysrvc) AddItem(ctx context.Context, p *inventory.AddItemPayload
 // Remove an item from inventory
 func (s *inventorysrvc) RemoveItem(ctx context.Context, p *inventory.RemoveItemPayload) (res *inventory.StoredInventory, view string, err error) {
 	s.logger.Print("inventory.removeItem")
-	item, err := s.repository.DeleteItem(*p.CharacterID, p.ID, p.ItemID)
+	item, err := s.repository.DeleteItem(p.ID, p.ItemID)
 	if err != nil {
 		return nil, "default", err
 	}

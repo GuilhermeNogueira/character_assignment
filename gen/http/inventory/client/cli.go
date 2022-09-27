@@ -30,12 +30,8 @@ func BuildListPayload(inventoryListCharacterID string) (*inventory.ListPayload, 
 
 // BuildShowPayload builds the payload for the inventory show endpoint from CLI
 // flags.
-func BuildShowPayload(inventoryShowCharacterID string, inventoryShowID string, inventoryShowView string) (*inventory.ShowPayload, error) {
+func BuildShowPayload(inventoryShowID string, inventoryShowView string) (*inventory.ShowPayload, error) {
 	var err error
-	var characterID string
-	{
-		characterID = inventoryShowCharacterID
-	}
 	var id string
 	{
 		id = inventoryShowID
@@ -53,7 +49,6 @@ func BuildShowPayload(inventoryShowCharacterID string, inventoryShowID string, i
 		}
 	}
 	v := &inventory.ShowPayload{}
-	v.CharacterID = &characterID
 	v.ID = id
 	v.View = view
 
@@ -62,12 +57,8 @@ func BuildShowPayload(inventoryShowCharacterID string, inventoryShowID string, i
 
 // BuildShowItemPayload builds the payload for the inventory showItem endpoint
 // from CLI flags.
-func BuildShowItemPayload(inventoryShowItemCharacterID string, inventoryShowItemID string, inventoryShowItemView string) (*inventory.ShowItemPayload, error) {
+func BuildShowItemPayload(inventoryShowItemID string, inventoryShowItemView string) (*inventory.ShowItemPayload, error) {
 	var err error
-	var characterID string
-	{
-		characterID = inventoryShowItemCharacterID
-	}
 	var id string
 	{
 		id = inventoryShowItemID
@@ -85,7 +76,6 @@ func BuildShowItemPayload(inventoryShowItemCharacterID string, inventoryShowItem
 		}
 	}
 	v := &inventory.ShowItemPayload{}
-	v.CharacterID = &characterID
 	v.ID = id
 	v.View = view
 
@@ -107,7 +97,7 @@ func BuildAddPayload(inventoryAddCharacterID string) (*inventory.AddPayload, err
 
 // BuildAddItemPayload builds the payload for the inventory addItem endpoint
 // from CLI flags.
-func BuildAddItemPayload(inventoryAddItemBody string, inventoryAddItemCharacterID string, inventoryAddItemID string, inventoryAddItemItemID string) (*inventory.AddItemPayload, error) {
+func BuildAddItemPayload(inventoryAddItemBody string, inventoryAddItemID string, inventoryAddItemItemID string) (*inventory.AddItemPayload, error) {
 	var err error
 	var body AddItemRequestBody
 	{
@@ -124,10 +114,6 @@ func BuildAddItemPayload(inventoryAddItemBody string, inventoryAddItemCharacterI
 			return nil, err
 		}
 	}
-	var characterID string
-	{
-		characterID = inventoryAddItemCharacterID
-	}
 	var id string
 	{
 		id = inventoryAddItemID
@@ -139,7 +125,6 @@ func BuildAddItemPayload(inventoryAddItemBody string, inventoryAddItemCharacterI
 	v := &inventory.AddItemPayload{
 		View: body.View,
 	}
-	v.CharacterID = &characterID
 	v.ID = id
 	v.ItemID = itemID
 
@@ -148,11 +133,7 @@ func BuildAddItemPayload(inventoryAddItemBody string, inventoryAddItemCharacterI
 
 // BuildRemoveItemPayload builds the payload for the inventory removeItem
 // endpoint from CLI flags.
-func BuildRemoveItemPayload(inventoryRemoveItemCharacterID string, inventoryRemoveItemID string, inventoryRemoveItemItemID string) (*inventory.RemoveItemPayload, error) {
-	var characterID string
-	{
-		characterID = inventoryRemoveItemCharacterID
-	}
+func BuildRemoveItemPayload(inventoryRemoveItemID string, inventoryRemoveItemItemID string) (*inventory.RemoveItemPayload, error) {
 	var id string
 	{
 		id = inventoryRemoveItemID
@@ -162,7 +143,6 @@ func BuildRemoveItemPayload(inventoryRemoveItemCharacterID string, inventoryRemo
 		itemID = inventoryRemoveItemItemID
 	}
 	v := &inventory.RemoveItemPayload{}
-	v.CharacterID = &characterID
 	v.ID = id
 	v.ItemID = itemID
 
@@ -171,17 +151,12 @@ func BuildRemoveItemPayload(inventoryRemoveItemCharacterID string, inventoryRemo
 
 // BuildRemovePayload builds the payload for the inventory remove endpoint from
 // CLI flags.
-func BuildRemovePayload(inventoryRemoveCharacterID string, inventoryRemoveID string) (*inventory.RemovePayload, error) {
-	var characterID string
-	{
-		characterID = inventoryRemoveCharacterID
-	}
+func BuildRemovePayload(inventoryRemoveID string) (*inventory.RemovePayload, error) {
 	var id string
 	{
 		id = inventoryRemoveID
 	}
 	v := &inventory.RemovePayload{}
-	v.CharacterID = &characterID
 	v.ID = id
 
 	return v, nil

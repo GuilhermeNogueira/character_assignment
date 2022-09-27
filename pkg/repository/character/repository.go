@@ -4,7 +4,9 @@ import (
 	"characters/gen/character"
 	"characters/pkg/database"
 	"errors"
+	"fmt"
 	"log"
+	"strings"
 )
 
 type Repository interface {
@@ -49,6 +51,13 @@ func (d *DbCharacter) GetId() string {
 }
 
 func (i *InMemoryRepository) Insert(c *character.Character) (*character.StoredCharacter, error) {
+
+	err := i.validateCharacter(c)
+
+	if err != nil {
+		return nil, err
+	}
+
 	model := toModel(c)
 
 	object, err := i.db.Insert(model, characterIdentifier)
@@ -66,6 +75,22 @@ func (i *InMemoryRepository) Insert(c *character.Character) (*character.StoredCh
 	i.logger.Printf("%s successfully retrieve with Id: [ %s ]", convert.Name, convert.ID)
 
 	return convert, nil
+}
+
+func (i *InMemoryRepository) checkNameAlreadyExists(c *character.Character) bool {
+	return len(i.db.ListAllMatchingCriteria(func(object database.DbObject) bool {
+		convert, err := i.modelToDto(object)
+
+		if err != nil {
+			return false
+		}
+
+		if strings.EqualFold(convert.Name, c.Name) {
+			return true
+		}
+
+		return false
+	})) > 0
 }
 
 func (i *InMemoryRepository) modelToDto(object database.DbObject) (*character.StoredCharacter, error) {
@@ -102,6 +127,11 @@ func (i *InMemoryRepository) Get(id string) (*character.StoredCharacter, error) 
 
 func (i *InMemoryRepository) Update(id string, c *character.Character) (*character.StoredCharacter, error) {
 
+	err := i.validateCharacter(c)
+
+	if err != nil {
+		return nil, err
+	}
 	model := toModel(c)
 
 	object, err := i.db.Update(model, id)
@@ -120,6 +150,16 @@ func (i *InMemoryRepository) Update(id string, c *character.Character) (*charact
 
 	return convert, nil
 
+}
+
+func (i *InMemoryRepository) validateCharacter(c *character.Character) error {
+
+	nameAlreadyExists := i.checkNameAlreadyExists(c)
+
+	if nameAlreadyExists {
+		return errors.New(fmt.Sprintf("name [ %s ] already in use", c.Name))
+	}
+	return nil
 }
 
 func (i *InMemoryRepository) Delete(id string) error {

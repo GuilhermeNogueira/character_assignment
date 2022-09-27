@@ -134,8 +134,8 @@ func NewUpdatePayload(message *itempb.UpdateRequest) *item.UpdatePayload {
 	v := &item.UpdatePayload{
 		ID: message.Id,
 	}
-	if message.Character != nil {
-		v.Character = protobufItempbCharacterToItemCharacter(message.Character)
+	if message.Item != nil {
+		v.Item = protobufItempbItem2ToItemItem(message.Item)
 	}
 	return v
 }
@@ -167,25 +167,26 @@ func NewProtoUpdateResponse(result *itemviews.StoredItemView) *itempb.UpdateResp
 
 // ValidateUpdateRequest runs the validations defined on UpdateRequest.
 func ValidateUpdateRequest(message *itempb.UpdateRequest) (err error) {
-	if message.Character == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("character", "message"))
+	if message.Item == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("item", "message"))
 	}
 	return
 }
 
-// ValidateCharacter runs the validations defined on Character.
-func ValidateCharacter(character *itempb.Character) (err error) {
+// ValidateItem2 runs the validations defined on Item2.
+func ValidateItem2(item *itempb.Item2) (err error) {
 
 	return
 }
 
-// protobufItempbCharacterToItemCharacter builds a value of type
-// *item.Character from a value of type *itempb.Character.
-func protobufItempbCharacterToItemCharacter(v *itempb.Character) *item.Character {
-	res := &item.Character{
+// protobufItempbItem2ToItemItem builds a value of type *item.Item from a value
+// of type *itempb.Item2.
+func protobufItempbItem2ToItemItem(v *itempb.Item2) *item.Item {
+	res := &item.Item{
 		Name:       v.Name,
-		Health:     v.Health,
-		Experience: v.Experience,
+		Damage:     v.Damage,
+		Healing:    v.Healing,
+		Protection: v.Protection,
 	}
 	if v.Description != "" {
 		res.Description = &v.Description
@@ -194,13 +195,14 @@ func protobufItempbCharacterToItemCharacter(v *itempb.Character) *item.Character
 	return res
 }
 
-// svcItemCharacterToItempbCharacter builds a value of type *itempb.Character
-// from a value of type *item.Character.
-func svcItemCharacterToItempbCharacter(v *item.Character) *itempb.Character {
-	res := &itempb.Character{
+// svcItemItemToItempbItem2 builds a value of type *itempb.Item2 from a value
+// of type *item.Item.
+func svcItemItemToItempbItem2(v *item.Item) *itempb.Item2 {
+	res := &itempb.Item2{
 		Name:       v.Name,
-		Health:     v.Health,
-		Experience: v.Experience,
+		Damage:     v.Damage,
+		Healing:    v.Healing,
+		Protection: v.Protection,
 	}
 	if v.Description != nil {
 		res.Description = *v.Description

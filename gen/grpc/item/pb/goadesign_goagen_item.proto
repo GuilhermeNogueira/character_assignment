@@ -103,18 +103,20 @@ message UpdateRequest {
 	// ID of item to update
 	string id = 1;
 	// item to update
-	Character character = 2;
+	Item2 item = 2;
 }
-// Character
-message Character {
+// item
+message Item2 {
 	// Name
 	string name = 1;
 	// Description
 	string description = 2;
-	// Health
-	double health = 3;
-	// Experience
-	double experience = 4;
+	// Damage
+	double damage = 3;
+	// Healing
+	double healing = 4;
+	// Protection
+	double protection = 5;
 }
 
 message UpdateResponse {

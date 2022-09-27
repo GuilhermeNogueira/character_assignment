@@ -51,8 +51,6 @@ var MethodNames = [7]string{"list", "show", "showItem", "add", "addItem", "remov
 
 // AddItemPayload is the payload type of the inventory service addItem method.
 type AddItemPayload struct {
-	// ID of character to show
-	CharacterID *string
 	// ID of inventory to add
 	ID string
 	// ID of item to add
@@ -85,8 +83,6 @@ type NotFound struct {
 // RemoveItemPayload is the payload type of the inventory service removeItem
 // method.
 type RemoveItemPayload struct {
-	// ID of character to show
-	CharacterID *string
 	// ID of inventory to add
 	ID string
 	// ID of item to add
@@ -95,16 +91,12 @@ type RemoveItemPayload struct {
 
 // RemovePayload is the payload type of the inventory service remove method.
 type RemovePayload struct {
-	// ID of character to show
-	CharacterID *string
 	// ID of inventory to remove
 	ID string
 }
 
 // ShowItemPayload is the payload type of the inventory service showItem method.
 type ShowItemPayload struct {
-	// ID of character to show
-	CharacterID *string
 	// ID of inventory to show
 	ID string
 	// View to render
@@ -113,8 +105,6 @@ type ShowItemPayload struct {
 
 // ShowPayload is the payload type of the inventory service show method.
 type ShowPayload struct {
-	// ID of character to show
-	CharacterID *string
 	// ID of inventory to show
 	ID string
 	// View to render
@@ -514,6 +504,9 @@ func transformInventoryviewsStoredItemViewToStoredItem(v *inventoryviews.StoredI
 // transformStoredItemToInventoryviewsStoredItemView builds a value of type
 // *inventoryviews.StoredItemView from a value of type *StoredItem.
 func transformStoredItemToInventoryviewsStoredItemView(v *StoredItem) *inventoryviews.StoredItemView {
+	if v == nil {
+		return nil
+	}
 	res := &inventoryviews.StoredItemView{
 		ID:          &v.ID,
 		Name:        &v.Name,

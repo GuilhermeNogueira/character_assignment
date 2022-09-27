@@ -111,8 +111,8 @@ func NewProtoUpdateRequest(payload *item.UpdatePayload) *itempb.UpdateRequest {
 	message := &itempb.UpdateRequest{
 		Id: payload.ID,
 	}
-	if payload.Character != nil {
-		message.Character = svcItemCharacterToItempbCharacter(payload.Character)
+	if payload.Item != nil {
+		message.Item = svcItemItemToItempbItem2(payload.Item)
 	}
 	return message
 }
@@ -133,13 +133,14 @@ func NewUpdateResult(message *itempb.UpdateResponse) *itemviews.StoredItemView {
 	return result
 }
 
-// protobufItempbCharacterToItemCharacter builds a value of type
-// *item.Character from a value of type *itempb.Character.
-func protobufItempbCharacterToItemCharacter(v *itempb.Character) *item.Character {
-	res := &item.Character{
+// protobufItempbItem2ToItemItem builds a value of type *item.Item from a value
+// of type *itempb.Item2.
+func protobufItempbItem2ToItemItem(v *itempb.Item2) *item.Item {
+	res := &item.Item{
 		Name:       v.Name,
-		Health:     v.Health,
-		Experience: v.Experience,
+		Damage:     v.Damage,
+		Healing:    v.Healing,
+		Protection: v.Protection,
 	}
 	if v.Description != "" {
 		res.Description = &v.Description
@@ -148,13 +149,14 @@ func protobufItempbCharacterToItemCharacter(v *itempb.Character) *item.Character
 	return res
 }
 
-// svcItemCharacterToItempbCharacter builds a value of type *itempb.Character
-// from a value of type *item.Character.
-func svcItemCharacterToItempbCharacter(v *item.Character) *itempb.Character {
-	res := &itempb.Character{
+// svcItemItemToItempbItem2 builds a value of type *itempb.Item2 from a value
+// of type *item.Item.
+func svcItemItemToItempbItem2(v *item.Item) *itempb.Item2 {
+	res := &itempb.Item2{
 		Name:       v.Name,
-		Health:     v.Health,
-		Experience: v.Experience,
+		Damage:     v.Damage,
+		Healing:    v.Healing,
+		Protection: v.Protection,
 	}
 	if v.Description != nil {
 		res.Description = *v.Description

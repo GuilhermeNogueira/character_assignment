@@ -70,10 +70,8 @@ message ShowNotFoundError {
 }
 
 message ShowRequest {
-	// ID of character to show
-	string character_id = 1;
 	// ID of inventory to show
-	string id = 2;
+	string id = 1;
 }
 
 message ShowResponse {
@@ -93,10 +91,8 @@ message ShowItemNotFoundError {
 }
 
 message ShowItemRequest {
-	// ID of character to show
-	string character_id = 1;
 	// ID of inventory to show
-	string id = 2;
+	string id = 1;
 }
 
 message StoredItemCollection {
@@ -113,14 +109,12 @@ message AddResponse {
 }
 
 message AddItemRequest {
-	// ID of character to show
-	string character_id = 1;
 	// ID of inventory to add
-	string id = 2;
+	string id = 1;
 	// ID of item to add
-	string item_id = 3;
+	string item_id = 2;
 	// View to render
-	string view = 4;
+	string view = 3;
 }
 
 message AddItemResponse {
@@ -133,12 +127,10 @@ message AddItemResponse {
 }
 
 message RemoveItemRequest {
-	// ID of character to show
-	string character_id = 1;
 	// ID of inventory to add
-	string id = 2;
+	string id = 1;
 	// ID of item to add
-	string item_id = 3;
+	string item_id = 2;
 }
 
 message RemoveItemResponse {
@@ -151,10 +143,8 @@ message RemoveItemResponse {
 }
 
 message RemoveRequest {
-	// ID of character to show
-	string character_id = 1;
 	// ID of inventory to remove
-	string id = 2;
+	string id = 1;
 }
 
 message RemoveResponse {

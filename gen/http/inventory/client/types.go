@@ -149,9 +149,11 @@ func NewShowStoredInventoryOK(body *ShowResponseBody) *inventoryviews.StoredInve
 		ID:          body.ID,
 		CharacterID: body.CharacterID,
 	}
-	v.Items = make([]*inventoryviews.StoredItemView, len(body.Items))
-	for i, val := range body.Items {
-		v.Items[i] = unmarshalStoredItemResponseBodyToInventoryviewsStoredItemView(val)
+	if body.Items != nil {
+		v.Items = make([]*inventoryviews.StoredItemView, len(body.Items))
+		for i, val := range body.Items {
+			v.Items[i] = unmarshalStoredItemResponseBodyToInventoryviewsStoredItemView(val)
+		}
 	}
 
 	return v
@@ -196,9 +198,11 @@ func NewAddItemStoredInventoryOK(body *AddItemResponseBody) *inventoryviews.Stor
 		ID:          body.ID,
 		CharacterID: body.CharacterID,
 	}
-	v.Items = make([]*inventoryviews.StoredItemView, len(body.Items))
-	for i, val := range body.Items {
-		v.Items[i] = unmarshalStoredItemResponseBodyToInventoryviewsStoredItemView(val)
+	if body.Items != nil {
+		v.Items = make([]*inventoryviews.StoredItemView, len(body.Items))
+		for i, val := range body.Items {
+			v.Items[i] = unmarshalStoredItemResponseBodyToInventoryviewsStoredItemView(val)
+		}
 	}
 
 	return v
@@ -211,9 +215,11 @@ func NewRemoveItemStoredInventoryOK(body *RemoveItemResponseBody) *inventoryview
 		ID:          body.ID,
 		CharacterID: body.CharacterID,
 	}
-	v.Items = make([]*inventoryviews.StoredItemView, len(body.Items))
-	for i, val := range body.Items {
-		v.Items[i] = unmarshalStoredItemResponseBodyToInventoryviewsStoredItemView(val)
+	if body.Items != nil {
+		v.Items = make([]*inventoryviews.StoredItemView, len(body.Items))
+		for i, val := range body.Items {
+			v.Items[i] = unmarshalStoredItemResponseBodyToInventoryviewsStoredItemView(val)
+		}
 	}
 
 	return v
@@ -251,9 +257,6 @@ func ValidateStoredInventoryResponse(body *StoredInventoryResponse) (err error) 
 	}
 	if body.CharacterID == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("characterId", "body"))
-	}
-	if body.Items == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("items", "body"))
 	}
 	for _, e := range body.Items {
 		if e != nil {

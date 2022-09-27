@@ -64,5 +64,11 @@ func (s *itemsrvc) Update(ctx context.Context, p *item.UpdatePayload) (res *item
 	res = &item.StoredItem{}
 	view = "default"
 	s.logger.Print("item.update")
-	return
+
+	update, err := s.repository.Update(p.ID, p.Item)
+
+	if err != nil {
+		return nil, view, err
+	}
+	return update, view, nil
 }

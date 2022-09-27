@@ -33,7 +33,7 @@ type AddRequestBody struct {
 // request body.
 type UpdateRequestBody struct {
 	// item to update
-	Character *CharacterRequestBody `form:"character,omitempty" json:"character,omitempty" xml:"character,omitempty"`
+	Item *ItemRequestBody `form:"item,omitempty" json:"item,omitempty" xml:"item,omitempty"`
 }
 
 // StoredItemResponseTinyCollection is the type of the "item" service "list"
@@ -127,16 +127,18 @@ type StoredItemResponseTiny struct {
 	Protection float64 `form:"protection" json:"protection" xml:"protection"`
 }
 
-// CharacterRequestBody is used to define fields on request body types.
-type CharacterRequestBody struct {
+// ItemRequestBody is used to define fields on request body types.
+type ItemRequestBody struct {
 	// Name
 	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
 	// Description
 	Description *string `form:"description,omitempty" json:"description,omitempty" xml:"description,omitempty"`
-	// Health
-	Health *float64 `form:"health,omitempty" json:"health,omitempty" xml:"health,omitempty"`
-	// Experience
-	Experience *float64 `form:"experience,omitempty" json:"experience,omitempty" xml:"experience,omitempty"`
+	// Damage
+	Damage *float64 `form:"damage,omitempty" json:"damage,omitempty" xml:"damage,omitempty"`
+	// Healing
+	Healing *float64 `form:"healing,omitempty" json:"healing,omitempty" xml:"healing,omitempty"`
+	// Protection
+	Protection *float64 `form:"protection,omitempty" json:"protection,omitempty" xml:"protection,omitempty"`
 }
 
 // NewStoredItemResponseTinyCollection builds the HTTP response body from the
@@ -246,7 +248,7 @@ func NewRemovePayload(id string) *item.RemovePayload {
 // NewUpdatePayload builds a item service update endpoint payload.
 func NewUpdatePayload(body *UpdateRequestBody, id string) *item.UpdatePayload {
 	v := &item.UpdatePayload{}
-	v.Character = unmarshalCharacterRequestBodyToItemCharacter(body.Character)
+	v.Item = unmarshalItemRequestBodyToItemItem(body.Item)
 	v.ID = id
 
 	return v
@@ -271,28 +273,30 @@ func ValidateAddRequestBody(body *AddRequestBody) (err error) {
 
 // ValidateUpdateRequestBody runs the validations defined on UpdateRequestBody
 func ValidateUpdateRequestBody(body *UpdateRequestBody) (err error) {
-	if body.Character == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("character", "body"))
+	if body.Item == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("item", "body"))
 	}
-	if body.Character != nil {
-		if err2 := ValidateCharacterRequestBody(body.Character); err2 != nil {
+	if body.Item != nil {
+		if err2 := ValidateItemRequestBody(body.Item); err2 != nil {
 			err = goa.MergeErrors(err, err2)
 		}
 	}
 	return
 }
 
-// ValidateCharacterRequestBody runs the validations defined on
-// CharacterRequestBody
-func ValidateCharacterRequestBody(body *CharacterRequestBody) (err error) {
+// ValidateItemRequestBody runs the validations defined on ItemRequestBody
+func ValidateItemRequestBody(body *ItemRequestBody) (err error) {
 	if body.Name == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
 	}
-	if body.Health == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("health", "body"))
+	if body.Damage == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("damage", "body"))
 	}
-	if body.Experience == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("experience", "body"))
+	if body.Healing == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("healing", "body"))
+	}
+	if body.Protection == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("protection", "body"))
 	}
 	return
 }

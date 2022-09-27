@@ -84,10 +84,10 @@ func BuildUpdatePayload(itemUpdateBody string, itemUpdateID string) (*item.Updat
 	{
 		err = json.Unmarshal([]byte(itemUpdateBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"character\": {\n         \"description\": \"A splintered fragment of the same primordial power as the Ancients themselves, Zet endeavors to end the disharmony among the warring factions through whatever means necessary. Solitary foes are thrown into a volatile state of Flux, ripping away their health over time. Distorting space to generate a Protective Field sheltering around allies, evading and attacking with greater efficiency. Zet summons Spark Fragments of its former self that circles in place, and seek out nearby foes. Is there one Arc Warden, or two? Armed with the original\\'s items and abilities, the Self\\'s Tempest Double duplicates each spell and every attack, bringing twice the chaos to any fight.\",\n         \"experience\": 65.21,\n         \"health\": 12.6,\n         \"name\": \"Arc Warden\"\n      }\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"item\": {\n         \"damage\": 37.8267,\n         \"description\": \"Boots of Travel is an item purchasable at the Base Shop, under Accessories. It can be upgraded by purchasing the recipe again.\",\n         \"healing\": 12.6,\n         \"name\": \"Boots of travel\",\n         \"protection\": 65.21\n      }\n   }'")
 		}
-		if body.Character == nil {
-			err = goa.MergeErrors(err, goa.MissingFieldError("character", "body"))
+		if body.Item == nil {
+			err = goa.MergeErrors(err, goa.MissingFieldError("item", "body"))
 		}
 		if err != nil {
 			return nil, err
@@ -98,8 +98,8 @@ func BuildUpdatePayload(itemUpdateBody string, itemUpdateID string) (*item.Updat
 		id = itemUpdateID
 	}
 	v := &item.UpdatePayload{}
-	if body.Character != nil {
-		v.Character = marshalCharacterRequestBodyToItemCharacter(body.Character)
+	if body.Item != nil {
+		v.Item = marshalItemRequestBodyToItemItem(body.Item)
 	}
 	v.ID = id
 

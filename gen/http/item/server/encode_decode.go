@@ -236,14 +236,15 @@ func marshalItemviewsStoredItemViewToStoredItemResponseTiny(v *itemviews.StoredI
 	return res
 }
 
-// unmarshalCharacterRequestBodyToItemCharacter builds a value of type
-// *item.Character from a value of type *CharacterRequestBody.
-func unmarshalCharacterRequestBodyToItemCharacter(v *CharacterRequestBody) *item.Character {
-	res := &item.Character{
+// unmarshalItemRequestBodyToItemItem builds a value of type *item.Item from a
+// value of type *ItemRequestBody.
+func unmarshalItemRequestBodyToItemItem(v *ItemRequestBody) *item.Item {
+	res := &item.Item{
 		Name:        *v.Name,
 		Description: v.Description,
-		Health:      *v.Health,
-		Experience:  *v.Experience,
+		Damage:      *v.Damage,
+		Healing:     *v.Healing,
+		Protection:  *v.Protection,
 	}
 
 	return res

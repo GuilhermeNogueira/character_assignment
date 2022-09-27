@@ -71,9 +71,6 @@ func NewShowPayload(message *inventorypb.ShowRequest, view *string) *inventory.S
 	v := &inventory.ShowPayload{
 		ID: message.Id,
 	}
-	if message.CharacterId != "" {
-		v.CharacterID = &message.CharacterId
-	}
 	v.View = view
 	return v
 }
@@ -130,9 +127,6 @@ func NewShowNotFoundError(er *inventory.NotFound) *inventorypb.ShowNotFoundError
 func NewShowItemPayload(message *inventorypb.ShowItemRequest, view *string) *inventory.ShowItemPayload {
 	v := &inventory.ShowItemPayload{
 		ID: message.Id,
-	}
-	if message.CharacterId != "" {
-		v.CharacterID = &message.CharacterId
 	}
 	v.View = view
 	return v
@@ -201,9 +195,6 @@ func NewAddItemPayload(message *inventorypb.AddItemRequest) *inventory.AddItemPa
 		ID:     message.Id,
 		ItemID: message.ItemId,
 	}
-	if message.CharacterId != "" {
-		v.CharacterID = &message.CharacterId
-	}
 	if message.View != "" {
 		v.View = &message.View
 	}
@@ -254,9 +245,6 @@ func NewRemoveItemPayload(message *inventorypb.RemoveItemRequest) *inventory.Rem
 		ID:     message.Id,
 		ItemID: message.ItemId,
 	}
-	if message.CharacterId != "" {
-		v.CharacterID = &message.CharacterId
-	}
 	return v
 }
 
@@ -302,9 +290,6 @@ func NewProtoRemoveItemResponse(result *inventoryviews.StoredInventoryView) *inv
 func NewRemovePayload(message *inventorypb.RemoveRequest) *inventory.RemovePayload {
 	v := &inventory.RemovePayload{
 		ID: message.Id,
-	}
-	if message.CharacterId != "" {
-		v.CharacterID = &message.CharacterId
 	}
 	return v
 }

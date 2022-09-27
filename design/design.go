@@ -176,7 +176,7 @@ var StoredInventory = ResultType("application/vnd.goa.example.inventory", func()
 		})
 	})
 
-	Required("id", "characterId", "items")
+	Required("id", "characterId")
 })
 
 var NotFound = Type("NotFound", func() { //TODO

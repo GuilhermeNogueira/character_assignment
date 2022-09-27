@@ -90,20 +90,16 @@ func DecodeListResponse(decoder func(*http.Response) goahttp.Decoder, restoreBod
 // to call the "inventory" service "show" endpoint
 func (c *Client) BuildShowRequest(ctx context.Context, v interface{}) (*http.Request, error) {
 	var (
-		characterID string
-		id          string
+		id string
 	)
 	{
 		p, ok := v.(*inventory.ShowPayload)
 		if !ok {
 			return nil, goahttp.ErrInvalidType("inventory", "show", "*inventory.ShowPayload", v)
 		}
-		if p.CharacterID != nil {
-			characterID = *p.CharacterID
-		}
 		id = p.ID
 	}
-	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: ShowInventoryPath(characterID, id)}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: ShowInventoryPath(id)}
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
 		return nil, goahttp.ErrInvalidURL("inventory", "show", u.String(), err)
@@ -195,20 +191,16 @@ func DecodeShowResponse(decoder func(*http.Response) goahttp.Decoder, restoreBod
 // set to call the "inventory" service "showItem" endpoint
 func (c *Client) BuildShowItemRequest(ctx context.Context, v interface{}) (*http.Request, error) {
 	var (
-		characterID string
-		id          string
+		id string
 	)
 	{
 		p, ok := v.(*inventory.ShowItemPayload)
 		if !ok {
 			return nil, goahttp.ErrInvalidType("inventory", "showItem", "*inventory.ShowItemPayload", v)
 		}
-		if p.CharacterID != nil {
-			characterID = *p.CharacterID
-		}
 		id = p.ID
 	}
-	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: ShowItemInventoryPath(characterID, id)}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: ShowItemInventoryPath(id)}
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
 		return nil, goahttp.ErrInvalidURL("inventory", "showItem", u.String(), err)
@@ -360,22 +352,18 @@ func DecodeAddResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody
 // set to call the "inventory" service "addItem" endpoint
 func (c *Client) BuildAddItemRequest(ctx context.Context, v interface{}) (*http.Request, error) {
 	var (
-		characterID string
-		id          string
-		itemID      string
+		id     string
+		itemID string
 	)
 	{
 		p, ok := v.(*inventory.AddItemPayload)
 		if !ok {
 			return nil, goahttp.ErrInvalidType("inventory", "addItem", "*inventory.AddItemPayload", v)
 		}
-		if p.CharacterID != nil {
-			characterID = *p.CharacterID
-		}
 		id = p.ID
 		itemID = p.ItemID
 	}
-	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: AddItemInventoryPath(characterID, id, itemID)}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: AddItemInventoryPath(id, itemID)}
 	req, err := http.NewRequest("POST", u.String(), nil)
 	if err != nil {
 		return nil, goahttp.ErrInvalidURL("inventory", "addItem", u.String(), err)
@@ -449,22 +437,18 @@ func DecodeAddItemResponse(decoder func(*http.Response) goahttp.Decoder, restore
 // path set to call the "inventory" service "removeItem" endpoint
 func (c *Client) BuildRemoveItemRequest(ctx context.Context, v interface{}) (*http.Request, error) {
 	var (
-		characterID string
-		id          string
-		itemID      string
+		id     string
+		itemID string
 	)
 	{
 		p, ok := v.(*inventory.RemoveItemPayload)
 		if !ok {
 			return nil, goahttp.ErrInvalidType("inventory", "removeItem", "*inventory.RemoveItemPayload", v)
 		}
-		if p.CharacterID != nil {
-			characterID = *p.CharacterID
-		}
 		id = p.ID
 		itemID = p.ItemID
 	}
-	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: RemoveItemInventoryPath(characterID, id, itemID)}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: RemoveItemInventoryPath(id, itemID)}
 	req, err := http.NewRequest("DELETE", u.String(), nil)
 	if err != nil {
 		return nil, goahttp.ErrInvalidURL("inventory", "removeItem", u.String(), err)
@@ -522,20 +506,16 @@ func DecodeRemoveItemResponse(decoder func(*http.Response) goahttp.Decoder, rest
 // set to call the "inventory" service "remove" endpoint
 func (c *Client) BuildRemoveRequest(ctx context.Context, v interface{}) (*http.Request, error) {
 	var (
-		characterID string
-		id          string
+		id string
 	)
 	{
 		p, ok := v.(*inventory.RemovePayload)
 		if !ok {
 			return nil, goahttp.ErrInvalidType("inventory", "remove", "*inventory.RemovePayload", v)
 		}
-		if p.CharacterID != nil {
-			characterID = *p.CharacterID
-		}
 		id = p.ID
 	}
-	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: RemoveInventoryPath(characterID, id)}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: RemoveInventoryPath(id)}
 	req, err := http.NewRequest("DELETE", u.String(), nil)
 	if err != nil {
 		return nil, goahttp.ErrInvalidURL("inventory", "remove", u.String(), err)
@@ -582,9 +562,11 @@ func unmarshalStoredInventoryResponseToInventoryviewsStoredInventoryView(v *Stor
 		ID:          v.ID,
 		CharacterID: v.CharacterID,
 	}
-	res.Items = make([]*inventoryviews.StoredItemView, len(v.Items))
-	for i, val := range v.Items {
-		res.Items[i] = unmarshalStoredItemResponseToInventoryviewsStoredItemView(val)
+	if v.Items != nil {
+		res.Items = make([]*inventoryviews.StoredItemView, len(v.Items))
+		for i, val := range v.Items {
+			res.Items[i] = unmarshalStoredItemResponseToInventoryviewsStoredItemView(val)
+		}
 	}
 
 	return res
@@ -593,6 +575,9 @@ func unmarshalStoredInventoryResponseToInventoryviewsStoredInventoryView(v *Stor
 // unmarshalStoredItemResponseToInventoryviewsStoredItemView builds a value of
 // type *inventoryviews.StoredItemView from a value of type *StoredItemResponse.
 func unmarshalStoredItemResponseToInventoryviewsStoredItemView(v *StoredItemResponse) *inventoryviews.StoredItemView {
+	if v == nil {
+		return nil
+	}
 	res := &inventoryviews.StoredItemView{
 		ID:          v.ID,
 		Name:        v.Name,
@@ -609,6 +594,9 @@ func unmarshalStoredItemResponseToInventoryviewsStoredItemView(v *StoredItemResp
 // of type *inventoryviews.StoredItemView from a value of type
 // *StoredItemResponseBody.
 func unmarshalStoredItemResponseBodyToInventoryviewsStoredItemView(v *StoredItemResponseBody) *inventoryviews.StoredItemView {
+	if v == nil {
+		return nil
+	}
 	res := &inventoryviews.StoredItemView{
 		ID:          v.ID,
 		Name:        v.Name,

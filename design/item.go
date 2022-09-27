@@ -84,8 +84,8 @@ var _ = Service("item", func() {
 		Description(" update ")
 		Payload(func() {
 			Field(1, "id", String, "ID of item to update")
-			Field(2, "character", Character, "item to update")
-			Required("id", "character")
+			Field(2, "item", Item, "item to update")
+			Required("id", "item")
 		})
 		Result(StoredItem)
 		HTTP(func() {

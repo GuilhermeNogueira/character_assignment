@@ -61,13 +61,13 @@ func New(
 ) *Server {
 	return &Server{
 		Mounts: []*MountPoint{
-			{"List", "GET", "/character/{characterId}/inventory"},
-			{"Show", "GET", "/character/{characterId}/inventory/{id}"},
-			{"ShowItem", "GET", "/character/{characterId}/inventory/{id}/item"},
-			{"Add", "POST", "/character/{characterId}/inventory"},
-			{"AddItem", "POST", "/character/{characterId}/inventory/{id}/item/{itemId}"},
-			{"RemoveItem", "DELETE", "/character/{characterId}/inventory/{id}/item/{itemId}"},
-			{"Remove", "DELETE", "/character/{characterId}/inventory/{id}"},
+			{"List", "GET", "/inventory/character/{characterId}"},
+			{"Show", "GET", "/inventory/{id}"},
+			{"ShowItem", "GET", "/inventory/{id}/item"},
+			{"Add", "POST", "/inventory/character/{characterId}"},
+			{"AddItem", "POST", "/inventory/{id}/item/{itemId}"},
+			{"RemoveItem", "DELETE", "/inventory/{id}/item/{itemId}"},
+			{"Remove", "DELETE", "/inventory/{id}"},
 		},
 		List:       NewListHandler(e.List, mux, decoder, encoder, errhandler, formatter),
 		Show:       NewShowHandler(e.Show, mux, decoder, encoder, errhandler, formatter),
@@ -118,7 +118,7 @@ func MountListHandler(mux goahttp.Muxer, h http.Handler) {
 			h.ServeHTTP(w, r)
 		}
 	}
-	mux.Handle("GET", "/character/{characterId}/inventory", f)
+	mux.Handle("GET", "/inventory/character/{characterId}", f)
 }
 
 // NewListHandler creates a HTTP handler which loads the HTTP request and calls
@@ -169,7 +169,7 @@ func MountShowHandler(mux goahttp.Muxer, h http.Handler) {
 			h.ServeHTTP(w, r)
 		}
 	}
-	mux.Handle("GET", "/character/{characterId}/inventory/{id}", f)
+	mux.Handle("GET", "/inventory/{id}", f)
 }
 
 // NewShowHandler creates a HTTP handler which loads the HTTP request and calls
@@ -220,7 +220,7 @@ func MountShowItemHandler(mux goahttp.Muxer, h http.Handler) {
 			h.ServeHTTP(w, r)
 		}
 	}
-	mux.Handle("GET", "/character/{characterId}/inventory/{id}/item", f)
+	mux.Handle("GET", "/inventory/{id}/item", f)
 }
 
 // NewShowItemHandler creates a HTTP handler which loads the HTTP request and
@@ -271,7 +271,7 @@ func MountAddHandler(mux goahttp.Muxer, h http.Handler) {
 			h.ServeHTTP(w, r)
 		}
 	}
-	mux.Handle("POST", "/character/{characterId}/inventory", f)
+	mux.Handle("POST", "/inventory/character/{characterId}", f)
 }
 
 // NewAddHandler creates a HTTP handler which loads the HTTP request and calls
@@ -322,7 +322,7 @@ func MountAddItemHandler(mux goahttp.Muxer, h http.Handler) {
 			h.ServeHTTP(w, r)
 		}
 	}
-	mux.Handle("POST", "/character/{characterId}/inventory/{id}/item/{itemId}", f)
+	mux.Handle("POST", "/inventory/{id}/item/{itemId}", f)
 }
 
 // NewAddItemHandler creates a HTTP handler which loads the HTTP request and
@@ -373,7 +373,7 @@ func MountRemoveItemHandler(mux goahttp.Muxer, h http.Handler) {
 			h.ServeHTTP(w, r)
 		}
 	}
-	mux.Handle("DELETE", "/character/{characterId}/inventory/{id}/item/{itemId}", f)
+	mux.Handle("DELETE", "/inventory/{id}/item/{itemId}", f)
 }
 
 // NewRemoveItemHandler creates a HTTP handler which loads the HTTP request and
@@ -424,7 +424,7 @@ func MountRemoveHandler(mux goahttp.Muxer, h http.Handler) {
 			h.ServeHTTP(w, r)
 		}
 	}
-	mux.Handle("DELETE", "/character/{characterId}/inventory/{id}", f)
+	mux.Handle("DELETE", "/inventory/{id}", f)
 }
 
 // NewRemoveHandler creates a HTTP handler which loads the HTTP request and

@@ -25,7 +25,7 @@ func BuildShowPayload(characterShowMessage string, characterShowView string) (*c
 		if characterShowMessage != "" {
 			err = json.Unmarshal([]byte(characterShowMessage), &message)
 			if err != nil {
-				return nil, fmt.Errorf("invalid JSON for message, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"id\": \"Officia ut id magnam deleniti.\"\n   }'")
+				return nil, fmt.Errorf("invalid JSON for message, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"id\": \"Odit voluptatibus voluptatem.\"\n   }'")
 			}
 		}
 	}
@@ -83,7 +83,7 @@ func BuildRemovePayload(characterRemoveMessage string) (*character.RemovePayload
 		if characterRemoveMessage != "" {
 			err = json.Unmarshal([]byte(characterRemoveMessage), &message)
 			if err != nil {
-				return nil, fmt.Errorf("invalid JSON for message, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"id\": \"Numquam delectus.\"\n   }'")
+				return nil, fmt.Errorf("invalid JSON for message, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"id\": \"Velit aliquid dignissimos et perspiciatis ipsa.\"\n   }'")
 			}
 		}
 	}
@@ -103,7 +103,7 @@ func BuildUpdatePayload(characterUpdateMessage string) (*character.UpdatePayload
 		if characterUpdateMessage != "" {
 			err = json.Unmarshal([]byte(characterUpdateMessage), &message)
 			if err != nil {
-				return nil, fmt.Errorf("invalid JSON for message, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"character\": {\n         \"description\": \"A splintered fragment of the same primordial power as the Ancients themselves, Zet endeavors to end the disharmony among the warring factions through whatever means necessary. Solitary foes are thrown into a volatile state of Flux, ripping away their health over time. Distorting space to generate a Protective Field sheltering around allies, evading and attacking with greater efficiency. Zet summons Spark Fragments of its former self that circles in place, and seek out nearby foes. Is there one Arc Warden, or two? Armed with the original\\'s items and abilities, the Self\\'s Tempest Double duplicates each spell and every attack, bringing twice the chaos to any fight.\",\n         \"experience\": 65.21,\n         \"health\": 12.6,\n         \"name\": \"Arc Warden\"\n      },\n      \"id\": \"Atque ab natus delectus sunt velit quos.\"\n   }'")
+				return nil, fmt.Errorf("invalid JSON for message, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"character\": {\n         \"description\": \"A splintered fragment of the same primordial power as the Ancients themselves, Zet endeavors to end the disharmony among the warring factions through whatever means necessary. Solitary foes are thrown into a volatile state of Flux, ripping away their health over time. Distorting space to generate a Protective Field sheltering around allies, evading and attacking with greater efficiency. Zet summons Spark Fragments of its former self that circles in place, and seek out nearby foes. Is there one Arc Warden, or two? Armed with the original\\'s items and abilities, the Self\\'s Tempest Double duplicates each spell and every attack, bringing twice the chaos to any fight.\",\n         \"experience\": 65.21,\n         \"health\": 12.6,\n         \"name\": \"Arc Warden\"\n      },\n      \"id\": \"Esse nobis.\"\n   }'")
 			}
 		}
 	}
