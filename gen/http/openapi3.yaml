@@ -863,6 +863,9 @@ components:
                 protection: 65.21
             required:
                 - name
+                - damage
+                - healing
+                - protection
         JSON:
             type: object
             properties:
@@ -907,6 +910,9 @@ components:
             required:
                 - id
                 - name
+                - damage
+                - healing
+                - protection
         NotFound:
             type: object
             properties:
@@ -1273,6 +1279,9 @@ components:
             required:
                 - id
                 - name
+                - damage
+                - healing
+                - protection
         StoredItemResponseTinyCollection:
             type: array
             items:

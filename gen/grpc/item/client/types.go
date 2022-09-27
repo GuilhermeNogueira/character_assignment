@@ -26,20 +26,14 @@ func NewListResult(message *itempb.StoredItemCollection) itemviews.StoredItemCol
 	result := make([]*itemviews.StoredItemView, len(message.Field))
 	for i, val := range message.Field {
 		result[i] = &itemviews.StoredItemView{
-			ID:   &val.Id,
-			Name: &val.Name,
+			ID:         &val.Id,
+			Name:       &val.Name,
+			Damage:     &val.Damage,
+			Healing:    &val.Healing,
+			Protection: &val.Protection,
 		}
 		if val.Description != "" {
 			result[i].Description = &val.Description
-		}
-		if val.Damage != 0 {
-			result[i].Damage = &val.Damage
-		}
-		if val.Healing != 0 {
-			result[i].Healing = &val.Healing
-		}
-		if val.Protection != 0 {
-			result[i].Protection = &val.Protection
 		}
 	}
 	return result
@@ -58,20 +52,14 @@ func NewProtoShowRequest(payload *item.ShowPayload) *itempb.ShowRequest {
 // service from the gRPC response type.
 func NewShowResult(message *itempb.ShowResponse) *itemviews.StoredItemView {
 	result := &itemviews.StoredItemView{
-		ID:   &message.Id,
-		Name: &message.Name,
+		ID:         &message.Id,
+		Name:       &message.Name,
+		Damage:     &message.Damage,
+		Healing:    &message.Healing,
+		Protection: &message.Protection,
 	}
 	if message.Description != "" {
 		result.Description = &message.Description
-	}
-	if message.Damage != 0 {
-		result.Damage = &message.Damage
-	}
-	if message.Healing != 0 {
-		result.Healing = &message.Healing
-	}
-	if message.Protection != 0 {
-		result.Protection = &message.Protection
 	}
 	return result
 }
@@ -133,20 +121,14 @@ func NewProtoUpdateRequest(payload *item.UpdatePayload) *itempb.UpdateRequest {
 // "item" service from the gRPC response type.
 func NewUpdateResult(message *itempb.UpdateResponse) *itemviews.StoredItemView {
 	result := &itemviews.StoredItemView{
-		ID:   &message.Id,
-		Name: &message.Name,
+		ID:         &message.Id,
+		Name:       &message.Name,
+		Damage:     &message.Damage,
+		Healing:    &message.Healing,
+		Protection: &message.Protection,
 	}
 	if message.Description != "" {
 		result.Description = &message.Description
-	}
-	if message.Damage != 0 {
-		result.Damage = &message.Damage
-	}
-	if message.Healing != 0 {
-		result.Healing = &message.Healing
-	}
-	if message.Protection != 0 {
-		result.Protection = &message.Protection
 	}
 	return result
 }

@@ -156,24 +156,9 @@ func NewShowResponseBody(res *itemviews.StoredItemView) *ShowResponseBody {
 		ID:          *res.ID,
 		Name:        *res.Name,
 		Description: res.Description,
-	}
-	if res.Damage != nil {
-		body.Damage = *res.Damage
-	}
-	if res.Healing != nil {
-		body.Healing = *res.Healing
-	}
-	if res.Protection != nil {
-		body.Protection = *res.Protection
-	}
-	if res.Damage == nil {
-		body.Damage = 0
-	}
-	if res.Healing == nil {
-		body.Healing = 0
-	}
-	if res.Protection == nil {
-		body.Protection = 0
+		Damage:      *res.Damage,
+		Healing:     *res.Healing,
+		Protection:  *res.Protection,
 	}
 	return body
 }
@@ -182,26 +167,11 @@ func NewShowResponseBody(res *itemviews.StoredItemView) *ShowResponseBody {
 // "show" endpoint of the "item" service.
 func NewShowResponseBodyTiny(res *itemviews.StoredItemView) *ShowResponseBodyTiny {
 	body := &ShowResponseBodyTiny{
-		ID:   *res.ID,
-		Name: *res.Name,
-	}
-	if res.Damage != nil {
-		body.Damage = *res.Damage
-	}
-	if res.Healing != nil {
-		body.Healing = *res.Healing
-	}
-	if res.Protection != nil {
-		body.Protection = *res.Protection
-	}
-	if res.Damage == nil {
-		body.Damage = 0
-	}
-	if res.Healing == nil {
-		body.Healing = 0
-	}
-	if res.Protection == nil {
-		body.Protection = 0
+		ID:         *res.ID,
+		Name:       *res.Name,
+		Damage:     *res.Damage,
+		Healing:    *res.Healing,
+		Protection: *res.Protection,
 	}
 	return body
 }
@@ -213,24 +183,9 @@ func NewUpdateResponseBody(res *itemviews.StoredItemView) *UpdateResponseBody {
 		ID:          *res.ID,
 		Name:        *res.Name,
 		Description: res.Description,
-	}
-	if res.Damage != nil {
-		body.Damage = *res.Damage
-	}
-	if res.Healing != nil {
-		body.Healing = *res.Healing
-	}
-	if res.Protection != nil {
-		body.Protection = *res.Protection
-	}
-	if res.Damage == nil {
-		body.Damage = 0
-	}
-	if res.Healing == nil {
-		body.Healing = 0
-	}
-	if res.Protection == nil {
-		body.Protection = 0
+		Damage:      *res.Damage,
+		Healing:     *res.Healing,
+		Protection:  *res.Protection,
 	}
 	return body
 }
@@ -239,26 +194,11 @@ func NewUpdateResponseBody(res *itemviews.StoredItemView) *UpdateResponseBody {
 // the "update" endpoint of the "item" service.
 func NewUpdateResponseBodyTiny(res *itemviews.StoredItemView) *UpdateResponseBodyTiny {
 	body := &UpdateResponseBodyTiny{
-		ID:   *res.ID,
-		Name: *res.Name,
-	}
-	if res.Damage != nil {
-		body.Damage = *res.Damage
-	}
-	if res.Healing != nil {
-		body.Healing = *res.Healing
-	}
-	if res.Protection != nil {
-		body.Protection = *res.Protection
-	}
-	if res.Damage == nil {
-		body.Damage = 0
-	}
-	if res.Healing == nil {
-		body.Healing = 0
-	}
-	if res.Protection == nil {
-		body.Protection = 0
+		ID:         *res.ID,
+		Name:       *res.Name,
+		Damage:     *res.Damage,
+		Healing:    *res.Healing,
+		Protection: *res.Protection,
 	}
 	return body
 }
@@ -287,24 +227,9 @@ func NewAddItem(body *AddRequestBody) *item.Item {
 	v := &item.Item{
 		Name:        *body.Name,
 		Description: body.Description,
-	}
-	if body.Damage != nil {
-		v.Damage = *body.Damage
-	}
-	if body.Healing != nil {
-		v.Healing = *body.Healing
-	}
-	if body.Protection != nil {
-		v.Protection = *body.Protection
-	}
-	if body.Damage == nil {
-		v.Damage = 0
-	}
-	if body.Healing == nil {
-		v.Healing = 0
-	}
-	if body.Protection == nil {
-		v.Protection = 0
+		Damage:      *body.Damage,
+		Healing:     *body.Healing,
+		Protection:  *body.Protection,
 	}
 
 	return v
@@ -331,6 +256,15 @@ func NewUpdatePayload(body *UpdateRequestBody, id string) *item.UpdatePayload {
 func ValidateAddRequestBody(body *AddRequestBody) (err error) {
 	if body.Name == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
+	}
+	if body.Damage == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("damage", "body"))
+	}
+	if body.Healing == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("healing", "body"))
+	}
+	if body.Protection == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("protection", "body"))
 	}
 	return
 }

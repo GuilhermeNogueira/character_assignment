@@ -136,7 +136,7 @@ func (i *InMemoryRepository) AddItem(characterId string, id string, itemId strin
 		return nil, err
 	}
 
-	storedItem, err := i.itemRepository.Get(itemId)
+	storedItem, err := i.itemRepository.GetItemForRepo(itemId)
 
 	if err != nil {
 		return nil, err

@@ -361,6 +361,9 @@ paths:
                     $ref: '#/definitions/ItemAddRequestBody'
                     required:
                         - name
+                        - damage
+                        - healing
+                        - protection
             responses:
                 "201":
                     description: Created response.
@@ -988,6 +991,9 @@ definitions:
             protection: 65.21
         required:
             - name
+            - damage
+            - healing
+            - protection
     ItemShowNotFoundResponseBody:
         title: ItemShowNotFoundResponseBody
         type: object
@@ -1052,6 +1058,9 @@ definitions:
         required:
             - id
             - name
+            - damage
+            - healing
+            - protection
     ItemStoredItemResponseTinyCollection:
         title: 'Mediatype identifier: application/json; type=collection; view=tiny'
         type: array
@@ -1136,6 +1145,9 @@ definitions:
         required:
             - id
             - name
+            - damage
+            - healing
+            - protection
     StoredCharacterResponseTiny:
         title: 'Mediatype identifier: application/vnd.goa.example.character; view=default'
         type: object
@@ -1266,6 +1278,9 @@ definitions:
         required:
             - id
             - name
+            - damage
+            - healing
+            - protection
     StoredItemResponseTiny:
         title: 'Mediatype identifier: application/json; view=default'
         type: object
@@ -1306,3 +1321,6 @@ definitions:
         required:
             - id
             - name
+            - damage
+            - healing
+            - protection

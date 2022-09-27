@@ -273,6 +273,15 @@ func ValidateStoredItemResponse(body *StoredItemResponse) (err error) {
 	if body.Name == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
 	}
+	if body.Damage == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("damage", "body"))
+	}
+	if body.Healing == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("healing", "body"))
+	}
+	if body.Protection == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("protection", "body"))
+	}
 	return
 }
 
@@ -284,6 +293,15 @@ func ValidateStoredItemResponseBody(body *StoredItemResponseBody) (err error) {
 	}
 	if body.Name == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
+	}
+	if body.Damage == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("damage", "body"))
+	}
+	if body.Healing == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("healing", "body"))
+	}
+	if body.Protection == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("protection", "body"))
 	}
 	return
 }

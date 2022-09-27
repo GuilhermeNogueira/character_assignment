@@ -37,20 +37,14 @@ func NewListResult(message *inventorypb.StoredInventoryCollection) inventoryview
 			result[i].Items = make([]*inventoryviews.StoredItemView, len(val.Items))
 			for j, val := range val.Items {
 				result[i].Items[j] = &inventoryviews.StoredItemView{
-					ID:   &val.Id,
-					Name: &val.Name,
+					ID:         &val.Id,
+					Name:       &val.Name,
+					Damage:     &val.Damage,
+					Healing:    &val.Healing,
+					Protection: &val.Protection,
 				}
 				if val.Description != "" {
 					result[i].Items[j].Description = &val.Description
-				}
-				if val.Damage != 0 {
-					result[i].Items[j].Damage = &val.Damage
-				}
-				if val.Healing != 0 {
-					result[i].Items[j].Healing = &val.Healing
-				}
-				if val.Protection != 0 {
-					result[i].Items[j].Protection = &val.Protection
 				}
 			}
 		}
@@ -81,20 +75,14 @@ func NewShowResult(message *inventorypb.ShowResponse) *inventoryviews.StoredInve
 		result.Items = make([]*inventoryviews.StoredItemView, len(message.Items))
 		for i, val := range message.Items {
 			result.Items[i] = &inventoryviews.StoredItemView{
-				ID:   &val.Id,
-				Name: &val.Name,
+				ID:         &val.Id,
+				Name:       &val.Name,
+				Damage:     &val.Damage,
+				Healing:    &val.Healing,
+				Protection: &val.Protection,
 			}
 			if val.Description != "" {
 				result.Items[i].Description = &val.Description
-			}
-			if val.Damage != 0 {
-				result.Items[i].Damage = &val.Damage
-			}
-			if val.Healing != 0 {
-				result.Items[i].Healing = &val.Healing
-			}
-			if val.Protection != 0 {
-				result.Items[i].Protection = &val.Protection
 			}
 		}
 	}
@@ -129,20 +117,14 @@ func NewShowItemResult(message *inventorypb.StoredItemCollection) inventoryviews
 	result := make([]*inventoryviews.StoredItemView, len(message.Field))
 	for i, val := range message.Field {
 		result[i] = &inventoryviews.StoredItemView{
-			ID:   &val.Id,
-			Name: &val.Name,
+			ID:         &val.Id,
+			Name:       &val.Name,
+			Damage:     &val.Damage,
+			Healing:    &val.Healing,
+			Protection: &val.Protection,
 		}
 		if val.Description != "" {
 			result[i].Description = &val.Description
-		}
-		if val.Damage != 0 {
-			result[i].Damage = &val.Damage
-		}
-		if val.Healing != 0 {
-			result[i].Healing = &val.Healing
-		}
-		if val.Protection != 0 {
-			result[i].Protection = &val.Protection
 		}
 	}
 	return result
@@ -201,20 +183,14 @@ func NewAddItemResult(message *inventorypb.AddItemResponse) *inventoryviews.Stor
 		result.Items = make([]*inventoryviews.StoredItemView, len(message.Items))
 		for i, val := range message.Items {
 			result.Items[i] = &inventoryviews.StoredItemView{
-				ID:   &val.Id,
-				Name: &val.Name,
+				ID:         &val.Id,
+				Name:       &val.Name,
+				Damage:     &val.Damage,
+				Healing:    &val.Healing,
+				Protection: &val.Protection,
 			}
 			if val.Description != "" {
 				result.Items[i].Description = &val.Description
-			}
-			if val.Damage != 0 {
-				result.Items[i].Damage = &val.Damage
-			}
-			if val.Healing != 0 {
-				result.Items[i].Healing = &val.Healing
-			}
-			if val.Protection != 0 {
-				result.Items[i].Protection = &val.Protection
 			}
 		}
 	}
@@ -245,20 +221,14 @@ func NewRemoveItemResult(message *inventorypb.RemoveItemResponse) *inventoryview
 		result.Items = make([]*inventoryviews.StoredItemView, len(message.Items))
 		for i, val := range message.Items {
 			result.Items[i] = &inventoryviews.StoredItemView{
-				ID:   &val.Id,
-				Name: &val.Name,
+				ID:         &val.Id,
+				Name:       &val.Name,
+				Damage:     &val.Damage,
+				Healing:    &val.Healing,
+				Protection: &val.Protection,
 			}
 			if val.Description != "" {
 				result.Items[i].Description = &val.Description
-			}
-			if val.Damage != 0 {
-				result.Items[i].Damage = &val.Damage
-			}
-			if val.Healing != 0 {
-				result.Items[i].Healing = &val.Healing
-			}
-			if val.Protection != 0 {
-				result.Items[i].Protection = &val.Protection
 			}
 		}
 	}

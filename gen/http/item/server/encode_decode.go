@@ -226,26 +226,11 @@ func DecodeUpdateRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.
 // type *StoredItemResponseTiny from a value of type *itemviews.StoredItemView.
 func marshalItemviewsStoredItemViewToStoredItemResponseTiny(v *itemviews.StoredItemView) *StoredItemResponseTiny {
 	res := &StoredItemResponseTiny{
-		ID:   *v.ID,
-		Name: *v.Name,
-	}
-	if v.Damage != nil {
-		res.Damage = *v.Damage
-	}
-	if v.Healing != nil {
-		res.Healing = *v.Healing
-	}
-	if v.Protection != nil {
-		res.Protection = *v.Protection
-	}
-	if v.Damage == nil {
-		res.Damage = 0
-	}
-	if v.Healing == nil {
-		res.Healing = 0
-	}
-	if v.Protection == nil {
-		res.Protection = 0
+		ID:         *v.ID,
+		Name:       *v.Name,
+		Damage:     *v.Damage,
+		Healing:    *v.Healing,
+		Protection: *v.Protection,
 	}
 
 	return res

@@ -147,6 +147,15 @@ func ValidateStoredItemView(result *StoredItemView) (err error) {
 	if result.Name == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("name", "result"))
 	}
+	if result.Damage == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("damage", "result"))
+	}
+	if result.Healing == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("healing", "result"))
+	}
+	if result.Protection == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("protection", "result"))
+	}
 	return
 }
 
@@ -158,6 +167,15 @@ func ValidateStoredItemViewTiny(result *StoredItemView) (err error) {
 	}
 	if result.Name == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("name", "result"))
+	}
+	if result.Damage == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("damage", "result"))
+	}
+	if result.Healing == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("healing", "result"))
+	}
+	if result.Protection == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("protection", "result"))
 	}
 	return
 }

@@ -35,7 +35,7 @@ var Item = Type("Item", func() {
 		Example(65.21)
 		Default(0)
 	})
-	Required("name")
+	Required("name", "damage", "healing", "protection")
 })
 
 var StoredItem = ResultType("application/json", func() {

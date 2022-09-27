@@ -59,24 +59,6 @@ func BuildAddPayload(itemAddBody string) (*item.Item, error) {
 		Healing:     body.Healing,
 		Protection:  body.Protection,
 	}
-	{
-		var zero float64
-		if v.Damage == zero {
-			v.Damage = 0
-		}
-	}
-	{
-		var zero float64
-		if v.Healing == zero {
-			v.Healing = 0
-		}
-	}
-	{
-		var zero float64
-		if v.Protection == zero {
-			v.Protection = 0
-		}
-	}
 
 	return v, nil
 }

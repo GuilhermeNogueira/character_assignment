@@ -11,12 +11,14 @@ import "characters/gen/inventory"
 
 type Repository interface {
 	Insert(item *item.Item) (*inventory.StoredItem, error)
-	Get(id string) (*inventory.StoredItem, error)
+	GetItemForRepo(id string) (*inventory.StoredItem, error)
+	Get(id string) (*item.StoredItem, error)
 	Update(id string, item *item.Item) (*inventory.StoredItem, error)
 	Delete(id string) error
-	ListAll() []*inventory.StoredItem
+	ListAll() []*item.StoredItem
 }
 
+// InMemoryItemsRepository Singleton value for InMemoryRepository
 var InMemoryItemsRepository = NewInMemoryRepository(log.Default())
 
 const itemIdentifier = "ITEM"
@@ -81,7 +83,7 @@ func (i *InMemoryRepository) Insert(item *item.Item) (*inventory.StoredItem, err
 	return dto, nil
 }
 
-func (i *InMemoryRepository) Get(id string) (*inventory.StoredItem, error) {
+func (i *InMemoryRepository) GetItemForRepo(id string) (*inventory.StoredItem, error) {
 
 	object, err := i.db.Get(id)
 
@@ -125,19 +127,28 @@ func (i *InMemoryRepository) Delete(id string) error {
 	return nil
 }
 
-func (i *InMemoryRepository) ListAll() []*inventory.StoredItem {
+func (i *InMemoryRepository) Get(id string) (*item.StoredItem, error) {
 
-	var result []*inventory.StoredItem
+	object, err := i.db.Get(id)
+	if err != nil {
+		return nil, err
+	}
+
+	if v, ok := object.(*DbItem); ok {
+		return (*item.StoredItem)(v), nil
+	}
+
+	return nil, errors.New("not able to convert")
+}
+
+func (i *InMemoryRepository) ListAll() []*item.StoredItem {
+
+	var result []*item.StoredItem
 
 	for _, object := range i.db.ListAll() {
-
-		dto, err := i.modelToDto(object)
-
-		if err != nil {
-			return nil
+		if v, ok := object.(*DbItem); ok {
+			result = append(result, (*item.StoredItem)(v))
 		}
-
-		result = append(result, dto)
 	}
 
 	return result

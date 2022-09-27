@@ -121,24 +121,6 @@ func NewAddRequestBody(p *item.Item) *AddRequestBody {
 		Healing:     p.Healing,
 		Protection:  p.Protection,
 	}
-	{
-		var zero float64
-		if body.Damage == zero {
-			body.Damage = 0
-		}
-	}
-	{
-		var zero float64
-		if body.Healing == zero {
-			body.Healing = 0
-		}
-	}
-	{
-		var zero float64
-		if body.Protection == zero {
-			body.Protection = 0
-		}
-	}
 	return body
 }
 
@@ -222,6 +204,15 @@ func ValidateStoredItemResponse(body *StoredItemResponse) (err error) {
 	}
 	if body.Name == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
+	}
+	if body.Damage == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("damage", "body"))
+	}
+	if body.Healing == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("healing", "body"))
+	}
+	if body.Protection == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("protection", "body"))
 	}
 	return
 }
